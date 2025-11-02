@@ -4,6 +4,21 @@ Modern AI-powered agentic e-commerce platform, similar to Magento or WooCommerce
 
 **Open Source Software** - Licensed under the Functional Source License (FSL). Free to use and modify.
 
+## Design Vision
+
+Below are the reference designs that showcase how the platform should look and feel:
+
+**Home Page**
+![Home Page Design](./template/assets/Desktop/home.png)
+
+**Product Listing**
+![Product Listing Design](./template/assets/Desktop/listing_1.png)
+
+**Product Page**
+![Product Page Design](./template/assets/Desktop/product_page.png)
+
+For more details about the template system and customization, see [template/README.md](./template/README.md).
+
 ## Project Overview
 
 Cognito is an innovative **agentic e-commerce platform** that leverages artificial intelligence and autonomous agents to enhance the shopping experience. Unlike traditional e-commerce systems, Cognito uses AI agents to handle complex workflows, customer interactions, and business processes autonomously.
