@@ -194,7 +194,48 @@ export const validateRegistrationData = (
 - Define schemas close to where they're used (in service files)
 - Use `z.infer<typeof schema>` to derive TypeScript types from schemas
 - Always pass locale explicitly to validation functions (no default parameters)
-- Validation errors are automatically translated based on locale
+- Validation errors are automatically translated based on locale via zod-i18n-map
+
+### Error Handling and Translations
+
+**CRITICAL**: All error messages must be translated based on the request locale:
+
+- **Never hardcode error messages** in English or any specific language
+- **Detect locale from request** (from URL, headers, or request context)
+- **Zod validation errors** are automatically translated via zod-i18n-map based on locale
+- **Business logic errors** must be translated server-side using `getTranslations` from next-intl
+- **API responses** must return fully translated error messages, not translation keys
+- **Services** must accept locale parameter and use `getTranslations` to translate errors
+
+**Translation namespace structure for errors:**
+- Feature-specific errors: `[feature].errors` (e.g., `registration.errors.userExists`)
+- Common/generic errors: `commonErrors` (e.g., `commonErrors.serverError`)
+
+### Custom Hooks
+
+Custom React hooks are used to extract and reuse component logic:
+
+- **Location**: Hooks specific to a component/feature should be placed in the same directory as the component
+- **Generic hooks**: Only truly reusable, generic hooks go in `hooks/` directory
+- **Naming**: Always prefix with `use` (e.g., `useRegistrationForm`, `useAuth`)
+- **Services integration**: Hooks should use service layer functions for validation and business logic
+- **Separation of concerns**: Hooks manage component state and effects, services handle business logic
+
+**Example structure:**
+```
+components/
+├── registration/
+│   └── registrationForm/
+│       ├── RegistrationForm.tsx           # Component using the hook
+│       ├── useRegistrationForm.ts         # Hook with form state and logic
+│       └── ...
+```
+
+**Principles:**
+- Hooks import and use functions from services (e.g., validation functions)
+- Services contain pure business logic that can be reused across hooks, API routes, and other contexts
+- Keep hooks focused on React-specific concerns (state, effects, refs)
+- Business logic stays in services, not in hooks
 
 ### Shared Components
 

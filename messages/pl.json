@@ -21,6 +21,27 @@
       "forgotPassword": "Zapomniałeś hasła?"
     }
   },
+  "registration": {
+    "title": "Załóż konto",
+    "subtitle": "Zarejestruj się, aby rozpocząć zakupy",
+    "email": "Adres email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "terms": "Akceptuję warunki korzystania z usługi",
+    "submit": "Zarejestruj się",
+    "cancel": "Anuluj",
+    "validation": {
+      "emailInvalid": "Nieprawidłowy format adresu email",
+      "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków",
+      "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę",
+      "passwordNumber": "Hasło musi zawierać co najmniej jedną cyfrę",
+      "passwordMismatch": "Hasła nie są identyczne"
+    },
+    "errors": {
+      "userExists": "Użytkownik z tym adresem email już istnieje",
+      "registrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie."
+    }
+  },
   "api": {
     "registration": {
       "success": "Użytkownik zarejestrowany pomyślnie",
