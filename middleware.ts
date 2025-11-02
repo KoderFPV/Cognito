@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/config';
-import { auth } from '@/services/auth/auth.config';
+import { getToken } from 'next-auth/jwt';
 import { ROLE } from '@/domain/user';
 
 const intlMiddleware = createMiddleware({
@@ -18,15 +18,18 @@ export default async function middleware(request: NextRequest) {
   const isCmsLoginRoute = pathname.includes('/cms/login');
 
   if (isCmsRoute && !isCmsLoginRoute) {
-    const session = await auth();
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET
+    });
 
-    if (!session) {
+    if (!token) {
       return NextResponse.redirect(
         new URL(`/${locale}/cms/login`, request.url)
       );
     }
 
-    if (session.user.role !== ROLE.ADMIN) {
+    if (token.role !== ROLE.ADMIN) {
       return NextResponse.redirect(
         new URL(`/${locale}`, request.url)
       );
