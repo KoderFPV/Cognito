@@ -1,6 +1,6 @@
 # Cognito
 
-Modern AI-powered agentic e-commerce platform, similar to Magento or WooCommerce, designed to autonomously handle complex commerce operations.
+Modern AI-powered agentic e-commerce platform, designed to autonomously handle complex commerce operations.
 
 **Open Source Software** - Licensed under the Functional Source License (FSL). Free to use and modify.
 
