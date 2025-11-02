@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Db } from 'mongodb';
 import { ROLE } from '@/domain/user';
-import { findUserByEmail, findUserById, createUser } from './usersRepository';
+import { findUserByEmail, findUserById, createUser } from './usersModel';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
   connectToMongo: vi.fn(),
 }));
 
-describe('usersRepository', () => {
+describe('usersModel', () => {
   let context: IMongoTestContext;
   let db: Db;
 

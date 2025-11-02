@@ -40,9 +40,9 @@ services/
 └── locale/
     └── locale.service.ts        # Locale extraction from requests
 
-repositories/
+models/
 └── users/
-    └── usersRepository.ts   # MongoDB user operations
+    └── usersModel.ts   # MongoDB user operations
 
 domain/
 └── user.ts                  # User domain model with ROLE enum
@@ -463,7 +463,7 @@ npm test
 
 ### Test Files
 
-- `repositories/users/usersRepository.test.ts` - Repository layer tests
+- `models/users/usersModel.test.ts` - Model layer tests
 - `services/auth/auth.service.test.ts` - Auth service tests
 - `services/registration/registration.service.test.ts` - Registration tests
 - `services/locale/locale.service.test.ts` - Locale extraction tests

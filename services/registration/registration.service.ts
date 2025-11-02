@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import { IUser, ROLE } from '@/domain/user';
 import { hashPassword } from '@/services/auth/auth.service';
-import { createUser, findUserByEmail } from '@/repositories/users/usersRepository';
+import { createUser, findUserByEmail } from '@/models/users/usersModel';
 
 export const registrationSchema = z.object({
   email: z.string().email(),
