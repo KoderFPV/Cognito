@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { getTranslations } from 'next-intl/server';
-import { connectToMongo } from '@/clients/mongodb/mongodb';
 import {
   createUserAccount,
   registrationSchema,
@@ -19,8 +18,7 @@ export const POST = async (request: NextRequest) => {
     await initZodI18n(locale);
     const validatedData = registrationSchema.parse(body);
 
-    const db = await connectToMongo();
-    const user = await createUserAccount(db, validatedData, locale);
+    const user = await createUserAccount(validatedData, locale);
 
     return NextResponse.json(
       {

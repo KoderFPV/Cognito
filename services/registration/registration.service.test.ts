@@ -12,6 +12,10 @@ vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn(async () => (key: string) => key),
 }));
 
+vi.mock('@/clients/mongodb/mongodb', () => ({
+  connectToMongo: vi.fn(),
+}));
+
 describe('registration.service', () => {
   let context: IMongoTestContext;
   let db: Db;
@@ -19,10 +23,14 @@ describe('registration.service', () => {
   beforeEach(async () => {
     context = await setupMongoTest();
     db = context.db;
+
+    const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+    vi.mocked(connectToMongo).mockResolvedValue(db);
   });
 
   afterEach(async () => {
     await teardownMongoTest(context);
+    vi.clearAllMocks();
   });
 
   describe('validateEmail', () => {
@@ -139,7 +147,7 @@ describe('registration.service', () => {
         termsAccepted: true,
       };
 
-      const user = await createUserAccount(db, validData, 'en');
+      const user = await createUserAccount(validData, 'en');
 
       expect(user).toBeDefined();
       expect(user.email).toBe('account@example.com');
@@ -157,9 +165,9 @@ describe('registration.service', () => {
         termsAccepted: true,
       };
 
-      await createUserAccount(db, validData, 'en');
+      await createUserAccount(validData, 'en');
 
-      await expect(createUserAccount(db, validData, 'en')).rejects.toThrow();
+      await expect(createUserAccount(validData, 'en')).rejects.toThrow();
     });
 
     it('should hash password', async () => {
@@ -169,7 +177,7 @@ describe('registration.service', () => {
         termsAccepted: true,
       };
 
-      const user = await createUserAccount(db, validData, 'en');
+      const user = await createUserAccount(validData, 'en');
 
       expect(user.hash).not.toBe('Password123');
       expect(user.hash.length).toBeGreaterThan(20);

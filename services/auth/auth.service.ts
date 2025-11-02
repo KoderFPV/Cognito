@@ -1,4 +1,3 @@
-import { Db } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import { IUser, ROLE } from '@/domain/user';
 import {
@@ -36,10 +35,9 @@ export const verifyPassword = async (
 };
 
 export const registerUser = async (
-  db: Db,
   data: IRegisterData
 ): Promise<IUser> => {
-  const existingUser = await findUserByEmail(db, data.email);
+  const existingUser = await findUserByEmail(data.email);
   if (existingUser) {
     throw new Error('User with this email already exists');
   }
@@ -64,14 +62,13 @@ export const registerUser = async (
     updatedAt: new Date(),
   };
 
-  return createUserInDb(db, userData);
+  return createUserInDb(userData);
 };
 
 export const validateUserCredentials = async (
-  db: Db,
   credentials: ILoginCredentials
 ): Promise<IUser | null> => {
-  const user = await findUserByEmail(db, credentials.email);
+  const user = await findUserByEmail(credentials.email);
 
   if (!user) {
     return null;

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Db } from 'mongodb';
 import { ROLE } from '@/domain/user';
 import {
@@ -8,6 +8,11 @@ import {
   validateUserCredentials,
 } from './auth.service';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
+import { createUser } from '@/repositories/users/usersRepository';
+
+vi.mock('@/clients/mongodb/mongodb', () => ({
+  connectToMongo: vi.fn(),
+}));
 
 describe('auth.service', () => {
   let context: IMongoTestContext;
@@ -16,10 +21,14 @@ describe('auth.service', () => {
   beforeEach(async () => {
     context = await setupMongoTest();
     db = context.db;
+
+    const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+    vi.mocked(connectToMongo).mockResolvedValue(db);
   });
 
   afterEach(async () => {
     await teardownMongoTest(context);
+    vi.clearAllMocks();
   });
 
   describe('hashPassword', () => {
@@ -73,7 +82,7 @@ describe('auth.service', () => {
         country: 'Poland',
       };
 
-      const user = await registerUser(db, userData);
+      const user = await registerUser(userData);
 
       expect(user).toBeDefined();
       expect(user._id).toBeDefined();
@@ -98,9 +107,9 @@ describe('auth.service', () => {
         country: 'Poland',
       };
 
-      await registerUser(db, userData);
+      await registerUser(userData);
 
-      await expect(registerUser(db, userData)).rejects.toThrow(
+      await expect(registerUser(userData)).rejects.toThrow(
         'User with this email already exists'
       );
     });
@@ -120,9 +129,9 @@ describe('auth.service', () => {
         country: 'Poland',
       };
 
-      await registerUser(db, userData);
+      await registerUser(userData);
 
-      const result = await validateUserCredentials(db, {
+      const result = await validateUserCredentials({
         email: 'valid@example.com',
         password: 'validpassword',
       });
@@ -144,9 +153,9 @@ describe('auth.service', () => {
         country: 'Poland',
       };
 
-      await registerUser(db, userData);
+      await registerUser(userData);
 
-      const result = await validateUserCredentials(db, {
+      const result = await validateUserCredentials({
         email: 'test@example.com',
         password: 'wrongpassword',
       });
@@ -155,7 +164,7 @@ describe('auth.service', () => {
     });
 
     it('should return null for non-existent user', async () => {
-      const result = await validateUserCredentials(db, {
+      const result = await validateUserCredentials({
         email: 'nonexistent@example.com',
         password: 'anypassword',
       });
@@ -164,10 +173,9 @@ describe('auth.service', () => {
     });
 
     it('should throw error for banned user', async () => {
-      const collection = db.collection('users');
       const hash = await hashPassword('password');
 
-      await collection.insertOne({
+      await createUser({
         email: 'banned@example.com',
         hash,
         firstName: 'Banned',
@@ -186,7 +194,7 @@ describe('auth.service', () => {
       });
 
       await expect(
-        validateUserCredentials(db, {
+        validateUserCredentials({
           email: 'banned@example.com',
           password: 'password',
         })

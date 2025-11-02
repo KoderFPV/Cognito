@@ -1,8 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Db } from 'mongodb';
 import { ROLE } from '@/domain/user';
 import { findUserByEmail, findUserById, createUser } from './usersRepository';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
+
+vi.mock('@/clients/mongodb/mongodb', () => ({
+  connectToMongo: vi.fn(),
+}));
 
 describe('usersRepository', () => {
   let context: IMongoTestContext;
@@ -11,10 +15,14 @@ describe('usersRepository', () => {
   beforeEach(async () => {
     context = await setupMongoTest();
     db = context.db;
+
+    const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+    vi.mocked(connectToMongo).mockResolvedValue(db);
   });
 
   afterEach(async () => {
     await teardownMongoTest(context);
+    vi.clearAllMocks();
   });
 
   describe('createUser', () => {
@@ -37,7 +45,7 @@ describe('usersRepository', () => {
         updatedAt: new Date(),
       };
 
-      const user = await createUser(db, userData);
+      const user = await createUser(userData);
 
       expect(user).toBeDefined();
       expect(user._id).toBeDefined();
@@ -66,15 +74,15 @@ describe('usersRepository', () => {
         updatedAt: new Date(),
       };
 
-      await createUser(db, userData);
-      const found = await findUserByEmail(db, 'find@example.com');
+      await createUser(userData);
+      const found = await findUserByEmail('find@example.com');
 
       expect(found).toBeDefined();
       expect(found?.email).toBe('find@example.com');
     });
 
     it('should return null for non-existent email', async () => {
-      const found = await findUserByEmail(db, 'nonexistent@example.com');
+      const found = await findUserByEmail('nonexistent@example.com');
       expect(found).toBeNull();
     });
 
@@ -97,8 +105,8 @@ describe('usersRepository', () => {
         updatedAt: new Date(),
       };
 
-      await createUser(db, userData);
-      const found = await findUserByEmail(db, 'deleted@example.com');
+      await createUser(userData);
+      const found = await findUserByEmail('deleted@example.com');
 
       expect(found).toBeNull();
     });
@@ -124,8 +132,8 @@ describe('usersRepository', () => {
         updatedAt: new Date(),
       };
 
-      const created = await createUser(db, userData);
-      const found = await findUserById(db, created._id);
+      const created = await createUser(userData);
+      const found = await findUserById(created._id);
 
       expect(found).toBeDefined();
       expect(found?._id).toBe(created._id);
@@ -133,7 +141,7 @@ describe('usersRepository', () => {
     });
 
     it('should return null for non-existent id', async () => {
-      const found = await findUserById(db, 'nonexistent-id');
+      const found = await findUserById('nonexistent-id');
       expect(found).toBeNull();
     });
   });

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { Db } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 import { IUser, ROLE } from '@/domain/user';
 import { hashPassword } from '@/services/auth/auth.service';
@@ -14,13 +13,12 @@ export const registrationSchema = z.object({
 export type IRegistrationInput = z.infer<typeof registrationSchema>;
 
 export const createUserAccount = async (
-  db: Db,
   data: IRegistrationInput,
   locale: string
 ): Promise<IUser> => {
   const t = await getTranslations({ locale, namespace: 'registration.errors' });
 
-  const existingUser = await findUserByEmail(db, data.email);
+  const existingUser = await findUserByEmail(data.email);
   if (existingUser) {
     throw new Error(t('userExists'));
   }
@@ -45,5 +43,5 @@ export const createUserAccount = async (
     updatedAt: new Date(),
   };
 
-  return createUser(db, userData);
+  return createUser(userData);
 };

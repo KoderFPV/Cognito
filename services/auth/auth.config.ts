@@ -1,7 +1,6 @@
 import NextAuth, { User, Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { validateUserCredentials } from './auth.service';
 import { ROLE } from '@/domain/user';
 
@@ -17,8 +16,7 @@ const authorizeUser = async (
   const password = credentials.password as string;
 
   try {
-    const db = await connectToMongo();
-    const user = await validateUserCredentials(db, {
+    const user = await validateUserCredentials({
       email,
       password,
     });
