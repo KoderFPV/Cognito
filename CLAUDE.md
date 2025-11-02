@@ -104,29 +104,29 @@ domain/
 - Use functional programming patterns (no classes)
 - Domain layer should have no external dependencies
 
-### Repository Layer
+### Model Layer (Server-Side Database Operations)
 
-The `repositories/` directory contains all database access logic and external data source operations:
+The `models/` directory contains all database access logic and external data source operations:
 
-- **Database Operations**: All MongoDB and Weaviate operations must be implemented in repositories
-- **Functional Pattern**: Use pure functions for all repository operations
-- **Single Responsibility**: Each repository handles operations for one domain entity
-- **Technology Abstraction**: Services and components should never directly access databases
+- **Database Operations**: All MongoDB and Weaviate operations must be implemented in models
+- **Functional Pattern**: Use pure functions for all model operations
+- **Single Responsibility**: Each model handles operations for one domain entity
+- **Technology Abstraction**: Services should never directly access databases, only through models
 
 **Directory Structure:**
 ```
-repositories/
+models/
 ├── users/
-│   ├── usersRepository.ts       # User database operations
-│   └── usersRepository.test.ts  # Repository tests
+│   ├── usersModel.ts       # User database operations
+│   └── usersModel.test.ts  # Model tests
 ├── products/
-│   └── productsRepository.ts    # Product database operations
-└── ...                          # Other entity repositories
+│   └── productsModel.ts    # Product database operations
+└── ...                     # Other entity models
 ```
 
 **Example:**
 ```typescript
-// repositories/users/usersRepository.ts
+// models/users/usersModel.ts
 import { Db } from 'mongodb';
 import { IUser } from '@/domain/user';
 
@@ -149,12 +149,100 @@ export const createUser = async (
 ```
 
 **Principles:**
-- All MongoDB operations go through repositories
-- All Weaviate operations go through repositories
-- Repositories return domain types (interfaces from `domain/`)
-- Services use repositories, never direct database access
+- All MongoDB operations go through models
+- All Weaviate operations go through models
+- Models return domain types (interfaces from `domain/`)
+- Models are server-side only (never imported in client components)
+- Services use models, never direct database access
 - Use functional programming patterns (no classes)
 - Each function should be pure and testable
+
+### Repository Layer (Client-Side API Communication)
+
+The `repositories/` directory contains **client-side API communication** with internal API routes:
+
+- **API Operations**: All fetch() calls to internal API routes must be implemented in repositories
+- **HTTP Abstraction**: Repositories abstract HTTP communication from hooks and components
+- **Separation of Concerns**: Components and hooks should never make direct fetch() calls
+- **Error Handling**: Repositories handle HTTP-level errors and response parsing
+
+**Directory Structure:**
+```
+repositories/
+├── api/
+│   ├── registration/
+│   │   ├── registrationApiRepository.ts       # API calls for registration
+│   │   └── registrationApiRepository.test.ts  # Repository tests
+│   ├── auth/
+│   │   └── authApiRepository.ts               # API calls for authentication
+│   └── ...                                     # Other API repositories
+└── ...
+```
+
+**Example:**
+```typescript
+// repositories/api/registration/registrationApiRepository.ts
+import { IUser } from '@/domain/user';
+
+export interface IRegistrationRequest {
+  email: string;
+  password: string;
+  termsAccepted: boolean;
+}
+
+export interface IRegistrationResponse {
+  message: string;
+  user: Omit<IUser, 'password'>;
+}
+
+export const registerUser = async (
+  data: IRegistrationRequest
+): Promise<IRegistrationResponse> => {
+  const response = await fetch('/api/registration', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Registration failed');
+  }
+
+  return response.json();
+};
+```
+
+**Usage in hooks:**
+```typescript
+// components/registration/registrationForm/useRegistrationForm.ts
+import { registerUser } from '@/repositories/api/registration/registrationApiRepository';
+
+export const useRegistrationForm = () => {
+  const handleSubmit = async () => {
+    try {
+      const result = await registerUser({
+        email,
+        password,
+        termsAccepted,
+      });
+      // Handle success
+    } catch (error) {
+      // Handle error
+    }
+  };
+};
+```
+
+**Principles:**
+- All fetch() calls to internal API routes go through repositories
+- Repositories are client-side only (never imported in server code)
+- Repositories handle request formatting and response parsing
+- Error responses are converted to Error objects
+- Use TypeScript interfaces for request/response types
+- Keep HTTP-level concerns in repositories, business logic in hooks
 
 ### Validation with Zod
 

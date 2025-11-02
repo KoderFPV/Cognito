@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { validateEmail, validatePassword } from '@/services/registration/registration.validation';
+import { registerUser } from '@/repositories/api/registration/registrationApiRepository';
 
 export const useRegistrationForm = () => {
   const t = useTranslations('registration');
@@ -78,28 +79,16 @@ export const useRegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/registration', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          termsAccepted,
-        }),
+      const data = await registerUser({
+        email,
+        password,
+        termsAccepted,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || t('errors.registrationFailed'));
-        return;
-      }
 
       console.log('Registration successful:', data);
     } catch (err) {
-      setError(t('errors.registrationFailed'));
+      const errorMessage = err instanceof Error ? err.message : t('errors.registrationFailed');
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

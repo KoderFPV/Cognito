@@ -6,7 +6,9 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-global.fetch = vi.fn();
+vi.mock('@/repositories/api/registration/registrationApiRepository', () => ({
+  registerUser: vi.fn(),
+}));
 
 describe('useRegistrationForm', () => {
   beforeEach(() => {
@@ -166,11 +168,11 @@ describe('useRegistrationForm', () => {
   });
 
   it('should submit valid data', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ message: 'success' }),
+    const { registerUser } = await import('@/repositories/api/registration/registrationApiRepository');
+    vi.mocked(registerUser).mockResolvedValue({
+      message: 'success',
+      user: {} as any,
     });
-    global.fetch = mockFetch;
 
     const { result } = renderHook(() => useRegistrationForm());
 
@@ -186,26 +188,17 @@ describe('useRegistrationForm', () => {
     });
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith('/api/registration', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: 'test@example.com',
-          password: 'Password123',
-          termsAccepted: true,
-        }),
+      expect(registerUser).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'Password123',
+        termsAccepted: true,
       });
     });
   });
 
   it('should handle API error', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: false,
-      json: async () => ({ message: 'errors.userExists' }),
-    });
-    global.fetch = mockFetch;
+    const { registerUser } = await import('@/repositories/api/registration/registrationApiRepository');
+    vi.mocked(registerUser).mockRejectedValue(new Error('errors.userExists'));
 
     const { result } = renderHook(() => useRegistrationForm());
 
@@ -226,20 +219,20 @@ describe('useRegistrationForm', () => {
   });
 
   it('should set loading state during submission', async () => {
-    const mockFetch = vi.fn().mockImplementation(
+    const { registerUser } = await import('@/repositories/api/registration/registrationApiRepository');
+    vi.mocked(registerUser).mockImplementation(
       () =>
         new Promise((resolve) =>
           setTimeout(
             () =>
               resolve({
-                ok: true,
-                json: async () => ({ message: 'success' }),
+                message: 'success',
+                user: {} as any,
               }),
             100
           )
         )
     );
-    global.fetch = mockFetch;
 
     const { result } = renderHook(() => useRegistrationForm());
 

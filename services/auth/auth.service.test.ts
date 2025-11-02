@@ -8,7 +8,7 @@ import {
   validateUserCredentials,
 } from './auth.service';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
-import { createUser } from '@/repositories/users/usersRepository';
+import { createUser } from '@/models/users/usersModel';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
   connectToMongo: vi.fn(),

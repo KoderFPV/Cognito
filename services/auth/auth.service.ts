@@ -3,7 +3,7 @@ import { IUser, ROLE } from '@/domain/user';
 import {
   findUserByEmail,
   createUser as createUserInDb,
-} from '@/repositories/users/usersRepository';
+} from '@/models/users/usersModel';
 
 export interface IRegisterData {
   email: string;
