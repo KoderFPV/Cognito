@@ -58,7 +58,7 @@ export const RegistrationFormTemplate = ({
 
       {error && <div className={styles.error}>{error}</div>}
 
-      <form onSubmit={onSubmit} className={styles.form}>
+      <form onSubmit={onSubmit} className={styles.form} noValidate>
         <div className={styles.formGroup}>
           <label htmlFor="email" className={styles.label}>
             {emailLabel}

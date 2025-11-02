@@ -35,6 +35,18 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/cognito-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -73,6 +85,20 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/cognito-e2e
+      NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
+      NEXTAUTH_URL: http://localhost:2137
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
