@@ -4,6 +4,8 @@ Modern AI-powered agentic e-commerce platform, designed to autonomously handle c
 
 **Open Source Software** - Licensed under the Functional Source License (FSL). Free to use and modify.
 
+**Demo app link:** TBA
+
 ## Design Vision
 
 Below are the reference designs that showcase how the platform should look and feel:
