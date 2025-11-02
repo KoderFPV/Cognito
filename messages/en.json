@@ -21,6 +21,27 @@
       "forgotPassword": "Forgot password?"
     }
   },
+  "registration": {
+    "title": "Create Account",
+    "subtitle": "Register to start shopping",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "terms": "I accept the terms of service",
+    "submit": "Register",
+    "cancel": "Cancel",
+    "validation": {
+      "emailInvalid": "Invalid email format",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "errors": {
+      "userExists": "User with this email already exists",
+      "registrationFailed": "Registration failed. Please try again."
+    }
+  },
   "api": {
     "registration": {
       "success": "User registered successfully",

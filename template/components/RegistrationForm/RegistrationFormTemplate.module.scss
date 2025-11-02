@@ -1,0 +1,103 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.registrationForm {
+  @include card;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: $font-size-h1;
+  margin-bottom: $spacing-md;
+  color: $primary-color;
+  text-align: center;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin-bottom: $spacing-lg;
+  color: $secondary-color;
+  text-align: center;
+  font-size: $font-size-base;
+}
+
+.error {
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  background-color: #fee;
+  color: $error-color;
+  border-radius: $border-radius-sm;
+  border: 1px solid $error-color;
+  font-size: $font-size-small;
+}
+
+.form {
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: $spacing-md;
+}
+
+.label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-weight: 600;
+  color: $foreground-color;
+  font-size: $font-size-base;
+}
+
+.input {
+  @include input-base;
+}
+
+.inputError {
+  border-color: $error-color;
+}
+
+.fieldError {
+  display: block;
+  margin-top: $spacing-xs;
+  color: $error-color;
+  font-size: $font-size-small;
+}
+
+.checkboxGroup {
+  margin-bottom: $spacing-lg;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-base;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+}
+
+.submitButton {
+  @include button-primary;
+  flex: 1;
+}
+
+.cancelButton {
+  @include button-primary;
+  flex: 1;
+  background-color: $secondary-color;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+  }
+}

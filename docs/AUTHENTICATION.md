@@ -75,22 +75,20 @@ export enum ROLE {
 ### Registration Flow
 
 1. User submits registration form
-2. **API Controller** (`/api/register`):
+2. **API Controller** (`/api/registration`):
    - Extracts locale from URL
    - Validates input with Zod (with i18n errors)
    - Calls service to create user
 3. **Registration Service**:
-   - Passes validated data to auth service
-4. **Auth Service**:
    - Checks if email already exists (via repository)
    - Hashes password with bcrypt
    - Creates user with `CUSTOMER` role
-5. **Repository**:
+4. **Repository**:
    - Inserts user into MongoDB
    - Returns created user
 
 ```
-User → API (/api/register) → Registration Service → Auth Service → Repository → MongoDB
+User → API (/api/registration) → Registration Service → Repository → MongoDB
          ↓
     Validation (Zod + i18n)
 ```
@@ -131,7 +129,7 @@ Request → Middleware → Check Session → Check Role → Allow/Deny
 
 ## API Endpoints
 
-### POST `/api/register`
+### POST `/api/registration`
 
 Register a new user account.
 
@@ -139,27 +137,15 @@ Register a new user account.
 ```json
 {
   "email": "user@example.com",
-  "password": "password123",
-  "firstName": "John",
-  "lastName": "Doe",
-  "phone": "123456789",
-  "address": "Test Street 123",
-  "city": "Warsaw",
-  "postal": "00-000",
-  "country": "Poland"
+  "password": "Password123",
+  "termsAccepted": true
 }
 ```
 
 **Validation Rules:**
 - `email` - Valid email format
-- `password` - Minimum 8 characters
-- `firstName` - Minimum 2 characters
-- `lastName` - Minimum 2 characters
-- `phone` - Minimum 9 characters
-- `address` - Minimum 5 characters
-- `city` - Minimum 2 characters
-- `postal` - Minimum 5 characters
-- `country` - Minimum 2 characters
+- `password` - Minimum 8 characters, at least one uppercase letter and one number
+- `termsAccepted` - Must be true
 
 **Success Response (201):**
 ```json
@@ -168,8 +154,6 @@ Register a new user account.
   "user": {
     "id": "507f1f77bcf86cd799439011",
     "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
     "role": "customer"
   }
 }
