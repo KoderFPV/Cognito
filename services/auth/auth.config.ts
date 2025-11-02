@@ -6,17 +6,21 @@ import { validateUserCredentials } from './auth.service';
 import { ROLE } from '@/domain/user';
 
 const authorizeUser = async (
-  credentials: Record<string, string> | undefined
+  credentials: Partial<Record<'email' | 'password', unknown>> | undefined,
+  request: Request
 ): Promise<User | null> => {
   if (!credentials?.email || !credentials?.password) {
     return null;
   }
 
+  const email = credentials.email as string;
+  const password = credentials.password as string;
+
   try {
     const db = await connectToMongo();
     const user = await validateUserCredentials(db, {
-      email: credentials.email,
-      password: credentials.password,
+      email,
+      password,
     });
 
     if (!user) {
