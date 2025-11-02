@@ -23,6 +23,12 @@ For more details about the template system and customization, see [template/READ
 
 Cognito is an innovative **agentic e-commerce platform** that leverages artificial intelligence and autonomous agents to enhance the shopping experience. Unlike traditional e-commerce systems, Cognito uses AI agents to handle complex workflows, customer interactions, and business processes autonomously.
 
+### AI Agents Architecture
+
+![LangGraph Architecture](docs/graph.png)
+
+The platform uses LangGraph to implement a multi-agent system where specialized AI agents autonomously handle different aspects of e-commerce operations. For detailed architecture documentation, see [docs/AGENTS.md](docs/AGENTS.md).
+
 ### Main Components
 
 1. **API Backend (Agentic)**

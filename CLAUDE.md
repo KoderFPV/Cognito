@@ -37,6 +37,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Documentation
 
 Comprehensive documentation is available in the `docs/` directory:
+- **AGENTS.md** - AI agents architecture and LangGraph implementation
 - **AUTHENTICATION.md** - Complete authentication and authorization guide
 - **TEST_GUIDE.md** - Testing guidelines and best practices
 
