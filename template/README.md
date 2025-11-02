@@ -2,6 +2,31 @@
 
 This directory contains the visual presentation layer of the Cognito e-commerce platform. It separates the **look & feel** (HTML + CSS) from the **business logic** (state, handlers, API calls).
 
+## Design Vision
+
+Below are the reference designs that showcase how the platform should look and feel:
+
+### Desktop Experience
+
+**Home Page**
+![Home Page Design](./assets/Desktop/home.png)
+
+**Product Listing**
+![Product Listing Design](./assets/Desktop/listing_1.png)
+
+**Product Page**
+![Product Page Design](./assets/Desktop/product_page.png)
+
+### Mobile Experience
+
+The platform is mobile-first with full responsive support. Mobile designs are available in `template/assets/Mobile/`.
+
+### Design System
+
+![Design System](./assets/design_system.png)
+
+The design system defines the visual language including colors, typography, spacing, and components used throughout the platform.
+
 ## Overview
 
 The template system allows you to completely customize the appearance of the Cognito platform without touching any business logic. Simply replace the contents of this `template/` directory with your own design.
