@@ -83,38 +83,33 @@ Project in initialization phase.
 
 ## Running the Project
 
-### Docker (Recommended)
-
-Run the entire application with MongoDB using Docker Compose:
+### Local Development (Recommended)
 
 ```bash
-# Build and start containers
+# Start infrastructure (MongoDB, Weaviate, Redis, etc.)
 docker-compose up -d
 
-# Check logs
-docker-compose logs -f app
-
-# Stop containers
-docker-compose down
-```
-
-Available services:
-- **Application**: http://localhost:2137
-- **MongoDB**: localhost:27017
-
-### Local Development
-
-```bash
 # Install dependencies
 npm install
 
 # Run development server
 npm run dev
-
-# Build production version
-npm run build
-npm start
 ```
+
+Available services:
+- **Application**: http://localhost:2137
+- **MongoDB**: localhost:27018 (mapped from container port 27017)
+
+### Production Deployment
+
+```bash
+# Build and start all containers (app + infrastructure)
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+Available services:
+- **Application**: http://localhost:2137
+- **MongoDB**: localhost:27018 (mapped from container port 27017)
 
 ## Configuration
 
