@@ -27,6 +27,15 @@ The platform is mobile-first with full responsive support. Mobile designs are av
 
 The design system defines the visual language including colors, typography, spacing, and components used throughout the platform.
 
+**📖 Complete Documentation:** See [styles/design-system.md](./styles/design-system.md) for comprehensive design system documentation including:
+- Full color palette (Primary, Secondary, Accent, Gray scale, Semantic colors)
+- Typography system (headings, body text, font weights)
+- Spacing and layout tokens
+- Component styles (buttons, inputs, cards, alerts)
+- SCSS mixins and utilities
+- Responsive breakpoints
+- Usage examples
+
 ## Overview
 
 The template system allows you to completely customize the appearance of the Cognito platform without touching any business logic. Simply replace the contents of this `template/` directory with your own design.
@@ -35,15 +44,20 @@ The template system allows you to completely customize the appearance of the Cog
 
 ```
 template/
-├── components/          # Presentational components (HTML structure)
+├── components/              # Presentational components (HTML structure)
 │   └── LoginForm/
 │       ├── LoginFormTemplate.tsx         # React component (JSX + props)
 │       └── LoginFormTemplate.module.scss # Component-specific styles
-├── styles/              # Global styles and design tokens
-│   ├── globals.scss     # Global CSS reset and base styles
-│   ├── variables.scss   # Design tokens (colors, spacing, fonts, etc.)
-│   └── mixins.scss      # Reusable SCSS mixins and utilities
-└── README.md           # This file
+├── styles/                  # Global styles and design tokens
+│   ├── globals.scss         # Global CSS reset and base styles
+│   ├── variables.scss       # Design tokens (colors, spacing, fonts, etc.)
+│   ├── mixins.scss          # Reusable SCSS mixins and utilities
+│   └── design-system.md     # Complete design system documentation
+├── assets/                  # Design references and mockups
+│   ├── Desktop/             # Desktop design mockups
+│   ├── Mobile/              # Mobile design mockups
+│   └── design_system.png    # Visual design system reference
+└── README.md               # This file
 ```
 
 ## How It Works
@@ -152,54 +166,20 @@ Edit the corresponding `.module.scss` files to style your components.
 
 ## Design Tokens
 
-All design tokens are centralized in `template/styles/variables.scss`:
+All design tokens (colors, typography, spacing, shadows, etc.) are centralized in `template/styles/variables.scss`.
 
-### Colors
-- `$primary-color` - Main brand color
-- `$secondary-color` - Secondary brand color
-- `$background-color` - Page background
-- `$foreground-color` - Text color
-- `$error-color` - Error messages
-- `$success-color` - Success messages
-
-### Typography
-- `$font-family-base` - Base font family
-- `$font-size-base` - Base font size (16px)
-- `$font-size-h1`, `$font-size-h2`, etc.
-
-### Spacing
-- `$spacing-xs` to `$spacing-2xl` - Consistent spacing scale
-
-### Border Radius
-- `$border-radius-sm` to `$border-radius-xl`
-
-### Responsive Breakpoints
-- `$breakpoint-mobile` - 768px
-- `$breakpoint-tablet` - 1024px
-- `$breakpoint-desktop` - 1280px
+**📖 Complete Reference:** See [styles/design-system.md](./styles/design-system.md) for full documentation.
 
 ## SCSS Mixins
 
-Common patterns are available as mixins in `template/styles/mixins.scss`:
+Reusable SCSS mixins for common patterns are available in `template/styles/mixins.scss` including:
+- Layout utilities (flexbox, container)
+- Typography styles (headings, body text, links)
+- Component styles (buttons, inputs, cards, alerts)
+- Responsive breakpoints
+- Text utilities (truncate, focus states)
 
-```scss
-@import '../../styles/mixins';
-
-.myComponent {
-  @include flex-center;      // Flexbox centered
-  @include card;             // Card styling with shadow
-  @include button-primary;   // Primary button styles
-  @include input-base;       // Input field styles
-
-  @include mobile {          // Mobile-only styles
-    // styles for mobile
-  }
-
-  @include tablet-up {       // Tablet and above
-    // styles for tablet+
-  }
-}
-```
+**📖 Complete Reference:** See [styles/design-system.md](./styles/design-system.md) for full mixin documentation and usage examples.
 
 ## Component Interface Contracts
 
