@@ -507,33 +507,42 @@ This project is in the initial setup phase. The Next.js frontend structure has b
 
 ## Development Commands
 
-### Docker (Recommended)
+### Local Development (Recommended)
 ```bash
-# Start all services (app + MongoDB)
+# Start infrastructure services (MongoDB, Weaviate, Redis, etc.)
 docker-compose up -d
 
-# View logs
-docker-compose logs -f app
-
-# Stop services
-docker-compose down
-
-# Rebuild after changes
-docker-compose up -d --build
-```
-
-### Local Development
-```bash
 # Install dependencies
 npm install
 
 # Run development server
 npm run dev
 
+# Stop infrastructure services
+docker-compose down
+```
+
+### Production Deployment
+```bash
+# Start all services (app + infrastructure)
+docker-compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f app
+
+# Stop services
+docker-compose -f docker-compose.prod.yml down
+
+# Rebuild after changes
+docker-compose -f docker-compose.prod.yml up -d --build
+```
+
+### Other Commands
+```bash
 # Build for production
 npm run build
 
-# Start production server
+# Start production server locally
 npm start
 
 # Lint code
