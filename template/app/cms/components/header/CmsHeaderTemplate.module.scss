@@ -1,0 +1,21 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.header {
+  background-color: $primary-color;
+  color: #ffffff;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.storeName {
+  margin: 0;
+  font-size: $font-size-h3;
+  font-weight: 600;
+  color: #ffffff;
+}
