@@ -12,13 +12,20 @@
     "subtitle": "Nowoczesna platforma e-commerce z AI"
   },
   "cms": {
+    "home": {
+      "welcome": "Witamy w Cognito CMS"
+    },
     "login": {
       "title": "Logowanie do CMS",
       "subtitle": "Zaloguj się, aby uzyskać dostęp do panelu administracyjnego",
       "email": "Adres email",
       "password": "Hasło",
       "submit": "Zaloguj się",
-      "forgotPassword": "Zapomniałeś hasła?"
+      "forgotPassword": "Zapomniałeś hasła?",
+      "errors": {
+        "invalidCredentials": "Nieprawidłowy email lub hasło",
+        "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie."
+      }
     }
   },
   "registration": {

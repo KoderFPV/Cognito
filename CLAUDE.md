@@ -34,6 +34,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Interfaces**: All TypeScript interfaces must start with capital "I" (e.g., `IUser`, `IProduct`, `IOrder`)
 - This convention clearly distinguishes interfaces from types, classes, and other constructs
 
+### TypeScript Conventions
+
+- **Optional properties**: Use `?` for optional properties instead of `| undefined` (e.g., `email?: string` instead of `email: string | undefined`)
+- **Nullable types**: Use `| null` when a value can be explicitly null (e.g., `email: string | null`)
+- **Return types**: Do not explicitly declare return types for functions - let TypeScript infer them automatically (e.g., `const add = (a: number, b: number) => a + b` instead of `const add = (a: number, b: number): number => a + b`)
+- **Always use braces**: Always use curly braces `{}` for if statements, even for single-line blocks (e.g., `if (condition) { return value; }` instead of `if (condition) return value;`)
+- This makes optional properties more concise and follows TypeScript best practices
+
 ## Documentation
 
 Comprehensive documentation is available in the `docs/` directory:

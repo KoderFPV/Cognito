@@ -22,6 +22,12 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
 
+  /* Global timeout for the entire test run (4 minutes) */
+  globalTimeout: 4 * 60 * 1000,
+
+  /* Timeout for each test (1 minute) */
+  timeout: 60 * 1000,
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -32,6 +38,9 @@ export default defineConfig({
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Action timeout (30 seconds for individual actions) */
+    actionTimeout: 30 * 1000,
   },
 
   /* Configure projects for Desktop and Mobile Chrome */

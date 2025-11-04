@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { LoginFormTemplate } from '@/template/components/LoginForm/LoginFormTemplate';
 
 export const LoginForm = () => {
   const t = useTranslations('cms.login');
+  const locale = useLocale();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,15 +21,23 @@ export const LoginForm = () => {
     setError(null);
 
     try {
-      // TODO: Implement login logic
-      console.log('Login attempt:', { email, password });
-      // await loginService.login(email, password);
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (result?.error) {
+        setError(t('errors.invalidCredentials'));
+        setIsLoading(false);
+        return;
+      }
+
+      router.push(`/${locale}/cms`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
+      setError(
+        err instanceof Error ? err.message : t('errors.loginFailed')
+      );
       setIsLoading(false);
     }
   };
