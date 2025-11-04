@@ -12,13 +12,20 @@
     "subtitle": "Modern AI-powered e-commerce platform"
   },
   "cms": {
+    "home": {
+      "welcome": "Welcome to Cognito CMS"
+    },
     "login": {
       "title": "CMS Login",
       "subtitle": "Sign in to access the admin panel",
       "email": "Email address",
       "password": "Password",
       "submit": "Sign In",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "Forgot password?",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "loginFailed": "Login failed. Please try again."
+      }
     }
   },
   "registration": {
