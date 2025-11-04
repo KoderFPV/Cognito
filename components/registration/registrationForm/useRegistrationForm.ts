@@ -93,6 +93,7 @@ export const useRegistrationForm = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t('errors.registrationFailed');
       setError(errorMessage);
+    } finally {
       setIsLoading(false);
     }
   };
