@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p 2137",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
@@ -14,7 +15,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:all": "vitest run && playwright test",
-    "precommit": "npm run lint && npm run build && vitest run && npm run test:e2e"
+    "precommit": "npm run lint && npm run type-check && npm run build && vitest run && npm run test:e2e"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
