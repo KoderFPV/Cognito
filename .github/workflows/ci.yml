@@ -99,6 +99,9 @@ jobs:
       MONGODB_URI: mongodb://localhost:27017/cognito-e2e
       NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
       NEXTAUTH_URL: http://localhost:2137
+      TEST_SERVER_URL: http://localhost:2137
+      NODE_ENV: development
+      PORT: 2137
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

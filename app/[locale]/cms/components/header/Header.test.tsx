@@ -12,6 +12,30 @@ vi.mock('next-auth/react', () => ({
     },
     status: 'authenticated',
   })),
+  signOut: vi.fn(),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+  })),
+  useParams: vi.fn(() => ({
+    locale: 'en',
+  })),
+}));
+
+vi.mock('next-intl', () => ({
+  useTranslations: vi.fn(() => (key: string) => key),
+}));
+
+vi.mock('@/hooks/useDropdown', () => ({
+  useDropdown: vi.fn(() => ({
+    isOpen: false,
+    toggle: vi.fn(),
+    open: vi.fn(),
+    close: vi.fn(),
+    dropdownRef: { current: null },
+  })),
 }));
 
 vi.mock('@/template/app/cms/components/header/CmsHeaderTemplate', () => ({
