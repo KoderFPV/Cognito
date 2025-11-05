@@ -1,93 +1,54 @@
 import { useTranslations } from 'next-intl';
 import styles from './NewProductFormTemplate.module.scss';
 
-export interface INewProductFormTemplateProps {
-  locale: string;
+export interface IFormField {
+  value: string;
+  error: string;
+  touched: boolean;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+}
 
-  name: string;
-  nameError: string;
-  nameTouched: boolean;
-  onNameChange: (value: string) => void;
-  onNameBlur: () => void;
+export interface IImageField {
+  preview: string;
+  error: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-  description: string;
-  descriptionError: string;
-  descriptionTouched: boolean;
-  onDescriptionChange: (value: string) => void;
-  onDescriptionBlur: () => void;
+export interface ICheckboxField {
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
 
-  price: string;
-  priceError: string;
-  priceTouched: boolean;
-  onPriceChange: (value: string) => void;
-  onPriceBlur: () => void;
-
-  sku: string;
-  skuError: string;
-  skuTouched: boolean;
-  onSkuChange: (value: string) => void;
-  onSkuBlur: () => void;
-
-  stock: string;
-  stockError: string;
-  stockTouched: boolean;
-  onStockChange: (value: string) => void;
-  onStockBlur: () => void;
-
-  category: string;
-  onCategoryChange: (value: string) => void;
-
-  isActive: boolean;
-  onIsActiveChange: (value: boolean) => void;
-
-  imagePreview: string;
-  imageError: string;
-  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
+export interface IFormState {
   isSubmitting: boolean;
   submitError: string;
   submitSuccess: boolean;
+}
+
+export interface INewProductFormTemplateProps {
+  locale: string;
+  fields: {
+    name: IFormField;
+    description: IFormField;
+    price: IFormField;
+    sku: IFormField;
+    stock: IFormField;
+    category: Omit<IFormField, 'error' | 'touched' | 'onBlur'>;
+  };
+  image: IImageField;
+  isActive: ICheckboxField;
+  formState: IFormState;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 }
 
 export const NewProductFormTemplate = ({
   locale,
-  name,
-  nameError,
-  nameTouched,
-  onNameChange,
-  onNameBlur,
-  description,
-  descriptionError,
-  descriptionTouched,
-  onDescriptionChange,
-  onDescriptionBlur,
-  price,
-  priceError,
-  priceTouched,
-  onPriceChange,
-  onPriceBlur,
-  sku,
-  skuError,
-  skuTouched,
-  onSkuChange,
-  onSkuBlur,
-  stock,
-  stockError,
-  stockTouched,
-  onStockChange,
-  onStockBlur,
-  category,
-  onCategoryChange,
+  fields,
+  image,
   isActive,
-  onIsActiveChange,
-  imagePreview,
-  imageError,
-  onImageChange,
-  isSubmitting,
-  submitError,
-  submitSuccess,
+  formState,
   onSubmit,
   onCancel,
 }: INewProductFormTemplateProps) => {
@@ -105,16 +66,16 @@ export const NewProductFormTemplate = ({
           <input
             id="name"
             type="text"
-            className={`${styles.input} ${nameTouched && nameError ? styles.inputError : ''}`}
-            value={name}
+            className={`${styles.input} ${fields.name.touched && fields.name.error ? styles.inputError : ''}`}
+            value={fields.name.value}
             onChange={(e) => {
-              onNameChange(e.target.value);
+              fields.name.onChange(e.target.value);
             }}
-            onBlur={onNameBlur}
-            disabled={isSubmitting}
+            onBlur={fields.name.onBlur}
+            disabled={formState.isSubmitting}
           />
-          {nameTouched && nameError && (
-            <span className={styles.error}>{nameError}</span>
+          {fields.name.touched && fields.name.error && (
+            <span className={styles.error}>{fields.name.error}</span>
           )}
         </div>
 
@@ -124,17 +85,17 @@ export const NewProductFormTemplate = ({
           </label>
           <textarea
             id="description"
-            className={`${styles.textarea} ${descriptionTouched && descriptionError ? styles.inputError : ''}`}
-            value={description}
+            className={`${styles.textarea} ${fields.description.touched && fields.description.error ? styles.inputError : ''}`}
+            value={fields.description.value}
             onChange={(e) => {
-              onDescriptionChange(e.target.value);
+              fields.description.onChange(e.target.value);
             }}
-            onBlur={onDescriptionBlur}
-            disabled={isSubmitting}
+            onBlur={fields.description.onBlur}
+            disabled={formState.isSubmitting}
             rows={5}
           />
-          {descriptionTouched && descriptionError && (
-            <span className={styles.error}>{descriptionError}</span>
+          {fields.description.touched && fields.description.error && (
+            <span className={styles.error}>{fields.description.error}</span>
           )}
         </div>
 
@@ -146,17 +107,17 @@ export const NewProductFormTemplate = ({
             <input
               id="price"
               type="text"
-              className={`${styles.input} ${priceTouched && priceError ? styles.inputError : ''}`}
-              value={price}
+              className={`${styles.input} ${fields.price.touched && fields.price.error ? styles.inputError : ''}`}
+              value={fields.price.value}
               onChange={(e) => {
-                onPriceChange(e.target.value);
+                fields.price.onChange(e.target.value);
               }}
-              onBlur={onPriceBlur}
-              disabled={isSubmitting}
+              onBlur={fields.price.onBlur}
+              disabled={formState.isSubmitting}
               placeholder="0.00"
             />
-            {priceTouched && priceError && (
-              <span className={styles.error}>{priceError}</span>
+            {fields.price.touched && fields.price.error && (
+              <span className={styles.error}>{fields.price.error}</span>
             )}
           </div>
 
@@ -167,16 +128,16 @@ export const NewProductFormTemplate = ({
             <input
               id="sku"
               type="text"
-              className={`${styles.input} ${skuTouched && skuError ? styles.inputError : ''}`}
-              value={sku}
+              className={`${styles.input} ${fields.sku.touched && fields.sku.error ? styles.inputError : ''}`}
+              value={fields.sku.value}
               onChange={(e) => {
-                onSkuChange(e.target.value);
+                fields.sku.onChange(e.target.value);
               }}
-              onBlur={onSkuBlur}
-              disabled={isSubmitting}
+              onBlur={fields.sku.onBlur}
+              disabled={formState.isSubmitting}
             />
-            {skuTouched && skuError && (
-              <span className={styles.error}>{skuError}</span>
+            {fields.sku.touched && fields.sku.error && (
+              <span className={styles.error}>{fields.sku.error}</span>
             )}
           </div>
         </div>
@@ -189,17 +150,17 @@ export const NewProductFormTemplate = ({
             <input
               id="stock"
               type="text"
-              className={`${styles.input} ${stockTouched && stockError ? styles.inputError : ''}`}
-              value={stock}
+              className={`${styles.input} ${fields.stock.touched && fields.stock.error ? styles.inputError : ''}`}
+              value={fields.stock.value}
               onChange={(e) => {
-                onStockChange(e.target.value);
+                fields.stock.onChange(e.target.value);
               }}
-              onBlur={onStockBlur}
-              disabled={isSubmitting}
+              onBlur={fields.stock.onBlur}
+              disabled={formState.isSubmitting}
               placeholder="0"
             />
-            {stockTouched && stockError && (
-              <span className={styles.error}>{stockError}</span>
+            {fields.stock.touched && fields.stock.error && (
+              <span className={styles.error}>{fields.stock.error}</span>
             )}
           </div>
 
@@ -211,11 +172,11 @@ export const NewProductFormTemplate = ({
               id="category"
               type="text"
               className={styles.input}
-              value={category}
+              value={fields.category.value}
               onChange={(e) => {
-                onCategoryChange(e.target.value);
+                fields.category.onChange(e.target.value);
               }}
-              disabled={isSubmitting}
+              disabled={formState.isSubmitting}
             />
           </div>
         </div>
@@ -228,14 +189,14 @@ export const NewProductFormTemplate = ({
             id="image"
             type="file"
             className={styles.fileInput}
-            onChange={onImageChange}
-            disabled={isSubmitting}
+            onChange={image.onChange}
+            disabled={formState.isSubmitting}
             accept="image/jpeg,image/png,image/webp"
           />
-          {imageError && <span className={styles.error}>{imageError}</span>}
-          {imagePreview && (
+          {image.error && <span className={styles.error}>{image.error}</span>}
+          {image.preview && (
             <div className={styles.imagePreview}>
-              <img src={imagePreview} alt="Preview" className={styles.previewImage} />
+              <img src={image.preview} alt="Preview" className={styles.previewImage} />
             </div>
           )}
         </div>
@@ -244,22 +205,22 @@ export const NewProductFormTemplate = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
-              checked={isActive}
+              checked={isActive.value}
               onChange={(e) => {
-                onIsActiveChange(e.target.checked);
+                isActive.onChange(e.target.checked);
               }}
-              disabled={isSubmitting}
+              disabled={formState.isSubmitting}
               className={styles.checkbox}
             />
             <span>{t('isActive')}</span>
           </label>
         </div>
 
-        {submitError && (
-          <div className={styles.submitError}>{submitError}</div>
+        {formState.submitError && (
+          <div className={styles.submitError}>{formState.submitError}</div>
         )}
 
-        {submitSuccess && (
+        {formState.submitSuccess && (
           <div className={styles.submitSuccess}>
             {t('successMessage')}
           </div>
@@ -269,17 +230,17 @@ export const NewProductFormTemplate = ({
           <button
             type="button"
             onClick={onCancel}
-            disabled={isSubmitting}
+            disabled={formState.isSubmitting}
             className={styles.cancelButton}
           >
             {t('cancel')}
           </button>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={formState.isSubmitting}
             className={styles.submitButton}
           >
-            {isSubmitting ? t('submitting') : t('submit')}
+            {formState.isSubmitting ? t('submitting') : t('submit')}
           </button>
         </div>
       </form>
