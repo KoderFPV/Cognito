@@ -40,7 +40,7 @@ The platform will leverage multiple AI models to create an intelligent, safe, an
 - **Qwen Guard** - Comment filtering and moderation for inappropriate content
 
 **Product Management**
-- **Qwen 8** - Automatic image analysis and product description generation
+- **Qwen 8 VL** - Automatic image analysis and product description generation
 - **Neural Network Classifier** - Intelligent filter population and product categorization
 
 **Store Management**
