@@ -15,10 +15,18 @@ export const requireAuth = async (locale: string) => {
   return user;
 };
 
+export const requireCmsAuth = async (locale: string) => {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect(`/${locale}/cms/login`);
+  }
+  return user;
+};
+
 export const requireAdmin = async (locale: string) => {
-  const user = await requireAuth(locale);
+  const user = await requireCmsAuth(locale);
   if (user.role !== ROLE.ADMIN) {
-    redirect(`/${locale}`);
+    redirect(`/${locale}/cms/login`);
   }
   return user;
 };
