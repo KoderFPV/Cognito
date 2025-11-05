@@ -31,6 +31,21 @@ Cognito is an innovative **agentic e-commerce platform** that leverages artifici
 
 The platform uses LangGraph to implement a multi-agent system where specialized AI agents autonomously handle different aspects of e-commerce operations. For detailed architecture documentation, see [docs/AGENTS.md](docs/AGENTS.md).
 
+### AI Ideas & Planned Features
+
+The platform will leverage multiple AI models to create an intelligent, safe, and autonomous e-commerce experience:
+
+**Content Moderation**
+- **Qwen Guard** - Vulgar language detection for product submissions in demo store
+- **Qwen Guard** - Comment filtering and moderation for inappropriate content
+
+**Product Management**
+- **Qwen 8 VL** - Automatic image analysis and product description generation
+- **Neural Network Classifier** - Intelligent filter population and product categorization
+
+**Store Management**
+- **Mistral** - Conversational AI for autonomous store management via chat interface
+
 ### Main Components
 
 1. **API Backend (Agentic)**
