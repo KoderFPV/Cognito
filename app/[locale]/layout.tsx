@@ -3,7 +3,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import { setRequestLocale } from 'next-intl/server';
-import { SessionProvider } from '@/providers/SessionProvider';
+import { SessionProvider } from 'next-auth/react';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
