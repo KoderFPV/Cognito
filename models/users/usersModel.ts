@@ -2,11 +2,13 @@ import { ObjectId } from 'mongodb';
 import { IUser } from '@/domain/user';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 
+export const USERS_COLLECTION = 'users';
+
 export const findUserByEmail = async (
   email: string
 ): Promise<IUser | null> => {
   const db = await connectToMongo();
-  const collection = db.collection<IUser>('users');
+  const collection = db.collection<IUser>(USERS_COLLECTION);
   return collection.findOne({ email, deleted: false });
 };
 
@@ -14,7 +16,7 @@ export const findUserById = async (
   id: string
 ): Promise<IUser | null> => {
   const db = await connectToMongo();
-  const collection = db.collection<IUser>('users');
+  const collection = db.collection<IUser>(USERS_COLLECTION);
 
   try {
     const objectId = new ObjectId(id);
@@ -37,7 +39,7 @@ export const createUser = async (
   userData: Omit<IUser, '_id'>
 ): Promise<IUser> => {
   const db = await connectToMongo();
-  const collection = db.collection<IUser>('users');
+  const collection = db.collection<IUser>(USERS_COLLECTION);
   const result = await collection.insertOne(userData as any);
 
   return {

@@ -55,7 +55,10 @@ npm run test:all
 ```
 cognito/
 ├── e2e/                           # E2E tests (Playwright)
-│   └── *.spec.ts
+│   ├── helpers/                   # E2E test helpers
+│   │   ├── testConfig.ts          # Test configuration (server URL, passwords)
+│   │   └── testUser.ts            # User management helpers (setUserAsAdmin)
+│   └── *.spec.ts                  # E2E test files
 ├── test/                          # Test configuration
 │   └── setup.ts                   # Vitest setup file
 ├── **/*.test.ts                   # Unit tests (Vitest)
@@ -99,10 +102,53 @@ describe('MyComponent', () => {
 ```typescript
 // e2e/feature.spec.ts
 import { test, expect } from '@playwright/test';
+import { getTestServerUrl } from './helpers/testConfig';
 
 test('should load page', async ({ page }) => {
-  await page.goto('/en/');
+  const serverUrl = getTestServerUrl();
+  await page.goto(`${serverUrl}/en/`);
   await expect(page).toHaveURL(/\/en\/?/);
+});
+```
+
+### E2E Test with Admin User
+
+For tests that require admin access (e.g., CMS tests), use the `setUserAsAdmin` helper:
+
+```typescript
+// e2e/cms-feature.spec.ts
+import { test, expect } from '@playwright/test';
+import { setUserAsAdmin } from './helpers/testUser';
+import {
+  getTestServerUrl,
+  generateTestUserEmail,
+  TEST_USER_PASSWORD,
+} from './helpers/testConfig';
+
+test('should access CMS as admin', async ({ page }) => {
+  const serverUrl = getTestServerUrl();
+  const testUserEmail = generateTestUserEmail('cms-test');
+
+  // Register new user
+  await page.goto(`${serverUrl}/en/registration`);
+  await page.fill('input[type="email"]', testUserEmail);
+  await page.fill('input[name="password"]', TEST_USER_PASSWORD);
+  await page.fill('input[name="confirmPassword"]', TEST_USER_PASSWORD);
+  await page.check('input[type="checkbox"]');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('**/en');
+
+  // Set user as admin in database
+  await setUserAsAdmin(testUserEmail);
+
+  // Login to CMS
+  await page.goto(`${serverUrl}/en/cms/login`);
+  await page.fill('input[type="email"]', testUserEmail);
+  await page.fill('input[type="password"]', TEST_USER_PASSWORD);
+  await page.click('button[type="submit"]');
+  await page.waitForURL('**/en/cms');
+
+  // Now test CMS functionality...
 });
 ```
 
@@ -209,6 +255,17 @@ npx playwright show-report
 
 ## Configuration
 
+### Environment Variables
+
+E2E tests require the following environment variable to be set in `.env.local`:
+
+```bash
+# E2E Tests Configuration
+TEST_SERVER_URL=http://localhost:2137
+```
+
+This variable is used by `getTestServerUrl()` helper to determine where the test server is running.
+
 ### Vitest Configuration (`vitest.config.ts`)
 
 - **Environment**: `happy-dom` (lightweight DOM)
@@ -223,6 +280,27 @@ npx playwright show-report
 - **Browsers**: Desktop Chrome, Mobile Chrome (Pixel 5)
 - **Auto-start**: Dev server starts automatically
 - **Reporters**: HTML report
+
+## E2E Test Helpers
+
+### `testConfig.ts`
+
+Provides test configuration and utilities:
+
+- `getTestServerUrl()` - Returns test server URL from `TEST_SERVER_URL` env variable
+- `generateTestUserEmail(prefix: string)` - Generates unique test user email
+- `TEST_USER_PASSWORD` - Standard password for test users
+
+### `testUser.ts`
+
+Provides user management helpers:
+
+- `setUserAsAdmin(email: string)` - Sets existing user as admin in database
+
+**Important**: `setUserAsAdmin` requires:
+- MongoDB connection via `MONGODB_URI` environment variable
+- User must already exist in the database
+- Direct database access (bypasses application logic)
 
 ## Resources
 

@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { validateEmail, validatePassword } from '@/services/registration/registration.validation';
 import { registerUser } from '@/repositories/api/registration/registrationApiRepository';
 
 export const useRegistrationForm = () => {
+  const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const t = useTranslations('registration');
   const tValidation = useTranslations('registration.validation');
 
@@ -79,13 +83,13 @@ export const useRegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      const data = await registerUser({
+      await registerUser({
         email,
         password,
         termsAccepted,
       });
 
-      console.log('Registration successful:', data);
+      router.push(`/${locale}`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t('errors.registrationFailed');
       setError(errorMessage);

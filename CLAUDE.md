@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use functional patterns: pure functions, immutability, composition, higher-order functions
 - **YAGNI (You Aren't Gonna Need It)**: Only implement functionality that is currently needed. Do not create functions, features, or abstractions for future use. If a function is not used in the current implementation, do not write it.
 - **No default parameters**: Never use default values in function arguments. All parameters must be explicitly provided by the caller. This makes function calls explicit and prevents hidden behavior.
+- **No fallback values**: Never use fallback or default values in configuration, environment variables, or other critical values (e.g., `const url = process.env.URL || 'http://localhost:3000'`). All required values must be explicitly provided or throw clear errors when missing. This prevents hidden behavior and makes missing configuration immediately visible.
 
 ### Documentation
 

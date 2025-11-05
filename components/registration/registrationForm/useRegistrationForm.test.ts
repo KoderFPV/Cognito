@@ -2,8 +2,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useRegistrationForm } from './useRegistrationForm';
 
+const mockPush = vi.fn();
+const mockRouter = {
+  push: mockPush,
+  replace: vi.fn(),
+  refresh: vi.fn(),
+  back: vi.fn(),
+  forward: vi.fn(),
+  prefetch: vi.fn(),
+};
+
+const mockParams = {
+  locale: 'en',
+};
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => mockRouter,
+  useParams: () => mockParams,
 }));
 
 vi.mock('@/repositories/api/registration/registrationApiRepository', () => ({
