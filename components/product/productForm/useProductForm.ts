@@ -6,6 +6,8 @@ import { useImageUpload } from '@/components/forms/useImageUpload';
 import { validateProductData } from '@/services/product/productValidation.service';
 import { ZodError } from 'zod';
 
+const MAX_PRODUCT_IMAGES = 5;
+
 export const useProductForm = () => {
   const router = useRouter();
   const t = useTranslations('product');
@@ -18,7 +20,7 @@ export const useProductForm = () => {
   const category = useFormField<string>('');
   const isActive = useFormField<boolean>(true);
 
-  const imageUpload = useImageUpload(5, ['image/jpeg', 'image/png', 'image/webp']);
+  const imageUpload = useImageUpload(MAX_PRODUCT_IMAGES, ['image/jpeg', 'image/png', 'image/webp']);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string>('');
