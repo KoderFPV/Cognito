@@ -46,6 +46,11 @@ The platform will leverage multiple AI models to create an intelligent, safe, an
 **Store Management**
 - **Mistral** - Conversational AI for autonomous store management via chat interface
 
+**Inventory Personal Assistance**
+- **AI Agent** - Supplier analysis and cost optimization to find cheaper suppliers
+- **Competitive Analysis** - Automated competitor monitoring and pricing insights
+- **Inventory Advisory** - Intelligent recommendations for stock management and reordering strategies
+
 ### Main Components
 
 1. **API Backend (Agentic)**
