@@ -56,5 +56,34 @@
       "userExists": "User with this email already exists",
       "registrationFailed": "Registration failed"
     }
+  },
+  "product": {
+    "form": {
+      "title": "Add New Product",
+      "name": "Product Name",
+      "description": "Description",
+      "price": "Price",
+      "sku": "SKU",
+      "stock": "Stock",
+      "category": "Category",
+      "image": "Product Image",
+      "isActive": "Active",
+      "submit": "Create Product",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "successMessage": "Product created successfully! Redirecting...",
+      "required": "*"
+    },
+    "errors": {
+      "nameRequired": "Product name is required",
+      "descriptionRequired": "Description is required",
+      "priceRequired": "Price is required",
+      "priceInvalid": "Price must be a positive number",
+      "skuRequired": "SKU is required",
+      "stockRequired": "Stock is required",
+      "stockInvalid": "Stock must be a non-negative integer",
+      "validationFailed": "Validation failed. Please check the form.",
+      "submitFailed": "Failed to create product. Please try again."
+    }
   }
 }

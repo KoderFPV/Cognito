@@ -56,5 +56,34 @@
       "userExists": "Użytkownik z tym adresem email już istnieje",
       "registrationFailed": "Rejestracja nie powiodła się"
     }
+  },
+  "product": {
+    "form": {
+      "title": "Dodaj nowy produkt",
+      "name": "Nazwa produktu",
+      "description": "Opis",
+      "price": "Cena",
+      "sku": "SKU",
+      "stock": "Stan magazynowy",
+      "category": "Kategoria",
+      "image": "Zdjęcie produktu",
+      "isActive": "Aktywny",
+      "submit": "Utwórz produkt",
+      "submitting": "Tworzenie...",
+      "cancel": "Anuluj",
+      "successMessage": "Produkt utworzony pomyślnie! Przekierowywanie...",
+      "required": "*"
+    },
+    "errors": {
+      "nameRequired": "Nazwa produktu jest wymagana",
+      "descriptionRequired": "Opis jest wymagany",
+      "priceRequired": "Cena jest wymagana",
+      "priceInvalid": "Cena musi być liczbą dodatnią",
+      "skuRequired": "SKU jest wymagane",
+      "stockRequired": "Stan magazynowy jest wymagany",
+      "stockInvalid": "Stan magazynowy musi być liczbą całkowitą nieujemną",
+      "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
+      "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
+    }
   }
 }

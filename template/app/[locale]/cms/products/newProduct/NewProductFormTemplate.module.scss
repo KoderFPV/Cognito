@@ -1,0 +1,208 @@
+@import '@/template/styles/variables.scss';
+@import '@/template/styles/mixins.scss';
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  @include mobile {
+    padding: $spacing-md;
+  }
+}
+
+.title {
+  font-size: $font-size-h1;
+  font-weight: 600;
+  margin-bottom: $spacing-xl;
+  color: $foreground-color;
+}
+
+.form {
+  @include card;
+  padding: $spacing-xl;
+
+  @include mobile {
+    padding: $spacing-md;
+  }
+}
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: $spacing-xs;
+  color: $foreground-color;
+  font-size: $font-size-base;
+}
+
+.input,
+.textarea {
+  @include input-base;
+  width: 100%;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: $font-family-base;
+}
+
+.inputError {
+  border-color: $error-color;
+
+  &:focus {
+    border-color: $error-color;
+    box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+  }
+}
+
+.error {
+  display: block;
+  color: $error-color;
+  font-size: $font-size-small;
+  margin-top: $spacing-xs;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fileInput {
+  display: block;
+  width: 100%;
+  padding: $spacing-sm;
+  border: 2px dashed $border-color;
+  border-radius: $border-radius-md;
+  background-color: $gray-50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.imagePreview {
+  margin-top: $spacing-md;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  max-width: 300px;
+}
+
+.previewImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  user-select: none;
+
+  span {
+    font-weight: 500;
+    color: $foreground-color;
+  }
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.submitError {
+  padding: $spacing-md;
+  background-color: rgba($error-color, 0.1);
+  border: 1px solid $error-color;
+  border-radius: $border-radius-md;
+  color: $error-color;
+  margin-bottom: $spacing-lg;
+  font-weight: 500;
+}
+
+.submitSuccess {
+  padding: $spacing-md;
+  background-color: rgba($success-color, 0.1);
+  border: 1px solid $success-color;
+  border-radius: $border-radius-md;
+  color: $success-color;
+  margin-bottom: $spacing-lg;
+  font-weight: 500;
+}
+
+.actions {
+  @include flex-center;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-color;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.cancelButton {
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  background-color: $background-color;
+  color: $foreground-color;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: $font-size-base;
+
+  &:hover:not(:disabled) {
+    background-color: $gray-50;
+    border-color: $gray-500;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include mobile {
+    width: 100%;
+  }
+}
+
+.submitButton {
+  @include button-primary;
+  padding: $spacing-sm $spacing-xl;
+
+  @include mobile {
+    width: 100%;
+  }
+}
