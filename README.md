@@ -35,6 +35,11 @@ The platform uses LangGraph to implement a multi-agent system where specialized 
 
 The platform will leverage multiple AI models to create an intelligent, safe, and autonomous e-commerce experience:
 
+**Conversational Ecommerce Experience**
+- **AI Chat Interface** - Natural language product discovery and purchase through conversational AI
+- **Personalized Recommendations** - Context-aware product suggestions based on conversation
+- **Smart Shopping Assistant** - Autonomous agent to guide customers through their shopping journey
+
 **Content Moderation**
 - **Qwen Guard** - Vulgar language detection for product submissions in demo store
 - **Qwen Guard** - Comment filtering and moderation for inappropriate content
@@ -42,9 +47,6 @@ The platform will leverage multiple AI models to create an intelligent, safe, an
 **Product Management**
 - **Qwen 8 VL** - Automatic image analysis and product description generation
 - **Neural Network Classifier** - Intelligent filter population and product categorization
-
-**Store Management**
-- **Mistral** - Conversational AI for autonomous store management via chat interface
 
 **Inventory Personal Assistance**
 - **AI Agent** - Supplier analysis and cost optimization to find cheaper suppliers
