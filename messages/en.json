@@ -55,6 +55,11 @@
       "validationFailed": "Validation failed",
       "userExists": "User with this email already exists",
       "registrationFailed": "Registration failed"
+    },
+    "product": {
+      "created": "Product created successfully",
+      "validationFailed": "Product validation failed",
+      "creationFailed": "Failed to create product"
     }
   },
   "product": {

@@ -55,6 +55,11 @@
       "validationFailed": "Walidacja nie powiodła się",
       "userExists": "Użytkownik z tym adresem email już istnieje",
       "registrationFailed": "Rejestracja nie powiodła się"
+    },
+    "product": {
+      "created": "Produkt utworzony pomyślnie",
+      "validationFailed": "Walidacja produktu nie powiodła się",
+      "creationFailed": "Nie udało się utworzyć produktu"
     }
   },
   "product": {

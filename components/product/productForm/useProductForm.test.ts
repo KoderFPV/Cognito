@@ -18,10 +18,15 @@ vi.mock('next-intl', () => ({
 
 vi.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
+  useParams: () => ({ locale: 'en' }),
 }));
 
 vi.mock('@/services/product/productValidation.service', () => ({
-  validateProductData: vi.fn((data) => data),
+  validateProductData: vi.fn((data) => Promise.resolve(data)),
+}));
+
+vi.mock('@/repositories/api/products/productsApiRepository', () => ({
+  createProductViaApi: vi.fn(() => Promise.resolve({ message: 'created' })),
 }));
 
 describe('useProductForm', () => {
@@ -60,7 +65,7 @@ describe('useProductForm', () => {
       result.current.handleCancel();
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/cms/products');
+    expect(mockPush).toHaveBeenCalledWith('/en/cms/products');
   });
 
   it('should set validation errors for empty required fields on submit', async () => {
@@ -156,7 +161,7 @@ describe('useProductForm', () => {
     const { ZodError } = await import('zod');
 
     vi.mocked(validateProductData).mockImplementation(() => {
-      throw new ZodError([]);
+      return Promise.reject(new ZodError([]));
     });
 
     const { result } = renderHook(() => useProductForm());
@@ -181,7 +186,7 @@ describe('useProductForm', () => {
     const { validateProductData } = await import('@/services/product/productValidation.service');
 
     vi.mocked(validateProductData).mockImplementation(() => {
-      throw new Error('Generic error');
+      return Promise.reject(new Error('Generic error'));
     });
 
     const { result } = renderHook(() => useProductForm());
@@ -206,7 +211,7 @@ describe('useProductForm', () => {
     vi.useFakeTimers();
 
     const { validateProductData } = await import('@/services/product/productValidation.service');
-    vi.mocked(validateProductData).mockImplementation((data) => data as any);
+    vi.mocked(validateProductData).mockImplementation((data) => Promise.resolve(data as any));
 
     const { result } = renderHook(() => useProductForm());
 
@@ -229,7 +234,7 @@ describe('useProductForm', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/cms/products');
+    expect(mockPush).toHaveBeenCalledWith('/en/cms/products');
 
     vi.useRealTimers();
   });
