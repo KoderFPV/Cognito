@@ -14,11 +14,17 @@ import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 describe('/api/products/list route', () => {
   const mockDb = {};
-  const fixedDate = '2025-01-01T00:00:00.000Z';
+  const fixedDate = new Date('2025-01-01T00:00:00.000Z');
   const mockProducts = [
-    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
-    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
+    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
+    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
   ];
+
+  const serializedMockProducts = mockProducts.map(product => ({
+    ...product,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+  }));
 
   const mockTranslations = {
     invalidPaginationParameters: 'Invalid pagination parameters',
@@ -29,7 +35,7 @@ describe('/api/products/list route', () => {
     vi.clearAllMocks();
     vi.mocked(connectToMongo).mockResolvedValue(mockDb as any);
     vi.mocked(getLocaleFromRequest).mockReturnValue('en');
-    vi.mocked(getTranslations).mockResolvedValue((key: string) => mockTranslations[key as keyof typeof mockTranslations]);
+    vi.mocked(getTranslations).mockResolvedValue(((key: string) => mockTranslations[key as keyof typeof mockTranslations]) as any);
     vi.mocked(findAllProducts).mockResolvedValue({
       products: mockProducts,
       total: 2,
@@ -42,7 +48,7 @@ describe('/api/products/list route', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.data).toEqual(mockProducts);
+    expect(data.data).toEqual(serializedMockProducts);
     expect(data.pagination.page).toBe(1);
     expect(data.pagination.pageSize).toBe(10);
     expect(data.pagination.total).toBe(2);

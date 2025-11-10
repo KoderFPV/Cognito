@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ProductsPageTemplate } from './ProductsPageTemplate';
+import { IColumn } from '@/components/tables/Table/Table';
+import { IProduct } from '@/domain/product';
 
 vi.mock('@/components/tables/Table/Table', () => {
   return {
@@ -37,21 +39,10 @@ vi.mock('@/components/tables/Table/Table', () => {
   };
 });
 
-interface TestProduct {
-  _id: string;
-  name: string;
-  price: number;
-  sku: string;
-  stock: number;
-  category: string;
-  description: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 describe('ProductsPageTemplate', () => {
-  const mockProducts: TestProduct[] = [
+  const fixedDate = new Date('2025-01-01T00:00:00.000Z');
+  const mockProducts: IProduct[] = [
     {
       _id: '1',
       name: 'Product 1',
@@ -61,8 +52,9 @@ describe('ProductsPageTemplate', () => {
       category: 'Electronics',
       description: 'Test product 1',
       isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: fixedDate,
+      updatedAt: fixedDate,
+      deleted: false,
     },
     {
       _id: '2',
@@ -73,16 +65,17 @@ describe('ProductsPageTemplate', () => {
       category: 'Clothing',
       description: 'Test product 2',
       isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: fixedDate,
+      updatedAt: fixedDate,
+      deleted: false,
     },
   ];
 
-  const mockColumns = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'price', label: 'Price', sortable: true },
-    { key: 'sku', label: 'SKU', sortable: true },
-    { key: 'stock', label: 'Stock', sortable: true },
+  const mockColumns: IColumn<IProduct>[] = [
+    { key: 'name' as const, label: 'Name', sortable: true },
+    { key: 'price' as const, label: 'Price', sortable: true },
+    { key: 'sku' as const, label: 'SKU', sortable: true },
+    { key: 'stock' as const, label: 'Stock', sortable: true },
   ];
 
   const defaultProps = {

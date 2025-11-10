@@ -13,7 +13,7 @@ describe('productsListApiRepository', () => {
     it('should fetch products list with correct parameters', async () => {
       const mockResponse: IProductsListResponse = {
         data: [
-          { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test product', isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test product', isActive: true, createdAt: new Date('2025-01-01T00:00:00.000Z'), updatedAt: new Date('2025-01-01T00:00:00.000Z'), deleted: false },
         ],
         pagination: {
           page: 1,
@@ -104,11 +104,12 @@ describe('productsListApiRepository', () => {
     });
 
     it('should handle multiple products in response', async () => {
+      const fixedDate = new Date('2025-01-01T00:00:00.000Z');
       const mockResponse: IProductsListResponse = {
         data: [
-          { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test product 1', isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-          { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test product 2', isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-          { _id: '3', name: 'Product 3', price: 19.99, sku: 'SKU-003', stock: 20, category: 'Books', description: 'Test product 3', isActive: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test product 1', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
+          { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test product 2', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
+          { _id: '3', name: 'Product 3', price: 19.99, sku: 'SKU-003', stock: 20, category: 'Books', description: 'Test product 3', isActive: false, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
         ],
         pagination: {
           page: 1,
@@ -139,8 +140,9 @@ describe('productsListApiRepository', () => {
         category: 'Testing',
         description: 'This is a test product',
         isActive: true,
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
+        createdAt: new Date('2024-01-01T00:00:00Z'),
+        updatedAt: new Date('2024-01-01T00:00:00Z'),
+        deleted: false,
       };
 
       const mockResponse: IProductsListResponse = {

@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Table, ITableProps } from './Table';
+import { Table, ITableProps, IColumn } from './Table';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => {
@@ -37,10 +37,10 @@ describe('Table Component', () => {
 
   const fixedDate = '2025-01-01T00:00:00.000Z';
 
-  const mockColumns = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'price', label: 'Price', sortable: true },
-    { key: 'stock', label: 'Stock', sortable: true },
+  const mockColumns: IColumn<TestItem>[] = [
+    { key: 'name' as const, label: 'Name', sortable: true },
+    { key: 'price' as const, label: 'Price', sortable: true },
+    { key: 'stock' as const, label: 'Stock', sortable: true },
   ];
 
   const defaultProps: ITableProps<TestItem> = {
@@ -61,9 +61,9 @@ describe('Table Component', () => {
   it('should render column headers', () => {
     render(<Table {...defaultProps} />);
 
-    expect(screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH')).toBeInTheDocument();
-    expect(screen.getByText((content, element) => element?.textContent?.includes('Price') && element?.tagName === 'TH')).toBeInTheDocument();
-    expect(screen.getByText((content, element) => element?.textContent?.includes('Stock') && element?.tagName === 'TH')).toBeInTheDocument();
+    expect(screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false)).toBeInTheDocument();
+    expect(screen.getByText((content, element) => (element?.textContent?.includes('Price') && element?.tagName === 'TH') ? true : false)).toBeInTheDocument();
+    expect(screen.getByText((content, element) => (element?.textContent?.includes('Stock') && element?.tagName === 'TH') ? true : false)).toBeInTheDocument();
   });
 
   it('should show loading message when isLoading is true', () => {
@@ -173,7 +173,7 @@ describe('Table Component', () => {
     const user = userEvent.setup();
     render(<Table {...defaultProps} />);
 
-    const nameHeader = screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH');
+    const nameHeader = screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false);
     await user.click(nameHeader);
 
     const rows = screen.getAllByRole('row');
@@ -184,7 +184,7 @@ describe('Table Component', () => {
     const user = userEvent.setup();
     render(<Table {...defaultProps} />);
 
-    const nameHeader = screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH');
+    const nameHeader = screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false);
     await user.click(nameHeader);
     await user.click(nameHeader);
 
@@ -194,14 +194,14 @@ describe('Table Component', () => {
 
   it('should not sort when clicking non-sortable column', async () => {
     const user = userEvent.setup();
-    const nonSortableColumns = [
-      { key: 'name', label: 'Name', sortable: false },
-      { key: 'price', label: 'Price', sortable: true },
+    const nonSortableColumns: IColumn<TestItem>[] = [
+      { key: 'name' as const, label: 'Name', sortable: false },
+      { key: 'price' as const, label: 'Price', sortable: true },
     ];
 
     render(<Table {...defaultProps} columns={nonSortableColumns} />);
 
-    const nameHeader = screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH');
+    const nameHeader = screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false);
     await user.click(nameHeader);
 
     expect(screen.getByText('Product 1')).toBeInTheDocument();
@@ -256,7 +256,7 @@ describe('Table Component', () => {
     const user = userEvent.setup();
     render(<Table {...defaultProps} />);
 
-    const priceHeader = screen.getByText((content, element) => element?.textContent?.includes('Price') && element?.tagName === 'TH');
+    const priceHeader = screen.getByText((content, element) => (element?.textContent?.includes('Price') && element?.tagName === 'TH') ? true : false);
     await user.click(priceHeader);
 
     const rows = screen.getAllByRole('row');
@@ -273,7 +273,7 @@ describe('Table Component', () => {
 
       expect(screen.getByText('Product 3')).toBeInTheDocument();
 
-      const nameHeader = screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH');
+      const nameHeader = screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false);
       await user.click(nameHeader);
 
       expect(screen.getByText(/Page 1 of 3/)).toBeInTheDocument();
@@ -302,7 +302,7 @@ describe('Table Component', () => {
     const user = userEvent.setup();
     render(<Table {...defaultProps} itemsPerPage={2} />);
 
-    const nameHeader = screen.getByText((content, element) => element?.textContent?.includes('Name') && element?.tagName === 'TH');
+    const nameHeader = screen.getByText((content, element) => (element?.textContent?.includes('Name') && element?.tagName === 'TH') ? true : false);
     await user.click(nameHeader);
 
     let rows = screen.getAllByRole('row');
@@ -317,12 +317,13 @@ describe('Table Component', () => {
     }
   });
 
-  it('should clamp page when page exceeds total pages', () => {
+  it('should clamp page when page exceeds total pages', async () => {
+    const user = userEvent.setup();
     const { rerender } = render(<Table {...defaultProps} itemsPerPage={2} />);
 
     const nextButton = screen.getAllByRole('button').find((btn) => btn.textContent?.includes('Next'));
     if (nextButton) {
-      fireEvent.click(nextButton);
+      await user.click(nextButton);
 
       rerender(<Table {...defaultProps} data={mockData.slice(0, 2)} itemsPerPage={2} />);
 

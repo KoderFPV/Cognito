@@ -6,10 +6,10 @@ import * as productsRepository from '@/repositories/api/products/productsListApi
 vi.mock('@/repositories/api/products/productsListApiRepository');
 
 describe('useProductsList', () => {
-  const fixedDate = '2025-01-01T00:00:00.000Z';
+  const fixedDate = new Date('2025-01-01T00:00:00.000Z');
   const mockProducts = [
-    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
-    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
+    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
+    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate, deleted: false },
   ];
 
   const mockResponse = {
@@ -203,7 +203,7 @@ describe('useProductsList', () => {
   });
 
   it('should handle empty products list', async () => {
-    (productsRepository.getProductsList as jest.Mock).mockResolvedValue({
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
       data: [],
       pagination: {
         page: 1,
@@ -349,7 +349,7 @@ describe('useProductsList', () => {
 
     const previousProducts = result.current.products;
 
-    (productsRepository.getProductsList as jest.Mock).mockRejectedValueOnce(new Error('Fetch failed'));
+    vi.mocked(productsRepository.getProductsList).mockRejectedValueOnce(new Error('Fetch failed'));
 
     act(() => {
       result.current.setPage(2);
