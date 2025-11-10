@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useProductsList } from '@/components/product/productsList/useProductsList';
 import { ProductsPageTemplate } from '@/template/app/[locale]/cms/products/ProductsPageTemplate';
 import { IColumn } from '@/components/tables/Table/TableHeader';
@@ -10,28 +11,29 @@ const DEFAULT_PAGE_SIZE = 10;
 
 export const ProductsPage = ({ locale }: { locale: string }) => {
   const router = useRouter();
+  const t = useTranslations('product.list');
   const { products, isLoading, error, pagination, setPage, setPageSize } = useProductsList(DEFAULT_PAGE_SIZE);
 
   const columns: IColumn<IProduct>[] = [
     {
       key: 'name',
-      label: 'Product Name',
+      label: t('name'),
       sortable: true,
     },
     {
       key: 'price',
-      label: 'Price',
+      label: t('price'),
       sortable: true,
       render: (value) => `$${Number(value).toFixed(2)}`,
     },
     {
       key: 'sku',
-      label: 'SKU',
+      label: t('sku'),
       sortable: true,
     },
     {
       key: 'stock',
-      label: 'Stock',
+      label: t('stock'),
       sortable: true,
     },
   ];
@@ -55,6 +57,8 @@ export const ProductsPage = ({ locale }: { locale: string }) => {
       onAddProduct={handleAddProduct}
       onPageChange={setPage}
       onPageSizeChange={setPageSize}
+      title={t('title')}
+      addButtonLabel={t('addButton')}
     />
   );
 };

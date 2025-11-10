@@ -17,6 +17,8 @@ export interface IProductsPageTemplateProps {
   onAddProduct: () => void;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  title?: string;
+  addButtonLabel?: string;
 }
 
 export const ProductsPageTemplate = ({
@@ -29,13 +31,15 @@ export const ProductsPageTemplate = ({
   onAddProduct,
   onPageChange,
   onPageSizeChange,
+  title = 'Products',
+  addButtonLabel = 'Add Product',
 }: IProductsPageTemplateProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Products</h1>
+        <h1 className={styles.title}>{title}</h1>
         <button className={styles.addButton} onClick={onAddProduct}>
-          + Add Product
+          + {addButtonLabel}
         </button>
       </div>
 

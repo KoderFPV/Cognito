@@ -67,6 +67,14 @@
     }
   },
   "product": {
+    "list": {
+      "title": "Products",
+      "addButton": "Add Product",
+      "name": "Product Name",
+      "price": "Price",
+      "sku": "SKU",
+      "stock": "Stock"
+    },
     "form": {
       "title": "Add New Product",
       "name": "Product Name",

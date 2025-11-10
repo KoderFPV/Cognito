@@ -67,6 +67,14 @@
     }
   },
   "product": {
+    "list": {
+      "title": "Produkty",
+      "addButton": "Dodaj produkt",
+      "name": "Nazwa produktu",
+      "price": "Cena",
+      "sku": "SKU",
+      "stock": "Stan magazynowy"
+    },
     "form": {
       "title": "Dodaj nowy produkt",
       "name": "Nazwa produktu",
