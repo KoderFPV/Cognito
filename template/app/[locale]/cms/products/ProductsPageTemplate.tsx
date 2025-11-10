@@ -17,8 +17,8 @@ export interface IProductsPageTemplateProps {
   onAddProduct: () => void;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
-  title?: string;
-  addButtonLabel?: string;
+  title: string;
+  addButtonLabel: string;
 }
 
 export const ProductsPageTemplate = ({
@@ -31,8 +31,8 @@ export const ProductsPageTemplate = ({
   onAddProduct,
   onPageChange,
   onPageSizeChange,
-  title = 'Products',
-  addButtonLabel = 'Add Product',
+  title,
+  addButtonLabel,
 }: IProductsPageTemplateProps) => {
   return (
     <div className={styles.container}>

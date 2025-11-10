@@ -99,6 +99,8 @@ describe('ProductsPageTemplate', () => {
     onPageChange: vi.fn(),
     onPageSizeChange: vi.fn(),
     onAddProduct: vi.fn(),
+    title: 'Products',
+    addButtonLabel: 'Add Product',
   };
 
   it('should render page title', () => {
