@@ -14,7 +14,8 @@ export const getProductsList = async (page: number, pageSize: number): Promise<I
   const response = await fetch(`/api/products/list?page=${page}&pageSize=${pageSize}`);
 
   if (!response.ok) {
-    throw new Error('Failed to fetch products');
+    const errorData = await response.json();
+    throw new Error(errorData.error);
   }
 
   return response.json();

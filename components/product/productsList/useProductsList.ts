@@ -40,7 +40,7 @@ export const useProductsList = (initialPageSize: number = 10) => {
           isLoading: false,
         }));
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+        const errorMessage = error instanceof Error ? error.message : '';
         setState((prev) => ({
           ...prev,
           error: errorMessage,
