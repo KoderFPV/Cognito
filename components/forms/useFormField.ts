@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 export interface IFormField<T> {
   value: T;
@@ -15,11 +15,11 @@ export const useFormField = <T>(initialValue: T): IFormField<T> => {
   const [error, setError] = useState<string>('');
   const [touched, setTouched] = useState<boolean>(false);
 
-  const reset = useCallback(() => {
+  const reset = () => {
     setValue(initialValue);
     setError('');
     setTouched(false);
-  }, [initialValue]);
+  };
 
   return {
     value,
