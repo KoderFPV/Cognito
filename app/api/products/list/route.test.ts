@@ -1,0 +1,166 @@
+import { NextRequest } from 'next/server';
+import { GET } from './route';
+
+jest.mock('@/clients/mongodb/mongodb');
+jest.mock('@/models/products/productsModel');
+jest.mock('next-intl/server');
+jest.mock('@/services/locale/locale.service');
+
+import { connectToMongo } from '@/clients/mongodb/mongodb';
+import { findAllProducts } from '@/models/products/productsModel';
+import { getTranslations } from 'next-intl/server';
+import { getLocaleFromRequest } from '@/services/locale/locale.service';
+
+describe('/api/products/list route', () => {
+  const mockDb = {};
+  const mockProducts = [
+    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+  ];
+
+  const mockTranslations = {
+    invalidPaginationParameters: 'Invalid pagination parameters',
+    fetchFailed: 'Failed to fetch products',
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (connectToMongo as jest.Mock).mockResolvedValue(mockDb);
+    (getLocaleFromRequest as jest.Mock).mockReturnValue('en');
+    (getTranslations as jest.Mock).mockResolvedValue((key: string) => mockTranslations[key as keyof typeof mockTranslations]);
+    (findAllProducts as jest.Mock).mockResolvedValue({
+      products: mockProducts,
+      total: 2,
+    });
+  });
+
+  it('should return products with default pagination', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.data).toEqual(mockProducts);
+    expect(data.pagination.page).toBe(1);
+    expect(data.pagination.pageSize).toBe(10);
+    expect(data.pagination.total).toBe(2);
+    expect(data.pagination.totalPages).toBe(1);
+  });
+
+  it('should return products with custom page and pageSize', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=2&pageSize=25'));
+    await GET(request);
+
+    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 25, 25);
+  });
+
+  it('should calculate correct offset based on page and pageSize', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=3&pageSize=10'));
+    await GET(request);
+
+    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 10, 20);
+  });
+
+  it('should return error for page less than 1', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=0&pageSize=10'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe('Invalid pagination parameters');
+  });
+
+  it('should return error for pageSize less than 1', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=1&pageSize=0'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe('Invalid pagination parameters');
+  });
+
+  it('should return error for pageSize greater than 100', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=1&pageSize=101'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe('Invalid pagination parameters');
+  });
+
+  it('should allow pageSize of 100', async () => {
+    (findAllProducts as jest.Mock).mockResolvedValue({
+      products: mockProducts,
+      total: 100,
+    });
+
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=1&pageSize=100'));
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should handle database errors gracefully', async () => {
+    (findAllProducts as jest.Mock).mockRejectedValue(new Error('Database error'));
+
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data.error).toBe('Failed to fetch products');
+  });
+
+  it('should use correct locale from request', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
+    await GET(request);
+
+    expect(getLocaleFromRequest).toHaveBeenCalledWith(request);
+  });
+
+  it('should call getTranslations with correct namespace', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
+    await GET(request);
+
+    expect(getTranslations).toHaveBeenCalledWith({
+      locale: 'en',
+      namespace: 'api.products',
+    });
+  });
+
+  it('should calculate totalPages correctly', async () => {
+    (findAllProducts as jest.Mock).mockResolvedValue({
+      products: mockProducts,
+      total: 25,
+    });
+
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?pageSize=10'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(data.pagination.totalPages).toBe(3);
+  });
+
+  it('should handle empty products list', async () => {
+    (findAllProducts as jest.Mock).mockResolvedValue({
+      products: [],
+      total: 0,
+    });
+
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
+    const response = await GET(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.data).toEqual([]);
+    expect(data.pagination.total).toBe(0);
+    expect(data.pagination.totalPages).toBe(0);
+  });
+
+  it('should parse query parameters correctly', async () => {
+    const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=5&pageSize=50'));
+    await GET(request);
+
+    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 50, 200);
+  });
+});
