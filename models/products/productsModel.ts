@@ -36,6 +36,7 @@ export const findAllProducts = async (
   const total = await collection.countDocuments({ deleted: false });
   const products = await collection
     .find({ deleted: false })
+    .sort({ updatedAt: -1 })
     .skip(offset)
     .limit(limit)
     .toArray();

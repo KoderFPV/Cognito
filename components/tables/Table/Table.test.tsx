@@ -5,17 +5,21 @@ import userEvent from '@testing-library/user-event';
 import { Table, ITableProps, IColumn } from './Table';
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      'empty': 'No data found',
-      'loading': 'Loading...',
-      'pagination.previous': 'Previous',
-      'pagination.next': 'Next',
-      'pagination.page': 'Page',
-      'pagination.of': 'of',
-      'pagination.itemsPerPage': 'Items per page',
+  useTranslations: (namespace: string) => (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      'table': {
+        'empty': 'No data found',
+        'loading': 'Loading...',
+      },
+      'table.pagination': {
+        'previous': 'Previous',
+        'next': 'Next',
+        'page': 'Page',
+        'of': 'of',
+        'itemsPerPage': 'Items per page',
+      },
     };
-    return translations[key] || key;
+    return translations[namespace]?.[key] || key;
   },
 }));
 
@@ -328,6 +332,84 @@ describe('Table Component', () => {
       rerender(<Table {...defaultProps} data={mockData.slice(0, 2)} itemsPerPage={2} />);
 
       expect(screen.getByText(/Page 1 of 1/)).toBeInTheDocument();
+    }
+  });
+
+  it('should use server pagination when pagination prop is provided', () => {
+    const onPageChange = vi.fn();
+    const onPageSizeChange = vi.fn();
+
+    render(
+      <Table
+        {...defaultProps}
+        data={mockData.slice(2, 4)}
+        pagination={{
+          page: 2,
+          pageSize: 2,
+          total: 5,
+          totalPages: 3,
+        }}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    );
+
+    expect(screen.getByText('Product 3')).toBeInTheDocument();
+    expect(screen.getByText('Product 4')).toBeInTheDocument();
+    expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
+  });
+
+  it('should call onPageChange when pagination button is clicked in server mode', async () => {
+    const user = userEvent.setup();
+    const onPageChange = vi.fn();
+    const onPageSizeChange = vi.fn();
+
+    render(
+      <Table
+        {...defaultProps}
+        data={mockData.slice(0, 2)}
+        pagination={{
+          page: 1,
+          pageSize: 2,
+          total: 5,
+          totalPages: 3,
+        }}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    );
+
+    const nextButton = screen.getAllByRole('button').find((btn) => btn.textContent?.includes('Next'));
+    if (nextButton) {
+      await user.click(nextButton);
+      expect(onPageChange).toHaveBeenCalledWith(2);
+    }
+  });
+
+  it('should call onPageSizeChange when page size is changed in server mode', async () => {
+    const user = userEvent.setup();
+    const onPageChange = vi.fn();
+    const onPageSizeChange = vi.fn();
+
+    render(
+      <Table
+        {...defaultProps}
+        data={mockData.slice(0, 2)}
+        pagination={{
+          page: 1,
+          pageSize: 2,
+          total: 5,
+          totalPages: 3,
+        }}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    );
+
+    const select = screen.queryByDisplayValue('2') as HTMLSelectElement | null;
+    if (select) {
+      await user.selectOptions(select, '10');
+      expect(onPageSizeChange).toHaveBeenCalledWith(10);
     }
   });
 });

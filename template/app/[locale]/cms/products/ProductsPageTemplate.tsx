@@ -56,6 +56,9 @@ export const ProductsPageTemplate = ({
         onRowClick={onRowClick}
         emptyMessage={emptyMessage}
         loadingMessage={loadingMessage}
+        pagination={pagination}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
       />
     </div>
   );

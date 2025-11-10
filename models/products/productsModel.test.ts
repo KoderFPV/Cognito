@@ -199,16 +199,17 @@ describe('productsModel', () => {
 
       expect(products).toHaveLength(2);
       expect(total).toBe(2);
-      expect(products[0].name).toBe('Product 1');
-      expect(products[1].name).toBe('Product 2');
+      expect(products[0].name).toBe('Product 2');
+      expect(products[1].name).toBe('Product 1');
     });
 
     it('should paginate products correctly', async () => {
       const { connectToMongo } = await import('@/clients/mongodb/mongodb');
       vi.mocked(connectToMongo).mockResolvedValue(db);
 
+      const createdProducts = [];
       for (let i = 1; i <= 5; i++) {
-        await createProduct({
+        const product = await createProduct({
           name: `Product ${i}`,
           description: `Product ${i} description`,
           price: i * 10,
@@ -217,6 +218,8 @@ describe('productsModel', () => {
           category: 'General',
           isActive: true,
         });
+        createdProducts.push(product);
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       const firstPage = await findAllProducts(db, 2, 0);
@@ -226,8 +229,13 @@ describe('productsModel', () => {
       expect(firstPage.total).toBe(5);
       expect(secondPage.products).toHaveLength(2);
       expect(secondPage.total).toBe(5);
-      expect(firstPage.products[0].name).toBe('Product 1');
-      expect(secondPage.products[0].name).toBe('Product 3');
+      const firstPageNames = firstPage.products.map((p) => p.name);
+      const secondPageNames = secondPage.products.map((p) => p.name);
+
+      expect(firstPageNames[0]).toBe('Product 5');
+      expect(firstPageNames[1]).toBe('Product 4');
+      expect(secondPageNames[0]).toBe('Product 3');
+      expect(secondPageNames[1]).toBe('Product 2');
     });
 
     it('should exclude deleted products', async () => {
