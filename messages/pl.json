@@ -73,7 +73,9 @@
       "name": "Nazwa produktu",
       "price": "Cena",
       "sku": "SKU",
-      "stock": "Stan magazynowy"
+      "stock": "Stan magazynowy",
+      "empty": "Nie znaleziono produktów",
+      "loading": "Ładowanie produktów..."
     },
     "form": {
       "title": "Dodaj nowy produkt",

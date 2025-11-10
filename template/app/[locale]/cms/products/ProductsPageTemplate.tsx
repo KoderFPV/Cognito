@@ -19,6 +19,8 @@ export interface IProductsPageTemplateProps {
   onPageSizeChange: (pageSize: number) => void;
   title: string;
   addButtonLabel: string;
+  emptyMessage: string;
+  loadingMessage: string;
 }
 
 export const ProductsPageTemplate = ({
@@ -33,6 +35,8 @@ export const ProductsPageTemplate = ({
   onPageSizeChange,
   title,
   addButtonLabel,
+  emptyMessage,
+  loadingMessage,
 }: IProductsPageTemplateProps) => {
   return (
     <div className={styles.container}>
@@ -50,8 +54,8 @@ export const ProductsPageTemplate = ({
         columns={columns}
         isLoading={isLoading}
         onRowClick={onRowClick}
-        emptyMessage="No products found"
-        loadingMessage="Loading products..."
+        emptyMessage={emptyMessage}
+        loadingMessage={loadingMessage}
       />
     </div>
   );

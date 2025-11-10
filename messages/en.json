@@ -73,7 +73,9 @@
       "name": "Product Name",
       "price": "Price",
       "sku": "SKU",
-      "stock": "Stock"
+      "stock": "Stock",
+      "empty": "No products found",
+      "loading": "Loading products..."
     },
     "form": {
       "title": "Add New Product",

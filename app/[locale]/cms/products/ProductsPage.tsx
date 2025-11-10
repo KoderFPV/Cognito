@@ -59,6 +59,8 @@ export const ProductsPage = ({ locale }: { locale: string }) => {
       onPageSizeChange={setPageSize}
       title={t('title')}
       addButtonLabel={t('addButton')}
+      emptyMessage={t('empty')}
+      loadingMessage={t('loading')}
     />
   );
 };

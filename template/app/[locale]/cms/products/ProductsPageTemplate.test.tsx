@@ -94,6 +94,8 @@ describe('ProductsPageTemplate', () => {
     onAddProduct: vi.fn(),
     title: 'Products',
     addButtonLabel: 'Add Product',
+    emptyMessage: 'No products found',
+    loadingMessage: 'Loading products...',
   };
 
   it('should render page title', () => {
