@@ -103,7 +103,7 @@ export const useProductForm = () => {
           price: parseFloat(price.value),
           sku: sku.value,
           stock: parseInt(stock.value),
-          category: category.value.trim() || undefined,
+          category: category.value.trim(),
           imageUrl: imageUpload.preview || undefined,
           isActive: isActive.value,
         };
