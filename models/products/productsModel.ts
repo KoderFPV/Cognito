@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, Db } from 'mongodb';
 import { IProduct, IProductCreateInput } from '@/domain/product';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 
@@ -23,5 +23,28 @@ export const createProduct = async (
   return {
     ...product,
     _id: result.insertedId.toString(),
+  };
+};
+
+export const findAllProducts = async (
+  db: Db,
+  limit: number,
+  offset: number
+): Promise<{ products: IProduct[]; total: number }> => {
+  const collection = db.collection<IProduct>(PRODUCTS_COLLECTION);
+
+  const total = await collection.countDocuments({ deleted: false });
+  const products = await collection
+    .find({ deleted: false })
+    .skip(offset)
+    .limit(limit)
+    .toArray();
+
+  return {
+    products: products.map((product) => ({
+      ...product,
+      _id: product._id.toString(),
+    })),
+    total,
   };
 };
