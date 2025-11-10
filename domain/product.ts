@@ -6,7 +6,7 @@ export interface IProduct {
   sku: string;
   stock: number;
   imageUrl?: string;
-  category?: string;
+  category: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,6 +20,6 @@ export interface IProductCreateInput {
   sku: string;
   stock: number;
   imageUrl?: string;
-  category?: string;
+  category: string;
   isActive: boolean;
 }

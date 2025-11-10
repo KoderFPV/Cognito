@@ -1,15 +1,18 @@
 import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useFormField } from '@/components/forms/useFormField';
 import { useImageUpload } from '@/components/forms/useImageUpload';
 import { validateProductData } from '@/services/product/productValidation.service';
+import { createProductViaApi } from '@/repositories/api/products/productsApiRepository';
 import { ZodError } from 'zod';
 
 const MAX_PRODUCT_IMAGES = 5;
 
 export const useProductForm = () => {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const t = useTranslations('product');
 
   const name = useFormField<string>('');
@@ -66,8 +69,13 @@ export const useProductForm = () => {
       }
     }
 
+    if (!category.value.trim()) {
+      category.setError(t('errors.categoryRequired'));
+      isValid = false;
+    }
+
     return isValid;
-  }, [name, description, price, sku, stock, t]);
+  }, [name, description, price, sku, stock, category, t]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -80,6 +88,7 @@ export const useProductForm = () => {
       price.setTouched(true);
       sku.setTouched(true);
       stock.setTouched(true);
+      category.setTouched(true);
 
       if (!validateForm()) {
         return;
@@ -94,17 +103,18 @@ export const useProductForm = () => {
           price: parseFloat(price.value),
           sku: sku.value,
           stock: parseInt(stock.value),
-          category: category.value.trim() || undefined,
+          category: category.value.trim(),
           imageUrl: imageUpload.preview || undefined,
           isActive: isActive.value,
         };
 
-        validateProductData(productData);
+        await validateProductData(productData, locale);
+        await createProductViaApi(productData);
 
         setSubmitSuccess(true);
 
         setTimeout(() => {
-          router.push('/cms/products');
+          router.push(`/${locale}/cms/products`);
         }, 1500);
       } catch (error) {
         if (error instanceof ZodError) {
@@ -128,12 +138,13 @@ export const useProductForm = () => {
       validateForm,
       router,
       t,
+      locale,
     ]
   );
 
   const handleCancel = useCallback(() => {
-    router.push('/cms/products');
-  }, [router]);
+    router.push(`/${locale}/cms/products`);
+  }, [router, locale]);
 
   return {
     fields: {

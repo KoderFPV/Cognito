@@ -99,6 +99,7 @@ test.describe('CMS New Product Form', () => {
       await expect(page.getByText(/price is required/i)).toBeVisible();
       await expect(page.getByText(/sku is required/i)).toBeVisible();
       await expect(page.getByText(/stock is required/i)).toBeVisible();
+      await expect(page.getByText(/category is required/i)).toBeVisible();
     });
 
     test('should show validation error for invalid price', async ({ page }) => {
@@ -132,6 +133,18 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#name').fill('Test Product');
       await expect(page.getByText(/product name is required/i)).not.toBeVisible();
     });
+
+    test('should show validation error for missing category', async ({ page }) => {
+      await page.locator('#name').fill('Test Product');
+      await page.locator('#description').fill('Test Description');
+      await page.locator('#price').fill('29.99');
+      await page.locator('#sku').fill('TEST-SKU');
+      await page.locator('#stock').fill('10');
+
+      await page.getByRole('button', { name: /create product/i }).click();
+
+      await expect(page.getByText(/category is required/i)).toBeVisible();
+    });
   });
 
   test.describe('Product Creation', () => {
@@ -148,6 +161,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#price').fill('29.99');
       await page.locator('#sku').fill(uniqueSKU);
       await page.locator('#stock').fill('100');
+      await page.locator('#category').fill('General');
 
       await page.getByRole('button', { name: /create product/i }).click();
 
@@ -221,6 +235,7 @@ test.describe('CMS New Product Form', () => {
       await expect(page.getByText(/cena jest wymagana/i)).toBeVisible();
       await expect(page.getByText(/sku jest wymagane/i)).toBeVisible();
       await expect(page.getByText(/stan magazynowy jest wymagany/i)).toBeVisible();
+      await expect(page.getByText(/kategoria jest wymagana/i)).toBeVisible();
     });
 
     test('should successfully create a new product in Polish locale', async ({ page }) => {
@@ -231,6 +246,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#price').fill('59.99');
       await page.locator('#sku').fill(uniqueSKU);
       await page.locator('#stock').fill('75');
+      await page.locator('#category').fill('Elektronika');
 
       await page.getByRole('button', { name: /utwórz produkt/i }).click();
 

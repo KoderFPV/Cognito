@@ -55,6 +55,11 @@
       "validationFailed": "Walidacja nie powiodła się",
       "userExists": "Użytkownik z tym adresem email już istnieje",
       "registrationFailed": "Rejestracja nie powiodła się"
+    },
+    "product": {
+      "created": "Produkt utworzony pomyślnie",
+      "validationFailed": "Walidacja produktu nie powiodła się",
+      "creationFailed": "Nie udało się utworzyć produktu"
     }
   },
   "product": {
@@ -82,6 +87,7 @@
       "skuRequired": "SKU jest wymagane",
       "stockRequired": "Stan magazynowy jest wymagany",
       "stockInvalid": "Stan magazynowy musi być liczbą całkowitą nieujemną",
+      "categoryRequired": "Kategoria jest wymagana",
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
     }

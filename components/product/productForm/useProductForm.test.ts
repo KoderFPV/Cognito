@@ -18,10 +18,15 @@ vi.mock('next-intl', () => ({
 
 vi.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
+  useParams: () => ({ locale: 'en' }),
 }));
 
 vi.mock('@/services/product/productValidation.service', () => ({
-  validateProductData: vi.fn((data) => data),
+  validateProductData: vi.fn((data) => Promise.resolve(data)),
+}));
+
+vi.mock('@/repositories/api/products/productsApiRepository', () => ({
+  createProductViaApi: vi.fn(() => Promise.resolve({ message: 'created' })),
 }));
 
 describe('useProductForm', () => {
@@ -60,7 +65,7 @@ describe('useProductForm', () => {
       result.current.handleCancel();
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/cms/products');
+    expect(mockPush).toHaveBeenCalledWith('/en/cms/products');
   });
 
   it('should set validation errors for empty required fields on submit', async () => {
@@ -75,6 +80,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.error).toBe('errors.priceRequired');
     expect(result.current.fields.sku.error).toBe('errors.skuRequired');
     expect(result.current.fields.stock.error).toBe('errors.stockRequired');
+    expect(result.current.fields.category.error).toBe('errors.categoryRequired');
   });
 
   it('should validate price as positive number', async () => {
@@ -139,6 +145,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.touched).toBe(false);
     expect(result.current.fields.sku.touched).toBe(false);
     expect(result.current.fields.stock.touched).toBe(false);
+    expect(result.current.fields.category.touched).toBe(false);
 
     await act(async () => {
       await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as React.FormEvent);
@@ -149,6 +156,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.touched).toBe(true);
     expect(result.current.fields.sku.touched).toBe(true);
     expect(result.current.fields.stock.touched).toBe(true);
+    expect(result.current.fields.category.touched).toBe(true);
   });
 
   it('should handle ZodError on submit', async () => {
@@ -156,7 +164,7 @@ describe('useProductForm', () => {
     const { ZodError } = await import('zod');
 
     vi.mocked(validateProductData).mockImplementation(() => {
-      throw new ZodError([]);
+      return Promise.reject(new ZodError([]));
     });
 
     const { result } = renderHook(() => useProductForm());
@@ -167,6 +175,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {
@@ -181,7 +190,7 @@ describe('useProductForm', () => {
     const { validateProductData } = await import('@/services/product/productValidation.service');
 
     vi.mocked(validateProductData).mockImplementation(() => {
-      throw new Error('Generic error');
+      return Promise.reject(new Error('Generic error'));
     });
 
     const { result } = renderHook(() => useProductForm());
@@ -192,6 +201,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {
@@ -206,7 +216,7 @@ describe('useProductForm', () => {
     vi.useFakeTimers();
 
     const { validateProductData } = await import('@/services/product/productValidation.service');
-    vi.mocked(validateProductData).mockImplementation((data) => data as any);
+    vi.mocked(validateProductData).mockImplementation((data) => Promise.resolve(data as any));
 
     const { result } = renderHook(() => useProductForm());
 
@@ -216,6 +226,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {
@@ -229,7 +240,7 @@ describe('useProductForm', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/cms/products');
+    expect(mockPush).toHaveBeenCalledWith('/en/cms/products');
 
     vi.useRealTimers();
   });

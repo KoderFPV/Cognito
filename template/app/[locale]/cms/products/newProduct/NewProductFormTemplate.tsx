@@ -34,7 +34,7 @@ export interface INewProductFormTemplateProps {
     price: IFormField;
     sku: IFormField;
     stock: IFormField;
-    category: Omit<IFormField, 'error' | 'touched' | 'onBlur'>;
+    category: IFormField;
   };
   image: IImageField;
   isActive: ICheckboxField;
@@ -166,18 +166,22 @@ export const NewProductFormTemplate = ({
 
           <div className={styles.formGroup}>
             <label htmlFor="category" className={styles.label}>
-              {t('category')}
+              {t('category')} {t('required')}
             </label>
             <input
               id="category"
               type="text"
-              className={styles.input}
+              className={`${styles.input} ${fields.category.touched && fields.category.error ? styles.inputError : ''}`}
               value={fields.category.value}
               onChange={(e) => {
                 fields.category.onChange(e.target.value);
               }}
+              onBlur={fields.category.onBlur}
               disabled={formState.isSubmitting}
             />
+            {fields.category.touched && fields.category.error && (
+              <span className={styles.error}>{fields.category.error}</span>
+            )}
           </div>
         </div>
 

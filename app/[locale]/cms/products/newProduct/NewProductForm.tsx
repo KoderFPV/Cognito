@@ -43,10 +43,7 @@ export const NewProductForm = () => {
         price: createFieldProps(fields.price),
         sku: createFieldProps(fields.sku),
         stock: createFieldProps(fields.stock),
-        category: {
-          value: fields.category.value,
-          onChange: fields.category.setValue,
-        },
+        category: createFieldProps(fields.category),
       }}
       image={{
         preview: imageUpload.preview,

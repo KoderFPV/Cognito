@@ -10,6 +10,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -40,6 +41,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -54,6 +56,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -68,6 +71,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -82,6 +86,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -96,6 +101,7 @@ describe('productValidation.service', () => {
         price: -10,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -110,6 +116,7 @@ describe('productValidation.service', () => {
         price: 0,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -124,6 +131,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: '',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -166,6 +174,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 0,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -180,6 +189,7 @@ describe('productValidation.service', () => {
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10.5,
+        category: 'Electronics',
         isActive: true,
       };
 
@@ -234,21 +244,22 @@ describe('productValidation.service', () => {
   });
 
   describe('validateProductData', () => {
-    it('should validate and return typed data', () => {
+    it('should validate and return typed data', async () => {
       const validData = {
         name: 'Test Product',
         description: 'Test description',
         price: 99.99,
         sku: 'TEST-SKU-001',
         stock: 10,
+        category: 'Electronics',
         isActive: true,
       };
 
-      const result = validateProductData(validData);
+      const result = await validateProductData(validData, 'en');
       expect(result).toEqual(validData);
     });
 
-    it('should throw error for invalid data', () => {
+    it('should throw error for invalid data', async () => {
       const invalidData = {
         name: '',
         description: 'Test description',
@@ -258,10 +269,10 @@ describe('productValidation.service', () => {
         isActive: true,
       };
 
-      expect(() => validateProductData(invalidData)).toThrow();
+      await expect(validateProductData(invalidData, 'en')).rejects.toThrow();
     });
 
-    it('should validate data with optional fields', () => {
+    it('should validate data with optional fields', async () => {
       const validData = {
         name: 'Test Product',
         description: 'Test description',
@@ -273,7 +284,7 @@ describe('productValidation.service', () => {
         isActive: true,
       };
 
-      const result = validateProductData(validData);
+      const result = await validateProductData(validData, 'en');
       expect(result).toEqual(validData);
     });
   });
