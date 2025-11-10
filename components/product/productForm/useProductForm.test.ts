@@ -80,6 +80,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.error).toBe('errors.priceRequired');
     expect(result.current.fields.sku.error).toBe('errors.skuRequired');
     expect(result.current.fields.stock.error).toBe('errors.stockRequired');
+    expect(result.current.fields.category.error).toBe('errors.categoryRequired');
   });
 
   it('should validate price as positive number', async () => {
@@ -144,6 +145,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.touched).toBe(false);
     expect(result.current.fields.sku.touched).toBe(false);
     expect(result.current.fields.stock.touched).toBe(false);
+    expect(result.current.fields.category.touched).toBe(false);
 
     await act(async () => {
       await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as React.FormEvent);
@@ -154,6 +156,7 @@ describe('useProductForm', () => {
     expect(result.current.fields.price.touched).toBe(true);
     expect(result.current.fields.sku.touched).toBe(true);
     expect(result.current.fields.stock.touched).toBe(true);
+    expect(result.current.fields.category.touched).toBe(true);
   });
 
   it('should handle ZodError on submit', async () => {
@@ -172,6 +175,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {
@@ -197,6 +201,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {
@@ -221,6 +226,7 @@ describe('useProductForm', () => {
       result.current.fields.price.setValue('99.99');
       result.current.fields.sku.setValue('SKU-001');
       result.current.fields.stock.setValue('10');
+      result.current.fields.category.setValue('Electronics');
     });
 
     await act(async () => {

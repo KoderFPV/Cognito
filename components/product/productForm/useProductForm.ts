@@ -69,8 +69,13 @@ export const useProductForm = () => {
       }
     }
 
+    if (!category.value.trim()) {
+      category.setError(t('errors.categoryRequired'));
+      isValid = false;
+    }
+
     return isValid;
-  }, [name, description, price, sku, stock, t]);
+  }, [name, description, price, sku, stock, category, t]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -83,6 +88,7 @@ export const useProductForm = () => {
       price.setTouched(true);
       sku.setTouched(true);
       stock.setTouched(true);
+      category.setTouched(true);
 
       if (!validateForm()) {
         return;

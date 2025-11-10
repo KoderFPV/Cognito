@@ -87,6 +87,7 @@
       "skuRequired": "SKU is required",
       "stockRequired": "Stock is required",
       "stockInvalid": "Stock must be a non-negative integer",
+      "categoryRequired": "Category is required",
       "validationFailed": "Validation failed. Please check the form.",
       "submitFailed": "Failed to create product. Please try again."
     }

@@ -87,6 +87,7 @@
       "skuRequired": "SKU jest wymagane",
       "stockRequired": "Stan magazynowy jest wymagany",
       "stockInvalid": "Stan magazynowy musi być liczbą całkowitą nieujemną",
+      "categoryRequired": "Kategoria jest wymagana",
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
     }
