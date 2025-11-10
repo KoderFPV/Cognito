@@ -8,7 +8,7 @@ export const productSchema = z.object({
   sku: z.string().min(1).max(50),
   stock: z.number().int().min(0),
   imageUrl: z.string().url().optional(),
-  category: z.string().min(1).max(100).optional(),
+  category: z.string().min(1).max(100),
   isActive: z.boolean(),
 });
 
