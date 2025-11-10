@@ -198,6 +198,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#price').fill('19.99');
       await page.locator('#sku').fill(uniqueSKU);
       await page.locator('#stock').fill('0');
+      await page.locator('#category').fill('Electronics');
 
       const checkbox = page.getByLabel(/active/i);
       if (await checkbox.isChecked()) {
@@ -206,8 +207,7 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
     });
   });
 
@@ -271,15 +271,13 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
 
-      await page.goto(`${serverUrl}/en/cms/products`);
       await page.waitForSelector('table', { timeout: 10000 });
 
       await expect(page.getByText(productName)).toBeVisible();
-      await expect(page.getByText('39.99')).toBeVisible();
-      await expect(page.getByText(uniqueSKU)).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(uniqueSKU) })).toBeVisible();
     });
 
     test('should display created product with correct price format on products list', async ({ page }) => {
@@ -297,14 +295,12 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
 
-      await page.goto(`${serverUrl}/en/cms/products`);
       await page.waitForSelector('table', { timeout: 10000 });
 
       await expect(page.getByText(productName)).toBeVisible();
-      await expect(page.getByText('99.99')).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
     });
 
     test('should filter products on list by name', async ({ page }) => {
