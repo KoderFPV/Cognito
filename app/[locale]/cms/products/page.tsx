@@ -1,11 +1,12 @@
 import { ProductsPage } from './ProductsPage';
 
 interface IProductsPageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-export default function Page({ params }: IProductsPageProps) {
-  return <ProductsPage locale={params.locale} />;
+export default async function Page({ params }: IProductsPageProps) {
+  const { locale } = await params;
+  return <ProductsPage locale={locale} />;
 }

@@ -17,7 +17,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: $font-size-sm;
+  font-size: $font-size-small;
 
   thead {
     background-color: $background-secondary;
@@ -108,7 +108,7 @@
   border: none;
   border-radius: $border-radius-sm;
   cursor: pointer;
-  font-size: $font-size-sm;
+  font-size: $font-size-small;
   font-weight: 500;
   transition: background-color 0.2s ease;
 
@@ -131,7 +131,7 @@
 .pageInfo {
   min-width: 150px;
   text-align: center;
-  font-size: $font-size-sm;
+  font-size: $font-size-small;
   color: $text-primary;
 }
 
@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  font-size: $font-size-sm;
+  font-size: $font-size-small;
   color: $text-primary;
 
   @include mobile {
@@ -155,7 +155,7 @@
   border: 1px solid $border-color;
   border-radius: $border-radius-sm;
   cursor: pointer;
-  font-size: $font-size-sm;
+  font-size: $font-size-small;
 
   &:hover {
     border-color: $primary-color;
