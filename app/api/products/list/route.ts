@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getTranslations } from 'next-intl/server';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { findAllProducts } from '@/models/products/productsModel';
+import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 export const GET = async (request: NextRequest) => {
+  const locale = getLocaleFromRequest(request);
+  const t = await getTranslations({ locale, namespace: 'api.products' });
+
   const { searchParams } = new URL(request.url);
   const pageParam = searchParams.get('page');
   const pageSizeParam = searchParams.get('pageSize');
@@ -11,7 +16,7 @@ export const GET = async (request: NextRequest) => {
   const pageSize = pageSizeParam ? parseInt(pageSizeParam) : 10;
 
   if (page < 1 || pageSize < 1 || pageSize > 100) {
-    return NextResponse.json({ error: 'Invalid pagination parameters' }, { status: 400 });
+    return NextResponse.json({ error: t('invalidPaginationParameters') }, { status: 400 });
   }
 
   try {
@@ -32,6 +37,6 @@ export const GET = async (request: NextRequest) => {
     });
   } catch (error) {
     console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    return NextResponse.json({ error: t('fetchFailed') }, { status: 500 });
   }
 };

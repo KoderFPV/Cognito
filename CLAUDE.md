@@ -42,6 +42,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Return types**: Do not explicitly declare return types for functions - let TypeScript infer them automatically (e.g., `const add = (a: number, b: number) => a + b` instead of `const add = (a: number, b: number): number => a + b`)
 - **Always use braces**: Always use curly braces `{}` for if statements, even for single-line blocks (e.g., `if (condition) { return value; }` instead of `if (condition) return value;`)
 - **No magic numbers**: Extract numeric constants to named constants at the top of the file to make the code self-documenting (e.g., `const DEFAULT_PAGE_SIZE = 10;` instead of using `10` directly in code)
+- **User-facing strings must be translated**: All strings visible to users must be internationalized, including UI text, error messages from services, and API responses. Strings should never be hardcoded in components, services, or API handlers. Services must accept locale parameter to provide translated error messages that will be displayed to users.
 - This makes optional properties more concise and follows TypeScript best practices
 
 ## Documentation
