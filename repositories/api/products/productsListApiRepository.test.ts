@@ -1,8 +1,9 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getProductsList, IProductsListResponse } from './productsListApiRepository';
 
 describe('productsListApiRepository', () => {
-  const mockFetch = jest.fn();
-  global.fetch = mockFetch;
+  const mockFetch = vi.fn();
+  global.fetch = mockFetch as any;
 
   beforeEach(() => {
     mockFetch.mockClear();

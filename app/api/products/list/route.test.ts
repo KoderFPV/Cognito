@@ -1,10 +1,11 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 
-jest.mock('@/clients/mongodb/mongodb');
-jest.mock('@/models/products/productsModel');
-jest.mock('next-intl/server');
-jest.mock('@/services/locale/locale.service');
+vi.mock('@/clients/mongodb/mongodb');
+vi.mock('@/models/products/productsModel');
+vi.mock('next-intl/server');
+vi.mock('@/services/locale/locale.service');
 
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { findAllProducts } from '@/models/products/productsModel';
@@ -13,9 +14,10 @@ import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 describe('/api/products/list route', () => {
   const mockDb = {};
+  const fixedDate = '2025-01-01T00:00:00.000Z';
   const mockProducts = [
-    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: new Date(), updatedAt: new Date() },
-    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
+    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
   ];
 
   const mockTranslations = {
@@ -24,11 +26,11 @@ describe('/api/products/list route', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (connectToMongo as jest.Mock).mockResolvedValue(mockDb);
-    (getLocaleFromRequest as jest.Mock).mockReturnValue('en');
-    (getTranslations as jest.Mock).mockResolvedValue((key: string) => mockTranslations[key as keyof typeof mockTranslations]);
-    (findAllProducts as jest.Mock).mockResolvedValue({
+    vi.clearAllMocks();
+    vi.mocked(connectToMongo).mockResolvedValue(mockDb as any);
+    vi.mocked(getLocaleFromRequest).mockReturnValue('en');
+    vi.mocked(getTranslations).mockResolvedValue((key: string) => mockTranslations[key as keyof typeof mockTranslations]);
+    vi.mocked(findAllProducts).mockResolvedValue({
       products: mockProducts,
       total: 2,
     });
@@ -51,14 +53,14 @@ describe('/api/products/list route', () => {
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=2&pageSize=25'));
     await GET(request);
 
-    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 25, 25);
+    expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 25, 25);
   });
 
   it('should calculate correct offset based on page and pageSize', async () => {
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=3&pageSize=10'));
     await GET(request);
 
-    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 10, 20);
+    expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 10, 20);
   });
 
   it('should return error for page less than 1', async () => {
@@ -89,7 +91,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should allow pageSize of 100', async () => {
-    (findAllProducts as jest.Mock).mockResolvedValue({
+    vi.mocked(findAllProducts).mockResolvedValue({
       products: mockProducts,
       total: 100,
     });
@@ -101,7 +103,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should handle database errors gracefully', async () => {
-    (findAllProducts as jest.Mock).mockRejectedValue(new Error('Database error'));
+    vi.mocked(findAllProducts).mockRejectedValue(new Error('Database error'));
 
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
     const response = await GET(request);
@@ -115,21 +117,21 @@ describe('/api/products/list route', () => {
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
     await GET(request);
 
-    expect(getLocaleFromRequest).toHaveBeenCalledWith(request);
+    expect(vi.mocked(getLocaleFromRequest)).toHaveBeenCalledWith(request);
   });
 
   it('should call getTranslations with correct namespace', async () => {
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list'));
     await GET(request);
 
-    expect(getTranslations).toHaveBeenCalledWith({
+    expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
       locale: 'en',
       namespace: 'api.products',
     });
   });
 
   it('should calculate totalPages correctly', async () => {
-    (findAllProducts as jest.Mock).mockResolvedValue({
+    vi.mocked(findAllProducts).mockResolvedValue({
       products: mockProducts,
       total: 25,
     });
@@ -142,7 +144,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should handle empty products list', async () => {
-    (findAllProducts as jest.Mock).mockResolvedValue({
+    vi.mocked(findAllProducts).mockResolvedValue({
       products: [],
       total: 0,
     });
@@ -161,6 +163,6 @@ describe('/api/products/list route', () => {
     const request = new NextRequest(new URL('http://localhost:3000/api/products/list?page=5&pageSize=50'));
     await GET(request);
 
-    expect(findAllProducts).toHaveBeenCalledWith(mockDb, 50, 200);
+    expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 50, 200);
   });
 });

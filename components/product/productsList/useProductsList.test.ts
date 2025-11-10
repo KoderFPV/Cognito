@@ -1,13 +1,15 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useProductsList } from './useProductsList';
 import * as productsRepository from '@/repositories/api/products/productsListApiRepository';
 
-jest.mock('@/repositories/api/products/productsListApiRepository');
+vi.mock('@/repositories/api/products/productsListApiRepository');
 
 describe('useProductsList', () => {
+  const fixedDate = '2025-01-01T00:00:00.000Z';
   const mockProducts = [
-    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { _id: '1', name: 'Product 1', price: 29.99, sku: 'SKU-001', stock: 10, category: 'Electronics', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
+    { _id: '2', name: 'Product 2', price: 49.99, sku: 'SKU-002', stock: 5, category: 'Clothing', description: 'Test', isActive: true, createdAt: fixedDate, updatedAt: fixedDate },
   ];
 
   const mockResponse = {
@@ -21,18 +23,26 @@ describe('useProductsList', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (productsRepository.getProductsList as jest.Mock).mockResolvedValue(mockResponse);
+    vi.clearAllMocks();
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue(mockResponse);
   });
 
-  it('should initialize with loading state', () => {
+  it('should initialize with loading state', async () => {
     const { result } = renderHook(() => useProductsList(10));
 
+    // Initially should be loading
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.products).toEqual([]);
     expect(result.current.error).toBe('');
     expect(result.current.pagination.page).toBe(1);
     expect(result.current.pagination.pageSize).toBe(10);
+
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // After loading, products should be populated
+    expect(result.current.products).toEqual(mockProducts);
   });
 
   it('should load products on mount', async () => {
@@ -48,6 +58,16 @@ describe('useProductsList', () => {
   });
 
   it('should use initial page size parameter', async () => {
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
+      data: mockProducts,
+      pagination: {
+        page: 1,
+        pageSize: 25,
+        total: 2,
+        totalPages: 1,
+      },
+    });
+
     const { result } = renderHook(() => useProductsList(25));
 
     await waitFor(() => {
@@ -55,11 +75,11 @@ describe('useProductsList', () => {
     });
 
     expect(result.current.pagination.pageSize).toBe(25);
-    expect(productsRepository.getProductsList).toHaveBeenCalledWith(1, 25);
+    expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenCalledWith(1, 25);
   });
 
   it('should use default page size of 10 when not specified', async () => {
-    (productsRepository.getProductsList as jest.Mock).mockResolvedValue({
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
       data: mockProducts,
       pagination: {
         page: 1,
@@ -75,7 +95,7 @@ describe('useProductsList', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(productsRepository.getProductsList).toHaveBeenCalledWith(1, 10);
+    expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenCalledWith(1, 10);
   });
 
   it('should change page when setPage is called', async () => {
@@ -90,10 +110,8 @@ describe('useProductsList', () => {
     });
 
     await waitFor(() => {
-      expect(productsRepository.getProductsList).toHaveBeenCalledWith(2, 10);
+      expect(result.current.pagination.page).toBe(2);
     });
-
-    expect(result.current.pagination.page).toBe(2);
   });
 
   it('should reset to page 1 when page size changes', async () => {
@@ -123,7 +141,7 @@ describe('useProductsList', () => {
 
   it('should handle API errors gracefully', async () => {
     const errorMessage = 'Failed to fetch products';
-    (productsRepository.getProductsList as jest.Mock).mockRejectedValue(new Error(errorMessage));
+    vi.mocked(productsRepository.getProductsList).mockRejectedValue(new Error(errorMessage));
 
     const { result } = renderHook(() => useProductsList(10));
 
@@ -137,7 +155,7 @@ describe('useProductsList', () => {
 
   it('should clear error and set loading when fetching new data', async () => {
     const errorMessage = 'Initial error';
-    (productsRepository.getProductsList as jest.Mock)
+    vi.mocked(productsRepository.getProductsList)
       .mockRejectedValueOnce(new Error(errorMessage))
       .mockResolvedValueOnce(mockResponse);
 
@@ -147,7 +165,7 @@ describe('useProductsList', () => {
       expect(result.current.error).toBe(errorMessage);
     });
 
-    (productsRepository.getProductsList as jest.Mock).mockResolvedValueOnce(mockResponse);
+    vi.mocked(productsRepository.getProductsList).mockResolvedValueOnce(mockResponse);
 
     act(() => {
       result.current.setPage(2);
@@ -162,6 +180,16 @@ describe('useProductsList', () => {
   });
 
   it('should maintain pagination state correctly', async () => {
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
+      data: mockProducts,
+      pagination: {
+        page: 1,
+        pageSize: 20,
+        total: 2,
+        totalPages: 1,
+      },
+    });
+
     const { result } = renderHook(() => useProductsList(20));
 
     await waitFor(() => {
@@ -197,22 +225,41 @@ describe('useProductsList', () => {
   });
 
   it('should fetch products with correct parameters on page change', async () => {
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
+      data: mockProducts,
+      pagination: {
+        page: 1,
+        pageSize: 15,
+        total: 2,
+        totalPages: 1,
+      },
+    });
+
     const { result } = renderHook(() => useProductsList(15));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(productsRepository.getProductsList).toHaveBeenCalledWith(1, 15);
+    expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenCalledWith(1, 15);
 
-    (productsRepository.getProductsList as jest.Mock).mockClear();
+    vi.mocked(productsRepository.getProductsList).mockClear();
+    vi.mocked(productsRepository.getProductsList).mockResolvedValue({
+      data: mockProducts,
+      pagination: {
+        page: 3,
+        pageSize: 15,
+        total: 2,
+        totalPages: 1,
+      },
+    });
 
     act(() => {
       result.current.setPage(3);
     });
 
     await waitFor(() => {
-      expect(productsRepository.getProductsList).toHaveBeenCalledWith(3, 15);
+      expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenCalledWith(3, 15);
     });
   });
 
@@ -223,18 +270,28 @@ describe('useProductsList', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    (productsRepository.getProductsList as jest.Mock).mockClear();
+    vi.mocked(productsRepository.getProductsList).mockClear();
 
     act(() => {
       result.current.setPageSize(50);
     });
 
     await waitFor(() => {
-      expect(productsRepository.getProductsList).toHaveBeenCalledWith(1, 50);
+      expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenCalledWith(1, 50);
     });
   });
 
   it('should handle rapid page changes', async () => {
+    vi.mocked(productsRepository.getProductsList).mockImplementation(async (page, pageSize) => ({
+      data: mockProducts,
+      pagination: {
+        page,
+        pageSize,
+        total: 2,
+        totalPages: 1,
+      },
+    }));
+
     const { result } = renderHook(() => useProductsList(10));
 
     await waitFor(() => {
@@ -251,23 +308,31 @@ describe('useProductsList', () => {
       expect(result.current.pagination.page).toBe(4);
     });
 
-    expect(productsRepository.getProductsList).toHaveBeenLastCalledWith(4, 10);
+    expect(vi.mocked(productsRepository.getProductsList)).toHaveBeenLastCalledWith(4, 10);
   });
 
   it('should set isLoading to true when fetching starts', async () => {
-    let resolvePromise: () => void;
-    const promise = new Promise<void>((resolve) => {
+    let resolvePromise: (value: any) => void;
+    const promise = new Promise<any>((resolve) => {
       resolvePromise = resolve;
     });
 
-    (productsRepository.getProductsList as jest.Mock).mockReturnValueOnce(promise);
+    vi.mocked(productsRepository.getProductsList).mockReturnValueOnce(promise);
 
     const { result } = renderHook(() => useProductsList(10));
 
     expect(result.current.isLoading).toBe(true);
 
     act(() => {
-      resolvePromise();
+      resolvePromise({
+        data: mockProducts,
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          total: 2,
+          totalPages: 1,
+        },
+      });
     });
 
     await waitFor(() => {

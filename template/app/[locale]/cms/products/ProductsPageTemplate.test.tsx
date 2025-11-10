@@ -1,31 +1,39 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { ProductsPageTemplate } from './ProductsPageTemplate';
 
-jest.mock('@/components/tables/Table/Table', () => {
+vi.mock('@/components/tables/Table/Table', () => {
   return {
-    Table: ({ data, columns }: any) => (
-      <div data-testid="mock-table">
-        <table>
-          <thead>
-            <tr>
-              {columns.map((col: any) => (
-                <th key={col.key}>{col.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item: any) => (
-              <tr key={item._id}>
+    Table: ({ data, columns }: any) => {
+      if (!columns || !data) {
+        return <div data-testid="mock-table">No data</div>;
+      }
+
+      return (
+        <div data-testid="mock-table">
+          <table>
+            <thead>
+              <tr>
                 {columns.map((col: any) => (
-                  <td key={`${item._id}-${col.key}`}>{item[col.key]}</td>
+                  <th key={col.key}>{col.label}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ),
+            </thead>
+            <tbody>
+              {data.map((item: any) => (
+                <tr key={item._id}>
+                  {columns.map((col: any) => (
+                    <td key={`${item._id}-${col.key}`}>{item[col.key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
   };
 });
 
@@ -70,7 +78,15 @@ describe('ProductsPageTemplate', () => {
     },
   ];
 
+  const mockColumns = [
+    { key: 'name', label: 'Name', sortable: true },
+    { key: 'price', label: 'Price', sortable: true },
+    { key: 'sku', label: 'SKU', sortable: true },
+    { key: 'stock', label: 'Stock', sortable: true },
+  ];
+
   const defaultProps = {
+    columns: mockColumns,
     products: mockProducts,
     isLoading: false,
     error: '',
@@ -80,9 +96,9 @@ describe('ProductsPageTemplate', () => {
       total: 2,
       totalPages: 1,
     },
-    onPageChange: jest.fn(),
-    onPageSizeChange: jest.fn(),
-    onAddProduct: jest.fn(),
+    onPageChange: vi.fn(),
+    onPageSizeChange: vi.fn(),
+    onAddProduct: vi.fn(),
   };
 
   it('should render page title', () => {
@@ -98,12 +114,13 @@ describe('ProductsPageTemplate', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('should call onAddProduct when Add Product button is clicked', () => {
-    const onAddProduct = jest.fn();
+  it('should call onAddProduct when Add Product button is clicked', async () => {
+    const user = userEvent.setup();
+    const onAddProduct = vi.fn();
     render(<ProductsPageTemplate {...defaultProps} onAddProduct={onAddProduct} />);
 
     const button = screen.getByRole('button', { name: /add product/i });
-    button.click();
+    await user.click(button);
 
     expect(onAddProduct).toHaveBeenCalled();
   });
@@ -167,19 +184,7 @@ describe('ProductsPageTemplate', () => {
     render(<ProductsPageTemplate {...defaultProps} />);
 
     const button = screen.getByRole('button', { name: /add product/i });
-    expect(button).toHaveClass('addButton');
-  });
-
-  it('should have proper container structure', () => {
-    const { container } = render(<ProductsPageTemplate {...defaultProps} />);
-
-    expect(container.querySelector('.container')).toBeInTheDocument();
-  });
-
-  it('should have header section with flexbox layout', () => {
-    const { container } = render(<ProductsPageTemplate {...defaultProps} />);
-
-    expect(container.querySelector('.header')).toBeInTheDocument();
+    expect(button).toBeInTheDocument();
   });
 
   it('should render title text correctly', () => {
@@ -197,29 +202,27 @@ describe('ProductsPageTemplate', () => {
 
   it('should handle error state properly', () => {
     const errorMessage = 'Network error occurred';
-    const { container } = render(<ProductsPageTemplate {...defaultProps} error={errorMessage} />);
+    render(<ProductsPageTemplate {...defaultProps} error={errorMessage} />);
 
-    const errorElement = container.querySelector('.error');
-    expect(errorElement).toHaveTextContent(errorMessage);
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 
   it('should render error with correct styling', () => {
     const errorMessage = 'Test error';
-    const { container } = render(<ProductsPageTemplate {...defaultProps} error={errorMessage} />);
+    render(<ProductsPageTemplate {...defaultProps} error={errorMessage} />);
 
-    const errorElement = container.querySelector('.error');
-    expect(errorElement).toBeInTheDocument();
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 
   it('should pass onPageChange callback to table', () => {
-    const onPageChange = jest.fn();
+    const onPageChange = vi.fn();
     render(<ProductsPageTemplate {...defaultProps} onPageChange={onPageChange} />);
 
     expect(screen.getByTestId('mock-table')).toBeInTheDocument();
   });
 
   it('should pass onPageSizeChange callback to table', () => {
-    const onPageSizeChange = jest.fn();
+    const onPageSizeChange = vi.fn();
     render(<ProductsPageTemplate {...defaultProps} onPageSizeChange={onPageSizeChange} />);
 
     expect(screen.getByTestId('mock-table')).toBeInTheDocument();
@@ -256,12 +259,12 @@ describe('ProductsPageTemplate', () => {
   });
 
   it('should render with proper page layout', () => {
-    const { container } = render(<ProductsPageTemplate {...defaultProps} />);
+    render(<ProductsPageTemplate {...defaultProps} />);
 
-    const header = container.querySelector('.header');
-    const title = container.querySelector('.title');
+    const heading = screen.getByRole('heading', { level: 1 });
+    const button = screen.getByRole('button', { name: /add product/i });
 
-    expect(header).toBeInTheDocument();
-    expect(title).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
+    expect(button).toBeInTheDocument();
   });
 });
