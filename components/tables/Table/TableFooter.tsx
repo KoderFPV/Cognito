@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import styles from './Table.module.scss';
 
 export interface ITableFooterProps {
@@ -15,6 +18,8 @@ export const TableFooter = ({
   onPageChange,
   onPageSizeChange,
 }: ITableFooterProps) => {
+  const t = useTranslations('table.pagination');
+
   return (
     <div className={styles.footer}>
       <div className={styles.pagination}>
@@ -24,11 +29,11 @@ export const TableFooter = ({
           disabled={currentPage === 1}
           aria-label="Previous page"
         >
-          ← Previous
+          ← {t('previous')}
         </button>
 
         <div className={styles.pageInfo}>
-          Page {currentPage} of {totalPages}
+          {t('page')} {currentPage} {t('of')} {totalPages}
         </div>
 
         <button
@@ -37,12 +42,12 @@ export const TableFooter = ({
           disabled={currentPage === totalPages}
           aria-label="Next page"
         >
-          Next →
+          {t('next')} →
         </button>
       </div>
 
       <div className={styles.pageSize}>
-        <label htmlFor="page-size">Items per page:</label>
+        <label htmlFor="page-size">{t('itemsPerPage')}:</label>
         <select
           id="page-size"
           value={pageSize}

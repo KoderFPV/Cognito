@@ -6,9 +6,11 @@ import { ProductsPageTemplate } from '@/template/app/[locale]/cms/products/Produ
 import { IColumn } from '@/components/tables/Table/TableHeader';
 import { IProduct } from '@/domain/product';
 
+const DEFAULT_PAGE_SIZE = 10;
+
 export const ProductsPage = ({ locale }: { locale: string }) => {
   const router = useRouter();
-  const { products, isLoading, error, pagination, setPage, setPageSize } = useProductsList(10);
+  const { products, isLoading, error, pagination, setPage, setPageSize } = useProductsList(DEFAULT_PAGE_SIZE);
 
   const columns: IColumn<IProduct>[] = [
     {

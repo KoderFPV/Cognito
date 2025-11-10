@@ -91,5 +91,16 @@
       "validationFailed": "Validation failed. Please check the form.",
       "submitFailed": "Failed to create product. Please try again."
     }
+  },
+  "table": {
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "itemsPerPage": "Items per page"
+    },
+    "empty": "No data found",
+    "loading": "Loading..."
   }
 }

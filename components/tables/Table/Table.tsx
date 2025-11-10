@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { TableHeader, IColumn } from './TableHeader';
 import { TableBody } from './TableBody';
 import { TableFooter } from './TableFooter';
@@ -27,10 +28,14 @@ export const Table = <T extends { _id: string }>({
   onRowClick,
   itemsPerPage = 10,
   onItemsPerPageChange,
-  emptyMessage = 'No data found',
-  loadingMessage = 'Loading...',
+  emptyMessage,
+  loadingMessage,
   renderCell,
 }: ITableProps<T>) => {
+  const t = useTranslations('table');
+  const defaultEmptyMessage = emptyMessage || t('empty');
+  const defaultLoadingMessage = loadingMessage || t('loading');
+
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<keyof T | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
@@ -64,9 +69,9 @@ export const Table = <T extends { _id: string }>({
     <div className={styles.container}>
       <div className={styles.tableWrapper}>
         {isLoading ? (
-          <div className={styles.loadingMessage}>{loadingMessage}</div>
+          <div className={styles.loadingMessage}>{defaultLoadingMessage}</div>
         ) : data.length === 0 ? (
-          <div className={styles.emptyMessage}>{emptyMessage}</div>
+          <div className={styles.emptyMessage}>{defaultEmptyMessage}</div>
         ) : (
           <table className={styles.table}>
             <TableHeader columns={columns} sortKey={sortKey} sortOrder={sortOrder} onSortChange={handleSort} />

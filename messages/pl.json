@@ -91,5 +91,16 @@
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
     }
+  },
+  "table": {
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona",
+      "of": "z",
+      "itemsPerPage": "Elementów na stronie"
+    },
+    "empty": "Nie znaleziono danych",
+    "loading": "Ładowanie..."
   }
 }
