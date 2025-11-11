@@ -1,5 +1,5 @@
-@import '@/template/styles/variables';
-@import '@/template/styles/mixins';
+@use '@/template/styles/variables' as *;
+@use '@/template/styles/mixins' as *;
 
 .container {
   padding: $spacing-xl;
