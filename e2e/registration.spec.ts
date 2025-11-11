@@ -101,8 +101,6 @@ test.describe('Registration Form', () => {
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: /register/i }).click();
-
-      await page.waitForTimeout(2000);
     });
 
     test('should show error when registering with existing email', async ({ page }) => {
@@ -114,8 +112,6 @@ test.describe('Registration Form', () => {
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: /register/i }).click();
-
-      await page.waitForTimeout(3000);
 
       await page.goto('/en/registration');
 
@@ -165,8 +161,6 @@ test.describe('Registration Form', () => {
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: /zarejestruj/i }).click();
-
-      await page.waitForTimeout(2000);
     });
   });
 
@@ -185,8 +179,6 @@ test.describe('Registration Form', () => {
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: /register/i }).click();
-
-      await page.waitForTimeout(2000);
     });
   });
 

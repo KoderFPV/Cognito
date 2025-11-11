@@ -25,13 +25,13 @@ test.describe('CMS New Product Form', () => {
     await page.fill('input[type="email"]', adminEmail);
     await page.fill('input[type="password"]', TEST_USER_PASSWORD);
     await page.click('button[type="submit"]');
-    await page.waitForURL('**/en/cms', { timeout: 10000 });
+    await page.waitForURL('**/en/cms');
   };
 
   test.describe('Authorization', () => {
     test('should redirect non-authenticated users to login', async ({ page }) => {
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
-      await page.waitForURL(/\/en\/cms\/login/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/login/);
       await expect(page).toHaveURL(/\/en\/cms\/login/);
     });
 
@@ -45,7 +45,7 @@ test.describe('CMS New Product Form', () => {
       await page.check('input[type="checkbox"]');
       await page.click('button[type="submit"]');
 
-      await page.waitForURL(/\/en$/, { timeout: 10000 });
+      await page.waitForURL(/\/en$/);
       await expect(page).toHaveURL(/\/en$/);
 
       await page.goto(`${serverUrl}/en/cms/login`);
@@ -53,11 +53,11 @@ test.describe('CMS New Product Form', () => {
       await page.fill('input[type="password"]', TEST_USER_PASSWORD);
       await page.click('button[type="submit"]');
 
-      await page.waitForURL(/\/en$/, { timeout: 10000 });
+      await page.waitForURL(/\/en$/);
       await expect(page).toHaveURL(/\/en$/);
 
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
-      await page.waitForURL(/\/en$/, { timeout: 10000 });
+      await page.waitForURL(/\/en$/);
       await expect(page).toHaveURL(/\/en$/);
 
       await deleteUser(customerEmail);
@@ -166,7 +166,6 @@ test.describe('CMS New Product Form', () => {
       await page.getByRole('button', { name: /create product/i }).click();
 
       await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
     });
 
     test('should successfully create a new product with all fields', async ({ page }) => {
@@ -187,7 +186,6 @@ test.describe('CMS New Product Form', () => {
       await page.getByRole('button', { name: /create product/i }).click();
 
       await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
     });
 
     test('should create product with active checkbox unchecked', async ({ page }) => {
@@ -207,7 +205,7 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products');
     });
   });
 
@@ -217,7 +215,7 @@ test.describe('CMS New Product Form', () => {
       await page.fill('input[type="email"]', adminEmail);
       await page.fill('input[type="password"]', TEST_USER_PASSWORD);
       await page.click('button[type="submit"]');
-      await page.waitForURL('**/pl/cms', { timeout: 10000 });
+      await page.waitForURL('**/pl/cms');
       await page.goto(`${serverUrl}/pl/cms/products/newProduct`);
     });
 
@@ -251,7 +249,6 @@ test.describe('CMS New Product Form', () => {
       await page.getByRole('button', { name: /utwórz produkt/i }).click();
 
       await expect(page.getByText(/produkt utworzony pomyślnie/i)).toBeVisible();
-      await page.waitForTimeout(2000);
     });
   });
 
@@ -271,9 +268,9 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products');
 
-      await page.waitForSelector('table', { timeout: 10000 });
+      await page.waitForSelector('table');
 
       await expect(page.getByText(productName)).toBeVisible();
       await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
@@ -295,9 +292,9 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products');
 
-      await page.waitForSelector('table', { timeout: 10000 });
+      await page.waitForSelector('table');
 
       await expect(page.getByText(productName)).toBeVisible();
       await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
@@ -319,10 +316,9 @@ test.describe('CMS New Product Form', () => {
       await page.getByRole('button', { name: /create product/i }).click();
 
       await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
 
       await page.goto(`${serverUrl}/en/cms/products`);
-      await page.waitForSelector('table', { timeout: 10000 });
+      await page.waitForSelector('table');
 
       await expect(page.getByText(productName)).toBeVisible();
     });
