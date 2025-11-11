@@ -60,9 +60,23 @@
       "created": "Produkt utworzony pomyślnie",
       "validationFailed": "Walidacja produktu nie powiodła się",
       "creationFailed": "Nie udało się utworzyć produktu"
+    },
+    "products": {
+      "invalidPaginationParameters": "Nieprawidłowe parametry paginacji",
+      "fetchFailed": "Nie udało się pobrać produktów"
     }
   },
   "product": {
+    "list": {
+      "title": "Produkty",
+      "addButton": "Dodaj produkt",
+      "name": "Nazwa produktu",
+      "price": "Cena",
+      "sku": "SKU",
+      "stock": "Stan magazynowy",
+      "empty": "Nie znaleziono produktów",
+      "loading": "Ładowanie produktów..."
+    },
     "form": {
       "title": "Dodaj nowy produkt",
       "name": "Nazwa produktu",
@@ -91,5 +105,16 @@
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
     }
+  },
+  "table": {
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona",
+      "of": "z",
+      "itemsPerPage": "Elementów na stronie"
+    },
+    "empty": "Nie znaleziono danych",
+    "loading": "Ładowanie..."
   }
 }

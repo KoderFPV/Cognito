@@ -1,0 +1,168 @@
+@import '@/template/styles/variables';
+@import '@/template/styles/mixins';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  background-color: $background-color;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-small;
+
+  thead {
+    background-color: $background-secondary;
+    border-bottom: 2px solid $border-color;
+  }
+
+  th {
+    padding: $spacing-md;
+    text-align: left;
+    font-weight: 600;
+    color: $text-primary;
+    user-select: none;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border-color;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $background-hover;
+    }
+  }
+
+  td {
+    padding: $spacing-md;
+    color: $text-primary;
+  }
+}
+
+.sortableHeader {
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($background-secondary, 5%);
+  }
+}
+
+.row {
+  &:hover {
+    background-color: $background-hover;
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: -2px;
+  }
+}
+
+.loadingMessage,
+.emptyMessage {
+  padding: $spacing-xl;
+  text-align: center;
+  color: $text-secondary;
+  font-size: $font-size-base;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-md;
+  background-color: $background-secondary;
+  border-radius: $border-radius-md;
+  flex-wrap: wrap;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  @include mobile {
+    justify-content: center;
+  }
+}
+
+.paginationButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  font-size: $font-size-small;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+  }
+
+  &:disabled {
+    background-color: $border-color;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.pageInfo {
+  min-width: 150px;
+  text-align: center;
+  font-size: $font-size-small;
+  color: $text-primary;
+}
+
+.pageSize {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-small;
+  color: $text-primary;
+
+  @include mobile {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.pageSizeSelect {
+  padding: $spacing-sm $spacing-md;
+  background-color: white;
+  color: $text-primary;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  font-size: $font-size-small;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}

@@ -198,6 +198,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#price').fill('19.99');
       await page.locator('#sku').fill(uniqueSKU);
       await page.locator('#stock').fill('0');
+      await page.locator('#category').fill('Electronics');
 
       const checkbox = page.getByLabel(/active/i);
       if (await checkbox.isChecked()) {
@@ -206,8 +207,7 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
-      await page.waitForTimeout(2000);
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
     });
   });
 
@@ -252,6 +252,79 @@ test.describe('CMS New Product Form', () => {
 
       await expect(page.getByText(/produkt utworzony pomyślnie/i)).toBeVisible();
       await page.waitForTimeout(2000);
+    });
+  });
+
+  test.describe('Product List', () => {
+    test('should display created product on products list page', async ({ page }) => {
+      await loginAsAdmin(page);
+      const productName = `List Test Product ${Date.now()}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.locator('#name').fill(productName);
+      await page.locator('#description').fill('This product should appear in the list');
+      await page.locator('#price').fill('39.99');
+      await page.locator('#sku').fill(uniqueSKU);
+      await page.locator('#stock').fill('25');
+      await page.locator('#category').fill('Testing');
+
+      await page.getByRole('button', { name: /create product/i }).click();
+
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
+
+      await page.waitForSelector('table', { timeout: 10000 });
+
+      await expect(page.getByText(productName)).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(uniqueSKU) })).toBeVisible();
+    });
+
+    test('should display created product with correct price format on products list', async ({ page }) => {
+      await loginAsAdmin(page);
+      const productName = `Price Format Test ${Date.now()}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.locator('#name').fill(productName);
+      await page.locator('#description').fill('Testing price format');
+      await page.locator('#price').fill('99.99');
+      await page.locator('#sku').fill(uniqueSKU);
+      await page.locator('#stock').fill('10');
+      await page.locator('#category').fill('Testing');
+
+      await page.getByRole('button', { name: /create product/i }).click();
+
+      await page.waitForURL('**/cms/products', { timeout: 10000 });
+
+      await page.waitForSelector('table', { timeout: 10000 });
+
+      await expect(page.getByText(productName)).toBeVisible();
+      await expect(page.getByRole('button', { name: new RegExp(productName) })).toBeVisible();
+    });
+
+    test('should filter products on list by name', async ({ page }) => {
+      await loginAsAdmin(page);
+      const productName = `Filterable Product ${Date.now()}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.locator('#name').fill(productName);
+      await page.locator('#description').fill('This product will be used for filtering');
+      await page.locator('#price').fill('29.99');
+      await page.locator('#sku').fill(uniqueSKU);
+      await page.locator('#stock').fill('50');
+      await page.locator('#category').fill('Testing');
+
+      await page.getByRole('button', { name: /create product/i }).click();
+
+      await expect(page.getByText(/product created successfully/i)).toBeVisible();
+      await page.waitForTimeout(2000);
+
+      await page.goto(`${serverUrl}/en/cms/products`);
+      await page.waitForSelector('table', { timeout: 10000 });
+
+      await expect(page.getByText(productName)).toBeVisible();
     });
   });
 });

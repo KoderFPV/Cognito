@@ -60,9 +60,23 @@
       "created": "Product created successfully",
       "validationFailed": "Product validation failed",
       "creationFailed": "Failed to create product"
+    },
+    "products": {
+      "invalidPaginationParameters": "Invalid pagination parameters",
+      "fetchFailed": "Failed to fetch products"
     }
   },
   "product": {
+    "list": {
+      "title": "Products",
+      "addButton": "Add Product",
+      "name": "Product Name",
+      "price": "Price",
+      "sku": "SKU",
+      "stock": "Stock",
+      "empty": "No products found",
+      "loading": "Loading products..."
+    },
     "form": {
       "title": "Add New Product",
       "name": "Product Name",
@@ -91,5 +105,16 @@
       "validationFailed": "Validation failed. Please check the form.",
       "submitFailed": "Failed to create product. Please try again."
     }
+  },
+  "table": {
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "itemsPerPage": "Items per page"
+    },
+    "empty": "No data found",
+    "loading": "Loading..."
   }
 }

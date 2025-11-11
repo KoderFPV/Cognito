@@ -1,0 +1,62 @@
+@import '@/template/styles/variables';
+@import '@/template/styles/mixins';
+
+.container {
+  padding: $spacing-xl;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.title {
+  font-size: $font-size-h1;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+}
+
+.addButton {
+  padding: $spacing-md $spacing-lg;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @include mobile {
+    width: 100%;
+  }
+}
+
+.error {
+  padding: $spacing-md;
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+  border-radius: $border-radius-md;
+  margin-bottom: $spacing-lg;
+  font-size: $font-size-small;
+}

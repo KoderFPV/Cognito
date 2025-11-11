@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Db } from 'mongodb';
-import { createProduct } from './productsModel';
+import { createProduct, findAllProducts } from './productsModel';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
@@ -160,6 +160,123 @@ describe('productsModel', () => {
 
       expect(product.stock).toBe(0);
       expect(product).toBeDefined();
+    });
+  });
+
+  describe('findAllProducts', () => {
+    it('should return empty array when no products exist', async () => {
+      const { products, total } = await findAllProducts(db, 10, 0);
+
+      expect(products).toEqual([]);
+      expect(total).toBe(0);
+    });
+
+    it('should return all products without pagination', async () => {
+      const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+      vi.mocked(connectToMongo).mockResolvedValue(db);
+
+      await createProduct({
+        name: 'Product 1',
+        description: 'First product',
+        price: 10.0,
+        sku: 'PROD-001',
+        stock: 100,
+        category: 'Clothing',
+        isActive: true,
+      });
+
+      await createProduct({
+        name: 'Product 2',
+        description: 'Second product',
+        price: 20.0,
+        sku: 'PROD-002',
+        stock: 50,
+        category: 'Home',
+        isActive: true,
+      });
+
+      const { products, total } = await findAllProducts(db, 100, 0);
+
+      expect(products).toHaveLength(2);
+      expect(total).toBe(2);
+      expect(products[0].name).toBe('Product 2');
+      expect(products[1].name).toBe('Product 1');
+    });
+
+    it('should paginate products correctly', async () => {
+      const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+      vi.mocked(connectToMongo).mockResolvedValue(db);
+
+      const createdProducts = [];
+      for (let i = 1; i <= 5; i++) {
+        const product = await createProduct({
+          name: `Product ${i}`,
+          description: `Product ${i} description`,
+          price: i * 10,
+          sku: `PROD-${i}`,
+          stock: 50,
+          category: 'General',
+          isActive: true,
+        });
+        createdProducts.push(product);
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+
+      const firstPage = await findAllProducts(db, 2, 0);
+      const secondPage = await findAllProducts(db, 2, 2);
+
+      expect(firstPage.products).toHaveLength(2);
+      expect(firstPage.total).toBe(5);
+      expect(secondPage.products).toHaveLength(2);
+      expect(secondPage.total).toBe(5);
+      const firstPageNames = firstPage.products.map((p) => p.name);
+      const secondPageNames = secondPage.products.map((p) => p.name);
+
+      expect(firstPageNames[0]).toBe('Product 5');
+      expect(firstPageNames[1]).toBe('Product 4');
+      expect(secondPageNames[0]).toBe('Product 3');
+      expect(secondPageNames[1]).toBe('Product 2');
+    });
+
+    it('should exclude deleted products', async () => {
+      const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+      vi.mocked(connectToMongo).mockResolvedValue(db);
+
+      await createProduct({
+        name: 'Active Product',
+        description: 'This product is active',
+        price: 50.0,
+        sku: 'ACTIVE-001',
+        stock: 10,
+        category: 'Electronics',
+        isActive: true,
+      });
+
+      const { products, total } = await findAllProducts(db, 100, 0);
+
+      expect(products).toHaveLength(1);
+      expect(total).toBe(1);
+      expect(products[0].deleted).toBe(false);
+    });
+
+    it('should convert MongoDB ObjectId to string', async () => {
+      const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+      vi.mocked(connectToMongo).mockResolvedValue(db);
+
+      await createProduct({
+        name: 'Test Product',
+        description: 'Testing ID conversion',
+        price: 99.99,
+        sku: 'TEST-ID-001',
+        stock: 5,
+        category: 'Testing',
+        isActive: true,
+      });
+
+      const { products } = await findAllProducts(db, 100, 0);
+
+      expect(products[0]._id).toBeDefined();
+      expect(typeof products[0]._id).toBe('string');
     });
   });
 });
