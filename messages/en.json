@@ -59,7 +59,9 @@
     "product": {
       "created": "Product created successfully",
       "validationFailed": "Product validation failed",
-      "creationFailed": "Failed to create product"
+      "creationFailed": "Failed to create product",
+      "notFound": "Product not found",
+      "fetchFailed": "Failed to fetch product"
     },
     "products": {
       "invalidPaginationParameters": "Invalid pagination parameters",
@@ -104,6 +106,24 @@
       "categoryRequired": "Category is required",
       "validationFailed": "Validation failed. Please check the form.",
       "submitFailed": "Failed to create product. Please try again."
+    },
+    "details": {
+      "back": "Back",
+      "loading": "Loading product details...",
+      "notFound": "Product not found",
+      "fetchFailed": "Failed to fetch product details",
+      "noImage": "No image available",
+      "description": "Description",
+      "price": "Price",
+      "sku": "SKU",
+      "stock": "Stock",
+      "category": "Category",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "deleted": "Deleted",
+      "created": "Created",
+      "updated": "Updated"
     }
   },
   "table": {

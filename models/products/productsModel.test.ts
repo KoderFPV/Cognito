@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Db } from 'mongodb';
-import { createProduct, findAllProducts } from './productsModel';
+import { Db, ObjectId } from 'mongodb';
+import { createProduct, findAllProducts, getProductById } from './productsModel';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
@@ -277,6 +277,145 @@ describe('productsModel', () => {
 
       expect(products[0]._id).toBeDefined();
       expect(typeof products[0]._id).toBe('string');
+    });
+  });
+
+  describe('getProductById', () => {
+    it('should retrieve product by valid ID', async () => {
+      const productData = {
+        name: 'Test Product',
+        description: 'Test product description',
+        price: 99.99,
+        sku: 'TEST-SKU-001',
+        stock: 10,
+        imageUrl: 'https://example.com/image.jpg',
+        category: 'Electronics',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(retrievedProduct).toBeDefined();
+      expect(retrievedProduct?._id).toBe(createdProduct._id);
+      expect(retrievedProduct?.name).toBe('Test Product');
+      expect(retrievedProduct?.description).toBe('Test product description');
+      expect(retrievedProduct?.price).toBe(99.99);
+      expect(retrievedProduct?.sku).toBe('TEST-SKU-001');
+      expect(retrievedProduct?.stock).toBe(10);
+      expect(retrievedProduct?.imageUrl).toBe('https://example.com/image.jpg');
+      expect(retrievedProduct?.category).toBe('Electronics');
+      expect(retrievedProduct?.isActive).toBe(true);
+    });
+
+    it('should return null for non-existent product ID', async () => {
+      const nonExistentId = '507f1f77bcf86cd799439011';
+      const product = await getProductById(db, nonExistentId);
+
+      expect(product).toBeNull();
+    });
+
+    it('should return null for invalid ObjectId format', async () => {
+      const invalidId = 'invalid-id-format';
+      const product = await getProductById(db, invalidId);
+
+      expect(product).toBeNull();
+    });
+
+    it('should retrieve product with all fields including timestamps', async () => {
+      const productData = {
+        name: 'Timestamp Product',
+        description: 'Product for timestamp testing',
+        price: 49.99,
+        sku: 'TS-001',
+        stock: 5,
+        category: 'Books',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(retrievedProduct?.createdAt).toBeInstanceOf(Date);
+      expect(retrievedProduct?.updatedAt).toBeInstanceOf(Date);
+      expect(retrievedProduct?.deleted).toBe(false);
+    });
+
+    it('should retrieve deleted product', async () => {
+      const productData = {
+        name: 'Deleted Product',
+        description: 'Product to be deleted',
+        price: 29.99,
+        sku: 'DEL-001',
+        stock: 3,
+        category: 'Clearance',
+        isActive: false,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const collection = db.collection('products');
+      await collection.updateOne(
+        { _id: new ObjectId(createdProduct._id) },
+        { $set: { deleted: true } }
+      );
+
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(retrievedProduct).toBeDefined();
+      expect(retrievedProduct?.deleted).toBe(true);
+    });
+
+    it('should convert MongoDB ObjectId to string', async () => {
+      const productData = {
+        name: 'ID Convert Test',
+        description: 'Testing ObjectId to string conversion',
+        price: 19.99,
+        sku: 'IDCONV-001',
+        stock: 7,
+        category: 'Testing',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(typeof retrievedProduct?._id).toBe('string');
+      expect(retrievedProduct?._id).toMatch(/^[a-f0-9]{24}$/);
+    });
+
+    it('should retrieve product without optional imageUrl', async () => {
+      const productData = {
+        name: 'No Image Product',
+        description: 'Product without image',
+        price: 39.99,
+        sku: 'NOIMG-001',
+        stock: 12,
+        category: 'Books',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(retrievedProduct).toBeDefined();
+      expect(retrievedProduct?.imageUrl).toBeUndefined();
+    });
+
+    it('should retrieve product with inactive status', async () => {
+      const productData = {
+        name: 'Inactive Product',
+        description: 'This product is inactive',
+        price: 15.99,
+        sku: 'INACTIVE-001',
+        stock: 20,
+        category: 'Electronics',
+        isActive: false,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const retrievedProduct = await getProductById(db, createdProduct._id);
+
+      expect(retrievedProduct?.isActive).toBe(false);
     });
   });
 });

@@ -59,7 +59,9 @@
     "product": {
       "created": "Produkt utworzony pomyślnie",
       "validationFailed": "Walidacja produktu nie powiodła się",
-      "creationFailed": "Nie udało się utworzyć produktu"
+      "creationFailed": "Nie udało się utworzyć produktu",
+      "notFound": "Produkt nie znaleziony",
+      "fetchFailed": "Nie udało się pobrać produktu"
     },
     "products": {
       "invalidPaginationParameters": "Nieprawidłowe parametry paginacji",
@@ -104,6 +106,24 @@
       "categoryRequired": "Kategoria jest wymagana",
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
+    },
+    "details": {
+      "back": "Wstecz",
+      "loading": "Ładowanie szczegółów produktu...",
+      "notFound": "Produkt nie znaleziony",
+      "fetchFailed": "Nie udało się pobrać szczegółów produktu",
+      "noImage": "Brak dostępnego obrazu",
+      "description": "Opis",
+      "price": "Cena",
+      "sku": "SKU",
+      "stock": "Stan magazynowy",
+      "category": "Kategoria",
+      "status": "Status",
+      "active": "Aktywny",
+      "inactive": "Nieaktywny",
+      "deleted": "Usunięty",
+      "created": "Utworzono",
+      "updated": "Zaktualizowano"
     }
   },
   "table": {
