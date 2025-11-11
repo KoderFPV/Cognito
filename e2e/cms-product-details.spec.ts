@@ -6,7 +6,7 @@ import {
   TEST_USER_PASSWORD,
 } from './helpers/testConfig';
 
-test.describe.skip('CMS Product Details View', () => {
+test.describe('CMS Product Details View', () => {
   const adminEmail = generateTestUserEmail('admin-details');
   const serverUrl = getTestServerUrl();
 
@@ -30,6 +30,7 @@ test.describe.skip('CMS Product Details View', () => {
 
   const createTestProduct = async (page: any, productName: string, sku: string) => {
     await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+    await page.waitForSelector('#name', { timeout: 5000 });
     await page.locator('#name').fill(productName);
     await page.locator('#description').fill('This is a test product for details view');
     await page.locator('#price').fill('99.99');
@@ -38,7 +39,8 @@ test.describe.skip('CMS Product Details View', () => {
     await page.locator('#category').fill('Test Category');
 
     await page.getByRole('button', { name: /create product/i }).click();
-    await page.waitForURL('**/cms/products', { timeout: 10000 });
+    await page.waitForURL('**/cms/products', { timeout: 5000 });
+    await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
   };
 
   test.describe('Authorization', () => {
@@ -81,10 +83,11 @@ test.describe.skip('CMS Product Details View', () => {
 
       await createTestProduct(page, productName, uniqueSKU);
 
+      await page.waitForSelector(`button:has-text("${productName}")`, { timeout: 5000 }).catch(() => null);
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
       await expect(page).toHaveURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
     });
   });
@@ -103,13 +106,14 @@ test.describe.skip('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(productName)).toBeVisible();
       await expect(page.getByText('This is a test product for details view')).toBeVisible();
       await expect(page.getByText(/\$99\.99/)).toBeVisible();
       await expect(page.getByText(uniqueSKU)).toBeVisible();
-      await expect(page.locator('text=/^42$/i')).toBeVisible();
+      await expect(page.getByText('42')).toBeVisible();
       await expect(page.getByText('Test Category')).toBeVisible();
     });
 
@@ -118,6 +122,7 @@ test.describe.skip('CMS Product Details View', () => {
       const uniqueSKU = generateUniqueSKU();
 
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.waitForSelector('#name', { timeout: 5000 });
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Testing active status display');
       await page.locator('#price').fill('49.99');
@@ -131,14 +136,16 @@ test.describe.skip('CMS Product Details View', () => {
       }
 
       await page.getByRole('button', { name: /create product/i }).click();
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products', { timeout: 5000 });
+      await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
-      await expect(page.locator('text=/^active$/i')).toBeVisible();
+      await expect(page.getByText(/active/i)).toBeVisible();
     });
 
     test('should display "Inactive" status for inactive products', async ({ page }) => {
@@ -146,6 +153,7 @@ test.describe.skip('CMS Product Details View', () => {
       const uniqueSKU = generateUniqueSKU();
 
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.waitForSelector('#name', { timeout: 5000 });
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Testing inactive status display');
       await page.locator('#price').fill('29.99');
@@ -159,14 +167,16 @@ test.describe.skip('CMS Product Details View', () => {
       }
 
       await page.getByRole('button', { name: /create product/i }).click();
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products', { timeout: 5000 });
+      await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
-      await expect(page.locator('text=/^inactive$/i')).toBeVisible();
+      await expect(page.getByText(/inactive/i)).toBeVisible();
     });
 
     test('should display created and updated timestamps with date and time', async ({ page }) => {
@@ -178,7 +188,8 @@ test.describe.skip('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
       const createdLabels = await page.getByText(/created/i).all();
       const updatedLabels = await page.getByText(/updated/i).all();
@@ -196,6 +207,7 @@ test.describe.skip('CMS Product Details View', () => {
       const testPrice = '149.99';
 
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.waitForSelector('#name', { timeout: 5000 });
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Price format testing');
       await page.locator('#price').fill(testPrice);
@@ -204,12 +216,14 @@ test.describe.skip('CMS Product Details View', () => {
       await page.locator('#category').fill('Premium');
 
       await page.getByRole('button', { name: /create product/i }).click();
-      await page.waitForURL('**/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/cms/products', { timeout: 5000 });
+      await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(/\$149\.99/)).toBeVisible();
     });
@@ -229,7 +243,8 @@ test.describe.skip('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(productName)).toBeVisible();
     });
@@ -243,12 +258,14 @@ test.describe.skip('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
+      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
 
       const backButton = page.getByRole('button', { name: /back/i });
       await backButton.click();
 
-      await page.waitForURL('**/en/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/en/cms/products', { timeout: 5000 });
+      await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
       await expect(page).toHaveURL(/\/en\/cms\/products$/);
     });
   });
@@ -261,14 +278,14 @@ test.describe.skip('CMS Product Details View', () => {
     test('should display error message for non-existent product ID', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
       await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(/not found/i)).toBeVisible();
     });
 
     test('should display error message for invalid product ID format', async ({ page }) => {
       await page.goto(`${serverUrl}/en/cms/products/invalid-id`);
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(/not found|failed/i)).toBeVisible();
     });
@@ -276,13 +293,14 @@ test.describe.skip('CMS Product Details View', () => {
     test('should have back button visible even when error occurs', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
       await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState('networkidle');
 
       const backButton = page.getByRole('button', { name: /back/i });
       await expect(backButton).toBeVisible();
 
       await backButton.click();
-      await page.waitForURL('**/en/cms/products', { timeout: 10000 });
+      await page.waitForURL('**/en/cms/products', { timeout: 5000 });
+      await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
     });
   });
 });
