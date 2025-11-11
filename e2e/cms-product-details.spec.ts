@@ -109,7 +109,7 @@ test.describe('CMS Product Details View', () => {
       await expect(page.getByText('This is a test product for details view')).toBeVisible();
       await expect(page.getByText(/\$99\.99/)).toBeVisible();
       await expect(page.getByText(uniqueSKU)).toBeVisible();
-      await expect(page.getByText('42')).toBeVisible();
+      await expect(page.locator('text=/^42$/i')).toBeVisible();
       await expect(page.getByText('Test Category')).toBeVisible();
     });
 
