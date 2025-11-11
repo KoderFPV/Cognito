@@ -3,6 +3,7 @@ import { getProductById } from '@/models/products/productsModel';
 import { ProductDetailsPage } from './ProductDetailsPage';
 import { requireAdmin } from '@/services/auth/auth.helpers';
 import { IProduct } from '@/domain/product';
+import { getTranslations } from 'next-intl/server';
 
 export default async function ProductPage({
   params,
@@ -12,6 +13,8 @@ export default async function ProductPage({
   const { locale, id } = await params;
   await requireAdmin(locale);
 
+  const t = await getTranslations({ locale, namespace: 'product.details' });
+
   let product: IProduct | null = null;
   let error: string | null = null;
 
@@ -19,10 +22,10 @@ export default async function ProductPage({
     const db = await connectToMongo();
     product = await getProductById(db, id);
     if (!product) {
-      error = 'Product not found';
+      error = t('notFound');
     }
   } catch (err) {
-    error = 'Failed to fetch product';
+    error = t('fetchFailed');
   }
 
   return <ProductDetailsPage locale={locale} product={product} error={error} />;

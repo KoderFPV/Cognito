@@ -59,7 +59,9 @@
     "product": {
       "created": "Produkt utworzony pomyślnie",
       "validationFailed": "Walidacja produktu nie powiodła się",
-      "creationFailed": "Nie udało się utworzyć produktu"
+      "creationFailed": "Nie udało się utworzyć produktu",
+      "notFound": "Produkt nie znaleziony",
+      "fetchFailed": "Nie udało się pobrać produktu"
     },
     "products": {
       "invalidPaginationParameters": "Nieprawidłowe parametry paginacji",
