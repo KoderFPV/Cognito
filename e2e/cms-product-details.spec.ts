@@ -138,8 +138,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
 
-      await expect(page.getByText(/status/i)).toBeVisible();
-      await expect(page.getByText(/active/i)).toBeVisible();
+      await expect(page.locator('text=/^active$/i')).toBeVisible();
     });
 
     test('should display "Inactive" status for inactive products', async ({ page }) => {
@@ -167,8 +166,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/, { timeout: 10000 });
 
-      await expect(page.getByText(/status/i)).toBeVisible();
-      await expect(page.getByText(/inactive/i)).toBeVisible();
+      await expect(page.locator('text=/^inactive$/i')).toBeVisible();
     });
 
     test('should display created and updated timestamps with date and time', async ({ page }) => {
