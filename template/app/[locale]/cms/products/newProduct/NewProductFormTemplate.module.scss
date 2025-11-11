@@ -1,5 +1,5 @@
-@import '@/template/styles/variables.scss';
-@import '@/template/styles/mixins.scss';
+@use '@/template/styles/variables.scss' as *;
+@use '@/template/styles/mixins.scss' as *;
 
 .container {
   max-width: 800px;
