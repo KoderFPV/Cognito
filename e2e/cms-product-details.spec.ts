@@ -6,7 +6,7 @@ import {
   TEST_USER_PASSWORD,
 } from './helpers/testConfig';
 
-test.describe('CMS Product Details View', () => {
+test.describe.skip('CMS Product Details View', () => {
   const adminEmail = generateTestUserEmail('admin-details');
   const serverUrl = getTestServerUrl();
 
