@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
 
     const validatedData = await validateProductData(body, locale);
 
-    const product = await createProduct(validatedData);
+    await createProduct(validatedData);
 
     return NextResponse.json(
       {
