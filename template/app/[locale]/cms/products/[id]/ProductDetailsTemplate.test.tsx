@@ -5,7 +5,7 @@ import { ProductDetailsTemplate } from './ProductDetailsTemplate';
 import { IProduct } from '@/domain/product';
 
 vi.mock('next-intl', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as any;
   return {
     ...actual,
     useTranslations: () => (key: string) => {
