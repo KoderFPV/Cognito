@@ -1,5 +1,6 @@
-@import '@/template/styles/variables';
-@import '@/template/styles/mixins';
+@use 'sass:color';
+@use '@/template/styles/variables' as *;
+@use '@/template/styles/mixins' as *;
 
 .container {
   display: flex;
@@ -51,7 +52,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: darken($background-secondary, 5%);
+    background-color: color.adjust($background-secondary, $lightness: -5%);
   }
 }
 
@@ -113,7 +114,7 @@
   transition: background-color 0.2s ease;
 
   &:hover:not(:disabled) {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
   }
 
   &:disabled {

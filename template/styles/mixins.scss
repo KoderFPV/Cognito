@@ -1,4 +1,5 @@
-@import './variables';
+@use 'sass:color';
+@use './variables' as *;
 
 // Responsive breakpoints
 @mixin mobile {
@@ -176,7 +177,7 @@
   }
 
   &:active:not(:disabled) {
-    background-color: darken($primary-700, 5%);
+    background-color: color.adjust($primary-700, $lightness: -5%);
   }
 }
 
@@ -258,7 +259,7 @@
   }
 
   &:active:not(:disabled) {
-    background-color: darken($accent-700, 5%);
+    background-color: color.adjust($accent-700, $lightness: -5%);
   }
 }
 
@@ -392,30 +393,30 @@
 
 @mixin alert-error {
   @include alert-base;
-  background-color: lighten($error, 40%);
+  background-color: color.adjust($error, $lightness: 40%);
   border-left-color: $error;
-  color: darken($error, 20%);
+  color: color.adjust($error, $lightness: -20%);
 }
 
 @mixin alert-warning {
   @include alert-base;
-  background-color: lighten($warning, 35%);
+  background-color: color.adjust($warning, $lightness: 35%);
   border-left-color: $warning;
-  color: darken($warning, 30%);
+  color: color.adjust($warning, $lightness: -30%);
 }
 
 @mixin alert-info {
   @include alert-base;
-  background-color: lighten($info, 40%);
+  background-color: color.adjust($info, $lightness: 40%);
   border-left-color: $info;
-  color: darken($info, 20%);
+  color: color.adjust($info, $lightness: -20%);
 }
 
 @mixin alert-success {
   @include alert-base;
-  background-color: lighten($success, 45%);
+  background-color: color.adjust($success, $lightness: 45%);
   border-left-color: $success;
-  color: darken($success, 20%);
+  color: color.adjust($success, $lightness: -20%);
 }
 
 // Text utilities

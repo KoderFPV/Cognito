@@ -1,5 +1,6 @@
-@import '@/template/styles/variables';
-@import '@/template/styles/mixins';
+@use 'sass:color';
+@use '@/template/styles/variables' as *;
+@use '@/template/styles/mixins' as *;
 
 .container {
   padding: $spacing-xl;
@@ -38,7 +39,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
   }
 
   &:focus-visible {
