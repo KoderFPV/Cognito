@@ -21,7 +21,7 @@ test.describe('CMS Logout', () => {
     await page.check('input[type="checkbox"]');
     await page.click('button[type="submit"]');
 
-    await page.waitForURL('**/en', { timeout: 10000 });
+    await page.waitForURL('**/en');
 
     await setUserAsAdmin(testUserEmail);
 
@@ -31,7 +31,7 @@ test.describe('CMS Logout', () => {
     await page.fill('input[type="password"]', TEST_USER_PASSWORD);
     await page.click('button[type="submit"]');
 
-    await page.waitForURL('**/en/cms', { timeout: 10000 });
+    await page.waitForURL('**/en/cms');
 
     const avatar = page.locator(`button[title="${testUserEmail}"]`);
     await expect(avatar).toBeVisible();
@@ -42,13 +42,13 @@ test.describe('CMS Logout', () => {
     await expect(logoutButton).toBeVisible();
     await logoutButton.click();
 
-    await page.waitForURL('**/en', { timeout: 10000 });
+    await page.waitForURL('**/en');
 
     await expect(page).toHaveURL(/\/en$/);
 
     await page.goto(`${serverUrl}/en/cms`);
 
-    await page.waitForURL('**/en/cms/login', { timeout: 10000 });
+    await page.waitForURL('**/en/cms/login');
     await expect(page).toHaveURL(/\/en\/cms\/login/);
   });
 });
