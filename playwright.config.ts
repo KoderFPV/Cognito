@@ -42,9 +42,6 @@ export default defineConfig({
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
-
-    /* Action timeout (30 seconds for individual actions) */
-    actionTimeout: 30 * 1000,
   },
 
   /* Configure projects for Desktop and Mobile Chrome */
