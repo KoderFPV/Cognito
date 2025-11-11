@@ -104,6 +104,24 @@
       "categoryRequired": "Kategoria jest wymagana",
       "validationFailed": "Walidacja nie powiodła się. Sprawdź formularz.",
       "submitFailed": "Nie udało się utworzyć produktu. Spróbuj ponownie."
+    },
+    "details": {
+      "back": "Wstecz",
+      "loading": "Ładowanie szczegółów produktu...",
+      "notFound": "Produkt nie znaleziony",
+      "fetchFailed": "Nie udało się pobrać szczegółów produktu",
+      "noImage": "Brak dostępnego obrazu",
+      "description": "Opis",
+      "price": "Cena",
+      "sku": "SKU",
+      "stock": "Stan magazynowy",
+      "category": "Kategoria",
+      "status": "Status",
+      "active": "Aktywny",
+      "inactive": "Nieaktywny",
+      "deleted": "Usunięty",
+      "created": "Utworzono",
+      "updated": "Zaktualizowano"
     }
   },
   "table": {

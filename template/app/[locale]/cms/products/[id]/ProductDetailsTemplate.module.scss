@@ -1,0 +1,126 @@
+@import '@/template/styles/variables';
+@import '@/template/styles/mixins';
+
+.container {
+  padding: $spacing-xl;
+}
+
+.backButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: transparent;
+  color: $primary-color;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: $spacing-lg;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.error {
+  padding: $spacing-lg;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  text-align: center;
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: $spacing-2xl;
+  margin-top: $spacing-xl;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.imageSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: $border-radius-lg;
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: $border-radius-lg;
+  color: $text-secondary;
+  font-size: $font-size-base;
+}
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-h1;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+  margin-bottom: $spacing-lg;
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  @include tablet-up {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.label {
+  font-weight: 600;
+  color: $text-primary;
+  min-width: 120px;
+
+  @include tablet-up {
+    min-width: 150px;
+  }
+}
+
+.value {
+  color: $text-secondary;
+  word-break: break-word;
+}
+
+.deleted {
+  color: #c33;
+  font-weight: 600;
+  padding: $spacing-xs $spacing-sm;
+  background-color: #fee;
+  border-radius: $border-radius-sm;
+  display: inline-block;
+}

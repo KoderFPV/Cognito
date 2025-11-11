@@ -1,5 +1,5 @@
 import { ObjectId, Db } from 'mongodb';
-import { IProduct, IProductCreateInput } from '@/domain/product';
+import { IProduct, IProductCreateInput, IProductMongo } from '@/domain/product';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 
 export const PRODUCTS_COLLECTION = 'products';
@@ -8,7 +8,7 @@ export const createProduct = async (
   productData: IProductCreateInput
 ): Promise<IProduct> => {
   const db = await connectToMongo();
-  const collection = db.collection<IProduct>(PRODUCTS_COLLECTION);
+  const collection = db.collection<IProductMongo>(PRODUCTS_COLLECTION);
 
   const now = new Date();
   const product = {
@@ -26,12 +26,37 @@ export const createProduct = async (
   };
 };
 
+export const getProductById = async (
+  db: Db,
+  productId: string
+): Promise<IProduct | null> => {
+  const collection = db.collection<IProductMongo>(PRODUCTS_COLLECTION);
+
+  try {
+    const objectId = new ObjectId(productId);
+    const product = await collection.findOne({
+      _id: objectId,
+    });
+
+    if (!product) {
+      return null;
+    }
+
+    return {
+      ...product,
+      _id: product._id.toString(),
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const findAllProducts = async (
   db: Db,
   limit: number,
   offset: number
 ): Promise<{ products: IProduct[]; total: number }> => {
-  const collection = db.collection<IProduct>(PRODUCTS_COLLECTION);
+  const collection = db.collection<IProductMongo>(PRODUCTS_COLLECTION);
 
   const total = await collection.countDocuments({ deleted: false });
   const products = await collection
