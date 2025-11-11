@@ -1,8 +1,12 @@
 import { ObjectId, Db } from 'mongodb';
-import { IProduct, IProductCreateInput, IProductMongo } from '@/domain/product';
+import { IProduct, IProductCreateInput } from '@/domain/product';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 
 export const PRODUCTS_COLLECTION = 'products';
+
+interface IProductMongo extends Omit<IProduct, '_id'> {
+  _id: ObjectId;
+}
 
 export const createProduct = async (
   productData: IProductCreateInput
