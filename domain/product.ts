@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-
 export interface IProduct {
   _id: string;
   name: string;
@@ -13,10 +11,6 @@ export interface IProduct {
   createdAt: Date;
   updatedAt: Date;
   deleted: boolean;
-}
-
-export interface IProductMongo extends Omit<IProduct, '_id'> {
-  _id: ObjectId;
 }
 
 export interface IProductCreateInput {
