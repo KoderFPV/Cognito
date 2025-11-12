@@ -560,6 +560,10 @@ npm start
 npm run lint
 ```
 
+## GitHub Tasks
+
+When working on a GitHub task, try to link the PR to the task using the "Closes #[task-number]" keyword in the PR description (only when it naturally comes up in the conversation, don't force it).
+
 ## Next Steps for Development
 
 When setting up this project, ensure to:

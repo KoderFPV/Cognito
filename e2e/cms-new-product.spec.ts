@@ -6,6 +6,7 @@ import {
   TEST_USER_PASSWORD,
   generateUniqueSKU,
 } from './helpers/testConfig';
+import { loginAsAdmin } from './helpers/testAuth';
 
 test.describe('CMS New Product Form', () => {
   const adminEmail = generateTestUserEmail('admin-product');
@@ -18,14 +19,6 @@ test.describe('CMS New Product Form', () => {
   test.afterAll(async () => {
     await deleteUser(adminEmail);
   });
-
-  const loginAsAdmin = async (page: any) => {
-    await page.goto(`${serverUrl}/en/cms/login`);
-    await page.fill('input[type="email"]', adminEmail);
-    await page.fill('input[type="password"]', TEST_USER_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/en/cms');
-  };
 
   test.describe('Authorization', () => {
     test('should redirect non-authenticated users to login', async ({ page }) => {
@@ -63,7 +56,7 @@ test.describe('CMS New Product Form', () => {
     });
 
     test('should allow admin users to access the page', async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
       await expect(page).toHaveURL(/\/en\/cms\/products\/newProduct/);
       await expect(page.getByRole('heading', { name: /add new product/i })).toBeVisible();
@@ -72,7 +65,7 @@ test.describe('CMS New Product Form', () => {
 
   test.describe('Form Display and Validation', () => {
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
     });
 
@@ -148,7 +141,7 @@ test.describe('CMS New Product Form', () => {
 
   test.describe('Product Creation', () => {
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       await page.goto(`${serverUrl}/en/cms/products/newProduct`);
     });
 
@@ -253,7 +246,7 @@ test.describe('CMS New Product Form', () => {
 
   test.describe('Product List', () => {
     test('should display created product on products list page', async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       const productName = `List Test Product ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
@@ -277,7 +270,7 @@ test.describe('CMS New Product Form', () => {
     });
 
     test('should display created product with correct price format on products list', async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       const productName = `Price Format Test ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
@@ -300,7 +293,7 @@ test.describe('CMS New Product Form', () => {
     });
 
     test('should filter products on list by name', async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       const productName = `Filterable Product ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
