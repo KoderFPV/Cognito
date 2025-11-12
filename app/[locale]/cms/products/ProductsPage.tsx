@@ -1,18 +1,25 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useProductsList } from '@/components/product/productsList/useProductsList';
 import { ProductsPageTemplate } from '@/template/app/[locale]/cms/products/ProductsPageTemplate';
 import { IColumn } from '@/components/tables/Table/TableHeader';
 import { IProduct } from '@/domain/product';
 
-const DEFAULT_PAGE_SIZE = 10;
+interface IProductsData {
+  products: IProduct[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
 
-export const ProductsPage = ({ locale }: { locale: string }) => {
+export const ProductsPage = ({ locale, data }: { locale: string; data: IProductsData }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('product.list');
-  const { products, isLoading, error, pagination, setPage, setPageSize } = useProductsList(DEFAULT_PAGE_SIZE);
 
   const columns: IColumn<IProduct>[] = [
     {
@@ -46,21 +53,33 @@ export const ProductsPage = ({ locale }: { locale: string }) => {
     router.push(`/${locale}/cms/products/newProduct`);
   };
 
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(page));
+    params.set('pageSize', String(data.pagination.pageSize));
+    router.push(`?${params.toString()}`);
+  };
+
+  const handlePageSizeChange = (pageSize: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', '1');
+    params.set('pageSize', String(pageSize));
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <ProductsPageTemplate
       columns={columns}
-      products={products}
-      isLoading={isLoading}
-      error={error}
-      pagination={pagination}
+      products={data.products}
+      error=""
+      pagination={data.pagination}
       onRowClick={handleRowClick}
       onAddProduct={handleAddProduct}
-      onPageChange={setPage}
-      onPageSizeChange={setPageSize}
+      onPageChange={handlePageChange}
+      onPageSizeChange={handlePageSizeChange}
       title={t('title')}
       addButtonLabel={t('addButton')}
       emptyMessage={t('empty')}
-      loadingMessage={t('loading')}
     />
   );
 };
