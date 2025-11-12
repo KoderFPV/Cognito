@@ -81,7 +81,6 @@ describe('ProductsPageTemplate', () => {
   const defaultProps = {
     columns: mockColumns,
     products: mockProducts,
-    isLoading: false,
     error: '',
     pagination: {
       page: 1,
@@ -95,7 +94,6 @@ describe('ProductsPageTemplate', () => {
     title: 'Products',
     addButtonLabel: 'Add Product',
     emptyMessage: 'No products found',
-    loadingMessage: 'Loading products...',
   };
 
   it('should render page title', () => {
@@ -171,11 +169,6 @@ describe('ProductsPageTemplate', () => {
     expect(screen.getByTestId('mock-table')).toBeInTheDocument();
   });
 
-  it('should display loading state in table', () => {
-    render(<ProductsPageTemplate {...defaultProps} isLoading={true} />);
-
-    expect(screen.getByTestId('mock-table')).toBeInTheDocument();
-  });
 
   it('should render Add Product button with proper styling', () => {
     render(<ProductsPageTemplate {...defaultProps} />);
@@ -191,11 +184,6 @@ describe('ProductsPageTemplate', () => {
     expect(heading.textContent).toMatch(/products/i);
   });
 
-  it('should pass isLoading prop to table', () => {
-    render(<ProductsPageTemplate {...defaultProps} isLoading={true} />);
-
-    expect(screen.getByTestId('mock-table')).toBeInTheDocument();
-  });
 
   it('should handle error state properly', () => {
     const errorMessage = 'Network error occurred';

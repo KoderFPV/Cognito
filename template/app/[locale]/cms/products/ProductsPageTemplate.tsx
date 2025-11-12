@@ -5,7 +5,6 @@ import styles from './ProductsPageTemplate.module.scss';
 export interface IProductsPageTemplateProps {
   columns: IColumn<IProduct>[];
   products: IProduct[];
-  isLoading?: boolean;
   error?: string;
   pagination: {
     page: number;
@@ -20,13 +19,11 @@ export interface IProductsPageTemplateProps {
   title: string;
   addButtonLabel: string;
   emptyMessage: string;
-  loadingMessage: string;
 }
 
 export const ProductsPageTemplate = ({
   columns,
   products,
-  isLoading,
   error,
   pagination,
   onRowClick,
@@ -36,7 +33,6 @@ export const ProductsPageTemplate = ({
   title,
   addButtonLabel,
   emptyMessage,
-  loadingMessage,
 }: IProductsPageTemplateProps) => {
   return (
     <div className={styles.container}>
@@ -52,10 +48,8 @@ export const ProductsPageTemplate = ({
       <Table
         data={products}
         columns={columns}
-        isLoading={isLoading}
         onRowClick={onRowClick}
         emptyMessage={emptyMessage}
-        loadingMessage={loadingMessage}
         pagination={pagination}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
