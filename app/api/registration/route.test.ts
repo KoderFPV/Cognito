@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import { Db } from 'mongodb';
 import { POST } from './route';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
+import { buildApiUrl } from '@/test/utils/apiTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
   connectToMongo: vi.fn(),
@@ -43,7 +44,7 @@ describe('POST /api/registration', () => {
       headers: new Headers({
         'content-type': 'application/json',
       }),
-      url: `http://localhost:3000/${locale}/api/registration`,
+      url: buildApiUrl(locale, '/api/registration'),
     } as NextRequest;
   };
 
