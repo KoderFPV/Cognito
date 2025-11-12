@@ -4,13 +4,12 @@ import {
   getTestServerUrl,
   generateTestUserEmail,
   TEST_USER_PASSWORD,
+  generateUniqueSKU,
 } from './helpers/testConfig';
 
 test.describe('CMS New Product Form', () => {
   const adminEmail = generateTestUserEmail('admin-product');
   const serverUrl = getTestServerUrl();
-
-  const generateUniqueSKU = () => `SKU-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
   test.beforeAll(async () => {
     await createAdminUser(adminEmail, TEST_USER_PASSWORD);
