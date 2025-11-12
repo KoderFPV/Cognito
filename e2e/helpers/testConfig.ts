@@ -9,7 +9,13 @@ export const getTestServerUrl = () => {
 };
 
 export const getTestLocale = () => {
-  return process.env.TEST_LOCALE || 'en';
+  const locale = process.env.TEST_LOCALE;
+
+  if (!locale) {
+    throw new Error('TEST_LOCALE environment variable must be set to run E2E tests');
+  }
+
+  return locale;
 };
 
 export const generateTestUserEmail = (prefix: string) => {
