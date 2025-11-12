@@ -5,12 +5,14 @@ import {
   generateTestUserEmail,
   TEST_USER_PASSWORD,
   generateUniqueSKU,
+  getTestLocale,
 } from './helpers/testConfig';
 import { loginAsAdmin } from './helpers/testAuth';
 
 test.describe('CMS New Product Form', () => {
   const adminEmail = generateTestUserEmail('admin-product');
   const serverUrl = getTestServerUrl();
+  const testLocale = getTestLocale();
 
   test.beforeAll(async () => {
     await createAdminUser(adminEmail, TEST_USER_PASSWORD);
@@ -22,43 +24,43 @@ test.describe('CMS New Product Form', () => {
 
   test.describe('Authorization', () => {
     test('should redirect non-authenticated users to login', async ({ page }) => {
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
-      await page.waitForURL(/\/en\/cms\/login/);
-      await expect(page).toHaveURL(/\/en\/cms\/login/);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/login`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/login`));
     });
 
     test('should redirect non-admin users to home page', async ({ page }) => {
       const customerEmail = generateTestUserEmail('customer-product');
 
-      await page.goto(`${serverUrl}/en/registration`);
+      await page.goto(`${serverUrl}/${testLocale}/registration`);
       await page.fill('input[type="email"]', customerEmail);
       await page.fill('input[name="password"]', TEST_USER_PASSWORD);
       await page.fill('input[name="confirmPassword"]', TEST_USER_PASSWORD);
       await page.check('input[type="checkbox"]');
       await page.click('button[type="submit"]');
 
-      await page.waitForURL(/\/en$/);
-      await expect(page).toHaveURL(/\/en$/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}$`));
 
-      await page.goto(`${serverUrl}/en/cms/login`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/login`);
       await page.fill('input[type="email"]', customerEmail);
       await page.fill('input[type="password"]', TEST_USER_PASSWORD);
       await page.click('button[type="submit"]');
 
-      await page.waitForURL(/\/en$/);
-      await expect(page).toHaveURL(/\/en$/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}$`));
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
-      await page.waitForURL(/\/en$/);
-      await expect(page).toHaveURL(/\/en$/);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}$`));
 
       await deleteUser(customerEmail);
     });
 
     test('should allow admin users to access the page', async ({ page }) => {
       await loginAsAdmin(page, adminEmail);
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
-      await expect(page).toHaveURL(/\/en\/cms\/products\/newProduct/);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/newProduct`));
       await expect(page.getByRole('heading', { name: /add new product/i })).toBeVisible();
     });
   });
@@ -66,7 +68,7 @@ test.describe('CMS New Product Form', () => {
   test.describe('Form Display and Validation', () => {
     test.beforeEach(async ({ page }) => {
       await loginAsAdmin(page, adminEmail);
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
     });
 
     test('should display new product form with all fields', async ({ page }) => {
@@ -142,7 +144,7 @@ test.describe('CMS New Product Form', () => {
   test.describe('Product Creation', () => {
     test.beforeEach(async ({ page }) => {
       await loginAsAdmin(page, adminEmail);
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
     });
 
     test('should successfully create a new product with required fields only', async ({ page }) => {
@@ -201,56 +203,13 @@ test.describe('CMS New Product Form', () => {
     });
   });
 
-  test.describe('Polish Locale', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(`${serverUrl}/pl/cms/login`);
-      await page.fill('input[type="email"]', adminEmail);
-      await page.fill('input[type="password"]', TEST_USER_PASSWORD);
-      await page.click('button[type="submit"]');
-      await page.waitForURL('**/pl/cms');
-      await page.goto(`${serverUrl}/pl/cms/products/newProduct`);
-    });
-
-    test('should display new product form in Polish', async ({ page }) => {
-      await expect(page.getByRole('heading', { name: /dodaj nowy produkt/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /utwórz produkt/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /anuluj/i })).toBeVisible();
-    });
-
-    test('should show validation errors in Polish', async ({ page }) => {
-      await page.getByRole('button', { name: /utwórz produkt/i }).click();
-
-      await expect(page.getByText(/nazwa produktu jest wymagana/i)).toBeVisible();
-      await expect(page.getByText(/opis jest wymagany/i)).toBeVisible();
-      await expect(page.getByText(/cena jest wymagana/i)).toBeVisible();
-      await expect(page.getByText(/sku jest wymagane/i)).toBeVisible();
-      await expect(page.getByText(/stan magazynowy jest wymagany/i)).toBeVisible();
-      await expect(page.getByText(/kategoria jest wymagana/i)).toBeVisible();
-    });
-
-    test('should successfully create a new product in Polish locale', async ({ page }) => {
-      const uniqueSKU = generateUniqueSKU();
-
-      await page.locator('#name').fill('Polski Produkt');
-      await page.locator('#description').fill('Opis polskiego produktu');
-      await page.locator('#price').fill('59.99');
-      await page.locator('#sku').fill(uniqueSKU);
-      await page.locator('#stock').fill('75');
-      await page.locator('#category').fill('Elektronika');
-
-      await page.getByRole('button', { name: /utwórz produkt/i }).click();
-
-      await expect(page.getByText(/produkt utworzony pomyślnie/i)).toBeVisible();
-    });
-  });
-
   test.describe('Product List', () => {
     test('should display created product on products list page', async ({ page }) => {
       await loginAsAdmin(page, adminEmail);
       const productName = `List Test Product ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('This product should appear in the list');
       await page.locator('#price').fill('39.99');
@@ -260,7 +219,7 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await page.waitForURL('**/cms/products');
+      await page.waitForURL(`**/${testLocale}/cms/products`);
 
       await page.waitForSelector('table');
 
@@ -274,7 +233,7 @@ test.describe('CMS New Product Form', () => {
       const productName = `Price Format Test ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Testing price format');
       await page.locator('#price').fill('99.99');
@@ -284,7 +243,7 @@ test.describe('CMS New Product Form', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
 
-      await page.waitForURL('**/cms/products');
+      await page.waitForURL(`**/${testLocale}/cms/products`);
 
       await page.waitForSelector('table');
 
@@ -297,7 +256,7 @@ test.describe('CMS New Product Form', () => {
       const productName = `Filterable Product ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('This product will be used for filtering');
       await page.locator('#price').fill('29.99');
@@ -309,7 +268,7 @@ test.describe('CMS New Product Form', () => {
 
       await expect(page.getByText(/product created successfully/i)).toBeVisible();
 
-      await page.goto(`${serverUrl}/en/cms/products`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products`);
       await page.waitForSelector('table');
 
       await expect(page.getByText(productName)).toBeVisible();

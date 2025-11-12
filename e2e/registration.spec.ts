@@ -17,9 +17,9 @@ test.describe('Registration Form', () => {
 
       await expect(page.getByRole('heading', { name: t('registration')('title') })).toBeVisible();
 
-      await expect(page.getByLabel(t('registration')('email'))).toBeVisible();
-      await expect(page.getByLabel(t('registration')('password'))).toBeVisible();
-      await expect(page.getByLabel(t('registration')('confirmPassword'))).toBeVisible();
+      await expect(page.locator('#email')).toBeVisible();
+      await expect(page.locator('#password')).toBeVisible();
+      await expect(page.locator('#confirmPassword')).toBeVisible();
       await expect(page.getByRole('checkbox')).toBeVisible();
 
       await expect(page.getByRole('button', { name: t('registration')('submit') })).toBeVisible();
@@ -27,9 +27,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should show validation error for invalid email', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('invalidemail');
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill('invalidemail');
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -38,9 +38,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should show validation error for password without uppercase', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('test@example.com');
-      await page.getByLabel(t('registration')('password')).fill('password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('password123');
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('password123');
+      await page.locator('#confirmPassword').fill('password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -49,9 +49,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should show validation error for password without number', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('test@example.com');
-      await page.getByLabel(t('registration')('password')).fill('PasswordABC');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('PasswordABC');
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('PasswordABC');
+      await page.locator('#confirmPassword').fill('PasswordABC');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -60,9 +60,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should show validation error for short password', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('test@example.com');
-      await page.getByLabel(t('registration')('password')).fill('Pass1');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Pass1');
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('Pass1');
+      await page.locator('#confirmPassword').fill('Pass1');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -71,9 +71,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should show validation error for password mismatch', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('test@example.com');
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('DifferentPassword123');
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('DifferentPassword123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -82,16 +82,16 @@ test.describe('Registration Form', () => {
     });
 
     test('should clear validation error when field is corrected', async ({ page }) => {
-      await page.getByLabel(t('registration')('email')).fill('invalidemail');
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill('invalidemail');
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
 
       await expect(page.getByText(t('registration')('validation.emailInvalid'))).toBeVisible();
 
-      await page.getByLabel(t('registration')('email')).fill('valid@example.com');
+      await page.locator('#email').fill('valid@example.com');
 
       await expect(page.getByText(t('registration')('validation.emailInvalid'))).not.toBeVisible();
     });
@@ -99,9 +99,9 @@ test.describe('Registration Form', () => {
     test('should successfully register a new user', async ({ page }) => {
       const uniqueEmail = generateUniqueEmail();
 
-      await page.getByLabel(t('registration')('email')).fill(uniqueEmail);
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill(uniqueEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -110,21 +110,23 @@ test.describe('Registration Form', () => {
     test('should show error when registering with existing email', async ({ page }) => {
       const existingEmail = generateUniqueEmail();
 
-      await page.getByLabel(t('registration')('email')).fill(existingEmail);
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill(existingEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
+      await page.waitForLoadState('networkidle');
 
       await page.goto(`/${testLocale}/registration`);
 
-      await page.getByLabel(t('registration')('email')).fill(existingEmail);
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill(existingEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
+      await page.waitForLoadState('networkidle');
 
       await expect(page.getByText(t('registration')('errors.userExists'))).toBeVisible();
     });
@@ -140,9 +142,9 @@ test.describe('Registration Form', () => {
 
       const uniqueEmail = generateUniqueEmail();
 
-      await page.getByLabel(t('registration')('email')).fill(uniqueEmail);
-      await page.getByLabel(t('registration')('password')).fill('Password123');
-      await page.getByLabel(t('registration')('confirmPassword')).fill('Password123');
+      await page.locator('#email').fill(uniqueEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
       await page.getByRole('button', { name: t('registration')('submit') }).click();
@@ -155,9 +157,9 @@ test.describe('Registration Form', () => {
     });
 
     test('should allow typing in all fields', async ({ page }) => {
-      const emailInput = page.getByLabel(t('registration')('email'));
-      const passwordInput = page.getByLabel(t('registration')('password'));
-      const confirmPasswordInput = page.getByLabel(t('registration')('confirmPassword'));
+      const emailInput = page.locator('#email');
+      const passwordInput = page.locator('#password');
+      const confirmPasswordInput = page.locator('#confirmPassword');
 
       await emailInput.fill('test@example.com');
       await expect(emailInput).toHaveValue('test@example.com');

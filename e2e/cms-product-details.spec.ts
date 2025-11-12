@@ -5,12 +5,14 @@ import {
   generateTestUserEmail,
   TEST_USER_PASSWORD,
   generateUniqueSKU,
+  getTestLocale,
 } from './helpers/testConfig';
 import { loginAsAdmin } from './helpers/testAuth';
 
 test.describe('CMS Product Details View', () => {
   const adminEmail = generateTestUserEmail('admin-details');
   const serverUrl = getTestServerUrl();
+  const testLocale = getTestLocale();
 
   test.beforeAll(async () => {
     await createAdminUser(adminEmail, TEST_USER_PASSWORD);
@@ -21,7 +23,7 @@ test.describe('CMS Product Details View', () => {
   });
 
   const createTestProduct = async (page: any, productName: string, sku: string) => {
-    await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+    await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
     await page.locator('#name').fill(productName);
     await page.locator('#description').fill('This is a test product for details view');
     await page.locator('#price').fill('99.99');
@@ -36,16 +38,16 @@ test.describe('CMS Product Details View', () => {
   test.describe('Authorization', () => {
     test('should redirect non-authenticated users to login when accessing product details', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
-      await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
-      await page.waitForURL(/\/en\/cms\/login/);
-      await expect(page).toHaveURL(/\/en\/cms\/login/);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/login`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/login`));
     });
 
     test('should redirect non-admin users to home page when accessing product details', async ({ page }) => {
       const customerEmail = generateTestUserEmail('customer-details');
       const fakeId = '507f1f77bcf86cd799439011';
 
-      await page.goto(`${serverUrl}/en/registration`);
+      await page.goto(`${serverUrl}/${testLocale}/registration`);
       await page.fill('input[type="email"]', customerEmail);
       await page.fill('input[name="password"]', TEST_USER_PASSWORD);
       await page.fill('input[name="confirmPassword"]', TEST_USER_PASSWORD);
@@ -53,14 +55,14 @@ test.describe('CMS Product Details View', () => {
       await page.click('button[type="submit"]');
       await page.waitForURL(/\/en$/);
 
-      await page.goto(`${serverUrl}/en/cms/login`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/login`);
       await page.fill('input[type="email"]', customerEmail);
       await page.fill('input[type="password"]', TEST_USER_PASSWORD);
       await page.click('button[type="submit"]');
-      await page.waitForURL(/\/en$/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
 
-      await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
-      await page.waitForURL(/\/en$/);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
       await expect(page).toHaveURL(/\/en$/);
 
       await deleteUser(customerEmail);
@@ -76,8 +78,8 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
-      await expect(page).toHaveURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
     });
   });
 
@@ -95,7 +97,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       await expect(page.getByText(productName)).toBeVisible();
       await expect(page.getByText('This is a test product for details view')).toBeVisible();
@@ -128,7 +130,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       await expect(page.locator('text=/^active$/i')).toBeVisible();
     });
@@ -156,7 +158,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       await expect(page.locator('text=/^inactive$/i')).toBeVisible();
     });
@@ -170,7 +172,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       const createdLabels = await page.getByText(/created/i).all();
       const updatedLabels = await page.getByText(/updated/i).all();
@@ -201,7 +203,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       await expect(page.getByText(/\$149\.99/)).toBeVisible();
     });
@@ -221,7 +223,7 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       await expect(page.getByText(productName)).toBeVisible();
     });
@@ -235,13 +237,13 @@ test.describe('CMS Product Details View', () => {
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
       await productRow.click();
 
-      await page.waitForURL(/\/en\/cms\/products\/[a-f0-9]{24}/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
       const backButton = page.getByRole('button', { name: /back/i });
       await backButton.click();
 
-      await page.waitForURL('**/en/cms/products');
-      await expect(page).toHaveURL(/\/en\/cms\/products$/);
+      await page.waitForURL(`**/${testLocale}/cms/products`);
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/products$`));
     });
   });
 
@@ -252,7 +254,7 @@ test.describe('CMS Product Details View', () => {
 
     test('should display error message for non-existent product ID', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
-      await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
 
       await expect(page.getByText(/not found/i)).toBeVisible();
     });
@@ -265,13 +267,13 @@ test.describe('CMS Product Details View', () => {
 
     test('should have back button visible even when error occurs', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
-      await page.goto(`${serverUrl}/en/cms/products/${fakeId}`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
 
       const backButton = page.getByRole('button', { name: /back/i });
       await expect(backButton).toBeVisible();
 
       await backButton.click();
-      await page.waitForURL('**/en/cms/products');
+      await page.waitForURL(`**/${testLocale}/cms/products`);
     });
   });
 });

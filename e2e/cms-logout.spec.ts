@@ -4,16 +4,18 @@ import {
   getTestServerUrl,
   generateTestUserEmail,
   TEST_USER_PASSWORD,
+  getTestLocale,
 } from './helpers/testConfig';
 
 test.describe('CMS Logout', () => {
   const testUserEmail = generateTestUserEmail('logout');
   const serverUrl = getTestServerUrl();
+  const testLocale = getTestLocale();
 
   test('should logout and redirect to home page when clicking logout button', async ({
     page,
   }) => {
-    await page.goto(`${serverUrl}/en/registration`);
+    await page.goto(`${serverUrl}/${testLocale}/registration`);
 
     await page.fill('input[type="email"]', testUserEmail);
     await page.fill('input[name="password"]', TEST_USER_PASSWORD);
@@ -21,17 +23,17 @@ test.describe('CMS Logout', () => {
     await page.check('input[type="checkbox"]');
     await page.click('button[type="submit"]');
 
-    await page.waitForURL('**/en');
+    await page.waitForURL(`**/${testLocale}`);
 
     await setUserAsAdmin(testUserEmail);
 
-    await page.goto(`${serverUrl}/en/cms/login`);
+    await page.goto(`${serverUrl}/${testLocale}/cms/login`);
 
     await page.fill('input[type="email"]', testUserEmail);
     await page.fill('input[type="password"]', TEST_USER_PASSWORD);
     await page.click('button[type="submit"]');
 
-    await page.waitForURL('**/en/cms');
+    await page.waitForURL(`**/${testLocale}/cms`);
 
     const avatar = page.locator(`button[title="${testUserEmail}"]`);
     await expect(avatar).toBeVisible();
@@ -42,13 +44,13 @@ test.describe('CMS Logout', () => {
     await expect(logoutButton).toBeVisible();
     await logoutButton.click();
 
-    await page.waitForURL('**/en');
+    await page.waitForURL(`**/${testLocale}`);
 
-    await expect(page).toHaveURL(/\/en$/);
+    await expect(page).toHaveURL(new RegExp(`\\/${testLocale}$`));
 
-    await page.goto(`${serverUrl}/en/cms`);
+    await page.goto(`${serverUrl}/${testLocale}/cms`);
 
-    await page.waitForURL('**/en/cms/login');
-    await expect(page).toHaveURL(/\/en\/cms\/login/);
+    await page.waitForURL(`**/${testLocale}/cms/login`);
+    await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/login`));
   });
 });
