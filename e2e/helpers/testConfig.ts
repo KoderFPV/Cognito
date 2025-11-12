@@ -8,6 +8,10 @@ export const getTestServerUrl = () => {
   return url;
 };
 
+export const getTestLocale = () => {
+  return process.env.TEST_LOCALE || 'en';
+};
+
 export const generateTestUserEmail = (prefix: string) => {
   return `test-${prefix}-${Date.now()}@example.com`;
 };

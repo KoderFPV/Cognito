@@ -28,6 +28,21 @@ npm run test:watch
 npm run test:coverage
 ```
 
+#### Unit Tests with Specific Locale
+
+Unit tests can be configured to run in different languages via the `TEST_LOCALE` environment variable:
+
+```bash
+# Run tests in English (default)
+TEST_LOCALE=en npm test
+
+# Run tests in Polish
+TEST_LOCALE=pl npm test
+
+# Run tests in watch mode with Polish locale
+TEST_LOCALE=pl npm run test:watch
+```
+
 ### E2E Tests
 
 **Important:** E2E tests require the Next.js dev server to be running.
@@ -43,11 +58,29 @@ npm run test:e2e:ui
 npm run test:e2e:headed
 ```
 
+#### E2E Tests with Specific Locale
+
+E2E tests can be configured to run in different languages via the `TEST_LOCALE` environment variable:
+
+```bash
+# Run E2E tests in English (default)
+TEST_LOCALE=en npm run test:e2e
+
+# Run E2E tests in Polish
+TEST_LOCALE=pl npm run test:e2e
+
+# Run E2E tests in UI mode with Polish locale
+TEST_LOCALE=pl npm run test:e2e:ui
+```
+
 ### All Tests
 
 ```bash
 # Run both unit and E2E tests
 npm run test:all
+
+# Run all tests with Polish locale
+TEST_LOCALE=pl npm run test:all
 ```
 
 ## File Structure
@@ -257,14 +290,45 @@ npx playwright show-report
 
 ### Environment Variables
 
-E2E tests require the following environment variable to be set in `.env.local`:
+Tests require the following environment variables to be set in `.env.local`:
 
 ```bash
 # E2E Tests Configuration
 TEST_SERVER_URL=http://localhost:2137
+
+# Test Locale Configuration (optional, defaults to 'en')
+TEST_LOCALE=en
 ```
 
-This variable is used by `getTestServerUrl()` helper to determine where the test server is running.
+**Variables explanation:**
+
+- `TEST_SERVER_URL` - URL where the test server is running (used by E2E tests)
+- `TEST_LOCALE` - Locale for test execution ('en' for English, 'pl' for Polish)
+
+### Locale Configuration
+
+Both unit and E2E tests respect the `TEST_LOCALE` environment variable:
+
+- **Default locale**: English (`en`)
+- **Available locales**: `en`, `pl`
+
+The locale is used to:
+- **Unit tests**: Control which translations are mocked/used
+- **E2E tests**: Determine which locale paths to test (e.g., `/en/registration` vs `/pl/registration`)
+- **Translation helpers**: Fetch correct language strings for assertions
+
+**Set locale in `.env.local`:**
+```bash
+TEST_LOCALE=pl
+```
+
+**Override at runtime:**
+```bash
+TEST_LOCALE=pl npm test
+TEST_LOCALE=pl npm run test:e2e
+```
+
+This approach ensures tests validate the application in different languages without code changes.
 
 ### Vitest Configuration (`vitest.config.ts`)
 
@@ -288,8 +352,30 @@ This variable is used by `getTestServerUrl()` helper to determine where the test
 Provides test configuration and utilities:
 
 - `getTestServerUrl()` - Returns test server URL from `TEST_SERVER_URL` env variable
+- `getTestLocale()` - Returns test locale from `TEST_LOCALE` env variable (defaults to 'en')
 - `generateTestUserEmail(prefix: string)` - Generates unique test user email
 - `TEST_USER_PASSWORD` - Standard password for test users
+- `generateUniqueSKU()` - Generates unique SKU for product tests
+
+### `translations.ts`
+
+Provides translation helper for E2E tests:
+
+- `createTranslationHelper(locale: string)` - Creates a translation function for the specified locale
+  - Returns a function that takes namespace and key and returns the translated string
+  - Example: `t('registration')('title')` returns "Create Account" or "Załóż konto" depending on locale
+
+**Usage:**
+```typescript
+import { createTranslationHelper } from './helpers/translations';
+import { getTestLocale } from './helpers/testConfig';
+
+const testLocale = getTestLocale();
+const t = createTranslationHelper(testLocale);
+
+const heading = t('registration')('title');
+const email = t('registration')('email');
+```
 
 ### `testUser.ts`
 
