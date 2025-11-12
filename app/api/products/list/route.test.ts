@@ -6,12 +6,10 @@ import { buildApiUrl } from '@/test/utils/apiTestUtils';
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
 vi.mock('next-intl/server');
-vi.mock('@/services/locale/locale.service');
 
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { findAllProducts } from '@/models/products/productsModel';
 import { getTranslations } from 'next-intl/server';
-import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 describe('/api/products/list route', () => {
   const mockDb = {};
@@ -35,7 +33,6 @@ describe('/api/products/list route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(connectToMongo).mockResolvedValue(mockDb as any);
-    vi.mocked(getLocaleFromRequest).mockReturnValue('en');
     vi.mocked(getTranslations).mockResolvedValue(((key: string) => mockTranslations[key as keyof typeof mockTranslations]) as any);
     vi.mocked(findAllProducts).mockResolvedValue({
       products: mockProducts,
@@ -118,13 +115,6 @@ describe('/api/products/list route', () => {
 
     expect(response.status).toBe(500);
     expect(data.error).toBe('Failed to fetch products');
-  });
-
-  it('should use correct locale from request', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list')));
-    await GET(request);
-
-    expect(vi.mocked(getLocaleFromRequest)).toHaveBeenCalledWith(request);
   });
 
   it('should call getTranslations with correct namespace', async () => {

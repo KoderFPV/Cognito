@@ -9,10 +9,6 @@ vi.mock('@/clients/mongodb/mongodb', () => ({
   connectToMongo: vi.fn(),
 }));
 
-vi.mock('@/services/locale/locale.service', () => ({
-  getLocaleFromRequest: vi.fn(() => 'en'),
-}));
-
 vi.mock('@/services/validation/validation.service', () => ({
   initZodI18n: vi.fn(),
 }));
@@ -39,12 +35,14 @@ describe('POST /api/registration', () => {
   });
 
   const createRequest = (body: any, locale: string): NextRequest => {
+    const url = new URL(buildApiUrl(locale, '/api/registration'));
     return {
       json: async () => body,
       headers: new Headers({
         'content-type': 'application/json',
       }),
-      url: buildApiUrl(locale, '/api/registration'),
+      url: url.toString(),
+      nextUrl: url,
     } as NextRequest;
   };
 
