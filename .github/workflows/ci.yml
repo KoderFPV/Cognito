@@ -98,8 +98,8 @@ jobs:
       - name: Build project
         run: npm run build
 
-  e2e-tests:
-    name: E2E Tests
+  e2e-tests-mobile:
+    name: E2E Tests (Mobile Chrome)
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -134,13 +134,60 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run E2E tests
-        run: npm run test:e2e
+      - name: Run E2E tests (Mobile Chrome)
+        run: npm run test:e2e -- --project='Mobile Chrome'
 
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-mobile
+          path: playwright-report/
+          retention-days: 7
+
+  e2e-tests-desktop:
+    name: E2E Tests (Desktop Chrome)
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/cognito-e2e
+      NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
+      NEXTAUTH_URL: http://localhost:2137
+      TEST_SERVER_URL: http://localhost:2137
+      NODE_ENV: development
+      PORT: 2137
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run E2E tests (Desktop Chrome)
+        run: npm run test:e2e -- --project='Desktop Chrome'
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-desktop
           path: playwright-report/
           retention-days: 7
