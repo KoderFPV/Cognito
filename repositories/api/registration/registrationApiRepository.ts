@@ -12,9 +12,10 @@ export interface IRegistrationResponse {
 }
 
 export const registerUser = async (
-  data: IRegistrationRequest
+  data: IRegistrationRequest,
+  locale: string
 ): Promise<IRegistrationResponse> => {
-  const response = await fetch('/api/registration', {
+  const response = await fetch(`/${locale}/api/registration`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

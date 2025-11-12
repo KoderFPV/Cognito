@@ -11,7 +11,7 @@ test.describe('i18n Routing', () => {
     test('should redirect root / to default locale', async ({ page }) => {
       await page.goto('/');
 
-      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/?`));
+      await expect(page).toHaveURL(new RegExp(`\\/en\\/?`));
     });
 
     test('should handle non-existent locale by redirecting to default', async ({ page }) => {
