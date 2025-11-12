@@ -11,19 +11,10 @@ import { loginAsAdmin } from './helpers/testAuth';
 import { createTranslationHelper } from './helpers/translations';
 
 test.describe('CMS Product Details View', () => {
-  const adminEmail = generateTestUserEmail('admin-details');
   const serverUrl = getTestServerUrl();
   const testLocale = getTestLocale();
   const t = createTranslationHelper(testLocale);
   const tProduct = t('product');
-
-  test.beforeAll(async () => {
-    await createAdminUser(adminEmail, TEST_USER_PASSWORD);
-  });
-
-  test.afterAll(async () => {
-    await deleteUser(adminEmail);
-  });
 
   const createTestProduct = async (page: any, productName: string, sku: string) => {
     await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
@@ -36,9 +27,21 @@ test.describe('CMS Product Details View', () => {
 
     await page.getByRole('button', { name: tProduct('form.submit') }).click();
     await page.waitForURL('**/cms/products');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: new RegExp(productName) }).first().waitFor({ state: 'visible' });
   };
 
   test.describe('Authorization', () => {
+    const authAdminEmail = generateTestUserEmail('admin-auth');
+
+    test.beforeAll(async () => {
+      await createAdminUser(authAdminEmail, TEST_USER_PASSWORD);
+    });
+
+    test.afterAll(async () => {
+      await deleteUser(authAdminEmail);
+    });
+
     test('should redirect non-authenticated users to login when accessing product details', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
       await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
@@ -72,13 +75,14 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should allow admin users to access product details page', async ({ page }) => {
-      await loginAsAdmin(page, adminEmail);
-      const productName = `Details Access Test ${Date.now()}`;
+      await loginAsAdmin(page, authAdminEmail);
+      const productName = `Details Access Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
       await createTestProduct(page, productName, uniqueSKU);
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -87,17 +91,28 @@ test.describe('CMS Product Details View', () => {
   });
 
   test.describe('Product Details Display', () => {
+    const displayAdminEmail = generateTestUserEmail('admin-display');
+
+    test.beforeAll(async () => {
+      await createAdminUser(displayAdminEmail, TEST_USER_PASSWORD);
+    });
+
+    test.afterAll(async () => {
+      await deleteUser(displayAdminEmail);
+    });
+
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page, adminEmail);
+      await loginAsAdmin(page, displayAdminEmail);
     });
 
     test('should display all product details fields correctly', async ({ page }) => {
-      const productName = `Full Details Test ${Date.now()}`;
+      const productName = `Full Details Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
       await createTestProduct(page, productName, uniqueSKU);
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -111,10 +126,10 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should display "Active" status for active products', async ({ page }) => {
-      const productName = `Active Status Test ${Date.now()}`;
+      const productName = `Active Status Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Testing active status display');
       await page.locator('#price').fill('49.99');
@@ -129,8 +144,10 @@ test.describe('CMS Product Details View', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
       await page.waitForURL('**/cms/products');
+      await page.waitForLoadState('networkidle');
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -139,10 +156,10 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should display "Inactive" status for inactive products', async ({ page }) => {
-      const productName = `Inactive Status Test ${Date.now()}`;
+      const productName = `Inactive Status Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Testing inactive status display');
       await page.locator('#price').fill('29.99');
@@ -157,8 +174,10 @@ test.describe('CMS Product Details View', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
       await page.waitForURL('**/cms/products');
+      await page.waitForLoadState('networkidle');
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -167,12 +186,13 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should display created and updated timestamps with date and time', async ({ page }) => {
-      const productName = `Timestamp Test ${Date.now()}`;
+      const productName = `Timestamp Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
       await createTestProduct(page, productName, uniqueSKU);
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -188,11 +208,11 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should display price with correct currency format', async ({ page }) => {
-      const productName = `Price Format Test ${Date.now()}`;
+      const productName = `Price Format Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
       const testPrice = '149.99';
 
-      await page.goto(`${serverUrl}/en/cms/products/newProduct`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await page.locator('#name').fill(productName);
       await page.locator('#description').fill('Price format testing');
       await page.locator('#price').fill(testPrice);
@@ -202,8 +222,10 @@ test.describe('CMS Product Details View', () => {
 
       await page.getByRole('button', { name: /create product/i }).click();
       await page.waitForURL('**/cms/products');
+      await page.waitForLoadState('networkidle');
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -213,17 +235,28 @@ test.describe('CMS Product Details View', () => {
   });
 
   test.describe('Navigation', () => {
+    const navAdminEmail = generateTestUserEmail('admin-nav');
+
+    test.beforeAll(async () => {
+      await createAdminUser(navAdminEmail, TEST_USER_PASSWORD);
+    });
+
+    test.afterAll(async () => {
+      await deleteUser(navAdminEmail);
+    });
+
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page, adminEmail);
+      await loginAsAdmin(page, navAdminEmail);
     });
 
     test('should navigate to product details when clicking on product row from list', async ({ page }) => {
-      const productName = `Navigation Test ${Date.now()}`;
+      const productName = `Navigation Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
       await createTestProduct(page, productName, uniqueSKU);
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -232,12 +265,13 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should have back button that returns to products list', async ({ page }) => {
-      const productName = `Back Button Test ${Date.now()}`;
+      const productName = `Back Button Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const uniqueSKU = generateUniqueSKU();
 
       await createTestProduct(page, productName, uniqueSKU);
 
       const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
       await productRow.click();
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
@@ -251,8 +285,18 @@ test.describe('CMS Product Details View', () => {
   });
 
   test.describe('Error Handling', () => {
+    const errorAdminEmail = generateTestUserEmail('admin-error');
+
+    test.beforeAll(async () => {
+      await createAdminUser(errorAdminEmail, TEST_USER_PASSWORD);
+    });
+
+    test.afterAll(async () => {
+      await deleteUser(errorAdminEmail);
+    });
+
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page, adminEmail);
+      await loginAsAdmin(page, errorAdminEmail);
     });
 
     test('should display error message for non-existent product ID', async ({ page }) => {
@@ -263,7 +307,7 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should display error message for invalid product ID format', async ({ page }) => {
-      await page.goto(`${serverUrl}/en/cms/products/invalid-id`);
+      await page.goto(`${serverUrl}/${testLocale}/cms/products/invalid-id`);
 
       await expect(page.getByText(/not found|failed/i)).toBeVisible();
     });
