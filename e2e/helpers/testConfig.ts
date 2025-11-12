@@ -13,3 +13,7 @@ export const generateTestUserEmail = (prefix: string) => {
 };
 
 export const TEST_USER_PASSWORD = 'TestPassword123';
+
+export const generateUniqueSKU = () => {
+  return `SKU-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+};
