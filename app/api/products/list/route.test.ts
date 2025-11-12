@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { buildApiUrl } from '@/test/utils/apiTestUtils';
+import { getTestLocale } from '@/test/utils/localeTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
@@ -122,7 +123,7 @@ describe('/api/products/list route', () => {
     await GET(request);
 
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'en',
+      locale: getTestLocale(),
       namespace: 'api.products',
     });
   });

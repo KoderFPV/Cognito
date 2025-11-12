@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { buildApiUrl } from '@/test/utils/apiTestUtils';
+import { getTestLocale } from '@/test/utils/localeTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
@@ -105,7 +106,7 @@ describe('/api/products/[id] route', () => {
     await GET(request, { params });
 
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'en',
+      locale: getTestLocale(),
       namespace: 'api.product',
     });
   });
@@ -179,14 +180,14 @@ describe('/api/products/[id] route', () => {
     expect(data.data.isActive).toBe(false);
   });
 
-  it('should work with Polish locale URL', async () => {
+  it('should work regardless of TEST_LOCALE setting', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
     const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
 
     expect(response.status).toBe(200);
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'pl',
+      locale: getTestLocale(),
       namespace: 'api.product',
     });
   });
