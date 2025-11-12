@@ -106,6 +106,7 @@ jobs:
     name: E2E Tests (${{ matrix.locale }} - ${{ matrix.browser }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         locale: ['en', 'pl']
         browser: ['Mobile Chrome', 'Desktop Chrome']
