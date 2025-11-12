@@ -8,11 +8,15 @@ import {
   getTestLocale,
 } from './helpers/testConfig';
 import { loginAsAdmin } from './helpers/testAuth';
+import { createTranslationHelper } from './helpers/translations';
 
 test.describe('CMS New Product Form', () => {
   const adminEmail = generateTestUserEmail('admin-product');
   const serverUrl = getTestServerUrl();
   const testLocale = getTestLocale();
+  const t = createTranslationHelper(testLocale);
+  const tProduct = t('product');
+  const tCommon = t('common');
 
   test.beforeAll(async () => {
     await createAdminUser(adminEmail, TEST_USER_PASSWORD);
@@ -61,7 +65,7 @@ test.describe('CMS New Product Form', () => {
       await loginAsAdmin(page, adminEmail);
       await page.goto(`${serverUrl}/${testLocale}/cms/products/newProduct`);
       await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/newProduct`));
-      await expect(page.getByRole('heading', { name: /add new product/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: tProduct('form.title') })).toBeVisible();
     });
   });
 
@@ -72,28 +76,28 @@ test.describe('CMS New Product Form', () => {
     });
 
     test('should display new product form with all fields', async ({ page }) => {
-      await expect(page.getByRole('heading', { name: /add new product/i })).toBeVisible();
-      await expect(page.getByLabel(/product name/i)).toBeVisible();
-      await expect(page.getByLabel(/description/i)).toBeVisible();
-      await expect(page.getByLabel(/price/i)).toBeVisible();
-      await expect(page.getByLabel(/sku/i)).toBeVisible();
-      await expect(page.getByLabel(/stock/i)).toBeVisible();
-      await expect(page.getByLabel(/category/i)).toBeVisible();
-      await expect(page.getByLabel(/product image/i)).toBeVisible();
-      await expect(page.getByLabel(/active/i)).toBeVisible();
-      await expect(page.getByRole('button', { name: /create product/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /cancel/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: tProduct('form.title') })).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.name'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.description'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.price'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.sku'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.stock'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.category'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.image'))).toBeVisible();
+      await expect(page.getByLabel(tProduct('form.isActive'))).toBeVisible();
+      await expect(page.getByRole('button', { name: tProduct('form.submit') })).toBeVisible();
+      await expect(page.getByRole('button', { name: tCommon('cancel') })).toBeVisible();
     });
 
     test('should show validation error for empty required fields', async ({ page }) => {
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/product name is required/i)).toBeVisible();
-      await expect(page.getByText(/description is required/i)).toBeVisible();
-      await expect(page.getByText(/price is required/i)).toBeVisible();
-      await expect(page.getByText(/sku is required/i)).toBeVisible();
-      await expect(page.getByText(/stock is required/i)).toBeVisible();
-      await expect(page.getByText(/category is required/i)).toBeVisible();
+      await expect(page.getByText(tProduct('errors.nameRequired'))).toBeVisible();
+      await expect(page.getByText(tProduct('errors.descriptionRequired'))).toBeVisible();
+      await expect(page.getByText(tProduct('errors.priceRequired'))).toBeVisible();
+      await expect(page.getByText(tProduct('errors.skuRequired'))).toBeVisible();
+      await expect(page.getByText(tProduct('errors.stockRequired'))).toBeVisible();
+      await expect(page.getByText(tProduct('errors.categoryRequired'))).toBeVisible();
     });
 
     test('should show validation error for invalid price', async ({ page }) => {
@@ -103,9 +107,9 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#sku').fill('TEST-SKU');
       await page.locator('#stock').fill('10');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/price must be a positive number/i)).toBeVisible();
+      await expect(page.getByText(tProduct('errors.priceInvalid'))).toBeVisible();
     });
 
     test('should show validation error for invalid stock', async ({ page }) => {
@@ -115,17 +119,17 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#sku').fill('TEST-SKU');
       await page.locator('#stock').fill('-5');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/stock must be a non-negative integer/i)).toBeVisible();
+      await expect(page.getByText(tProduct('errors.stockInvalid'))).toBeVisible();
     });
 
     test('should clear validation error when field is corrected', async ({ page }) => {
-      await page.getByRole('button', { name: /create product/i }).click();
-      await expect(page.getByText(/product name is required/i)).toBeVisible();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
+      await expect(page.getByText(tProduct('errors.nameRequired'))).toBeVisible();
 
       await page.locator('#name').fill('Test Product');
-      await expect(page.getByText(/product name is required/i)).not.toBeVisible();
+      await expect(page.getByText(tProduct('errors.nameRequired'))).not.toBeVisible();
     });
 
     test('should show validation error for missing category', async ({ page }) => {
@@ -135,9 +139,9 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#sku').fill('TEST-SKU');
       await page.locator('#stock').fill('10');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/category is required/i)).toBeVisible();
+      await expect(page.getByText(tProduct('errors.categoryRequired'))).toBeVisible();
     });
   });
 
@@ -157,9 +161,9 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('100');
       await page.locator('#category').fill('General');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
+      await expect(page.getByText(tProduct('form.successMessage'))).toBeVisible();
     });
 
     test('should successfully create a new product with all fields', async ({ page }) => {
@@ -172,14 +176,14 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('50');
       await page.locator('#category').fill('Electronics');
 
-      const checkbox = page.getByLabel(/active/i);
+      const checkbox = page.getByLabel(tProduct('form.isActive'));
       if (!(await checkbox.isChecked())) {
         await checkbox.check();
       }
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
+      await expect(page.getByText(tProduct('form.successMessage'))).toBeVisible();
     });
 
     test('should create product with active checkbox unchecked', async ({ page }) => {
@@ -192,12 +196,12 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('0');
       await page.locator('#category').fill('Electronics');
 
-      const checkbox = page.getByLabel(/active/i);
+      const checkbox = page.getByLabel(tProduct('form.isActive'));
       if (await checkbox.isChecked()) {
         await checkbox.uncheck();
       }
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
       await page.waitForURL('**/cms/products');
     });
@@ -217,7 +221,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('25');
       await page.locator('#category').fill('Testing');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
       await page.waitForURL(`**/${testLocale}/cms/products`);
 
@@ -241,7 +245,7 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('10');
       await page.locator('#category').fill('Testing');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
       await page.waitForURL(`**/${testLocale}/cms/products`);
 
@@ -264,9 +268,9 @@ test.describe('CMS New Product Form', () => {
       await page.locator('#stock').fill('50');
       await page.locator('#category').fill('Testing');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
 
-      await expect(page.getByText(/product created successfully/i)).toBeVisible();
+      await expect(page.getByText(tProduct('form.successMessage'))).toBeVisible();
 
       await page.goto(`${serverUrl}/${testLocale}/cms/products`);
       await page.waitForSelector('table');

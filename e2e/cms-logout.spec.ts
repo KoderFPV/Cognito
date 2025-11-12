@@ -6,11 +6,14 @@ import {
   TEST_USER_PASSWORD,
   getTestLocale,
 } from './helpers/testConfig';
+import { createTranslationHelper } from './helpers/translations';
 
 test.describe('CMS Logout', () => {
   const testUserEmail = generateTestUserEmail('logout');
   const serverUrl = getTestServerUrl();
   const testLocale = getTestLocale();
+  const t = createTranslationHelper(testLocale);
+  const tCommon = t('common');
 
   test('should logout and redirect to home page when clicking logout button', async ({
     page,
@@ -40,7 +43,7 @@ test.describe('CMS Logout', () => {
 
     await avatar.click();
 
-    const logoutButton = page.getByRole('button', { name: /logout/i });
+    const logoutButton = page.getByRole('button', { name: tCommon('logout') });
     await expect(logoutButton).toBeVisible();
     await logoutButton.click();
 

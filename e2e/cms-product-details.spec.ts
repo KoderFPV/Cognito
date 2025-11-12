@@ -8,11 +8,14 @@ import {
   getTestLocale,
 } from './helpers/testConfig';
 import { loginAsAdmin } from './helpers/testAuth';
+import { createTranslationHelper } from './helpers/translations';
 
 test.describe('CMS Product Details View', () => {
   const adminEmail = generateTestUserEmail('admin-details');
   const serverUrl = getTestServerUrl();
   const testLocale = getTestLocale();
+  const t = createTranslationHelper(testLocale);
+  const tProduct = t('product');
 
   test.beforeAll(async () => {
     await createAdminUser(adminEmail, TEST_USER_PASSWORD);
@@ -31,7 +34,7 @@ test.describe('CMS Product Details View', () => {
     await page.locator('#stock').fill('42');
     await page.locator('#category').fill('Test Category');
 
-    await page.getByRole('button', { name: /create product/i }).click();
+    await page.getByRole('button', { name: tProduct('form.submit') }).click();
     await page.waitForURL('**/cms/products');
   };
 
@@ -53,7 +56,7 @@ test.describe('CMS Product Details View', () => {
       await page.fill('input[name="confirmPassword"]', TEST_USER_PASSWORD);
       await page.check('input[type="checkbox"]');
       await page.click('button[type="submit"]');
-      await page.waitForURL(/\/en$/);
+      await page.waitForURL(new RegExp(`\\/${testLocale}$`));
 
       await page.goto(`${serverUrl}/${testLocale}/cms/login`);
       await page.fill('input[type="email"]', customerEmail);
@@ -63,7 +66,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
       await page.waitForURL(new RegExp(`\\/${testLocale}$`));
-      await expect(page).toHaveURL(/\/en$/);
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}$`));
 
       await deleteUser(customerEmail);
     });
