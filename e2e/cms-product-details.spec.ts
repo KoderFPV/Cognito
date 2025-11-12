@@ -6,6 +6,7 @@ import {
   TEST_USER_PASSWORD,
   generateUniqueSKU,
 } from './helpers/testConfig';
+import { loginAsAdmin } from './helpers/testAuth';
 
 test.describe('CMS Product Details View', () => {
   const adminEmail = generateTestUserEmail('admin-details');
@@ -18,14 +19,6 @@ test.describe('CMS Product Details View', () => {
   test.afterAll(async () => {
     await deleteUser(adminEmail);
   });
-
-  const loginAsAdmin = async (page: any) => {
-    await page.goto(`${serverUrl}/en/cms/login`);
-    await page.fill('input[type="email"]', adminEmail);
-    await page.fill('input[type="password"]', TEST_USER_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/en/cms');
-  };
 
   const createTestProduct = async (page: any, productName: string, sku: string) => {
     await page.goto(`${serverUrl}/en/cms/products/newProduct`);
@@ -74,7 +67,7 @@ test.describe('CMS Product Details View', () => {
     });
 
     test('should allow admin users to access product details page', async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
       const productName = `Details Access Test ${Date.now()}`;
       const uniqueSKU = generateUniqueSKU();
 
@@ -90,7 +83,7 @@ test.describe('CMS Product Details View', () => {
 
   test.describe('Product Details Display', () => {
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
     });
 
     test('should display all product details fields correctly', async ({ page }) => {
@@ -216,7 +209,7 @@ test.describe('CMS Product Details View', () => {
 
   test.describe('Navigation', () => {
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
     });
 
     test('should navigate to product details when clicking on product row from list', async ({ page }) => {
@@ -254,7 +247,7 @@ test.describe('CMS Product Details View', () => {
 
   test.describe('Error Handling', () => {
     test.beforeEach(async ({ page }) => {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, adminEmail);
     });
 
     test('should display error message for non-existent product ID', async ({ page }) => {
