@@ -37,12 +37,13 @@ describe('POST /api/registration', () => {
     vi.clearAllMocks();
   });
 
-  const createRequest = (body: any): NextRequest => {
+  const createRequest = (body: any, locale: string): NextRequest => {
     return {
       json: async () => body,
       headers: new Headers({
         'content-type': 'application/json',
       }),
+      url: `http://localhost:3000/${locale}/api/registration`,
     } as NextRequest;
   };
 
@@ -53,7 +54,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'en');
     const response = await POST(request);
     const data = await response.json();
 
@@ -71,7 +72,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'pl');
     const response = await POST(request);
     const data = await response.json();
 
@@ -86,7 +87,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'en');
     const response = await POST(request);
     const data = await response.json();
 
@@ -101,7 +102,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'pl');
     const response = await POST(request);
     const data = await response.json();
 
@@ -116,7 +117,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'en');
     const response = await POST(request);
     const data = await response.json();
 
@@ -131,7 +132,7 @@ describe('POST /api/registration', () => {
       termsAccepted: false,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'pl');
     const response = await POST(request);
     const data = await response.json();
 
@@ -146,10 +147,10 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request1 = createRequest(requestBody);
+    const request1 = createRequest(requestBody, 'en');
     await POST(request1);
 
-    const request2 = createRequest(requestBody);
+    const request2 = createRequest(requestBody, 'en');
     const response = await POST(request2);
     const data = await response.json();
 
@@ -164,7 +165,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'pl');
     const response = await POST(request);
     const data = await response.json();
 
@@ -180,7 +181,7 @@ describe('POST /api/registration', () => {
       termsAccepted: true,
     };
 
-    const request = createRequest(requestBody);
+    const request = createRequest(requestBody, 'en');
     const response = await POST(request);
     const data = await response.json();
 
