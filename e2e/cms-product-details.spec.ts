@@ -137,12 +137,12 @@ test.describe('CMS Product Details View', () => {
       await page.locator('#stock').fill('10');
       await page.locator('#category').fill('Test');
 
-      const activeCheckbox = page.getByLabel(/active/i);
+      const activeCheckbox = page.getByLabel(tProduct('form.isActive'));
       if (!(await activeCheckbox.isChecked())) {
         await activeCheckbox.check();
       }
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
       await page.waitForURL('**/cms/products');
       await page.waitForLoadState('networkidle');
 
@@ -152,7 +152,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
-      await expect(page.locator('text=/^active$/i')).toBeVisible();
+      await expect(page.locator(`text=/^${tProduct('details.active')}$/i`)).toBeVisible();
     });
 
     test('should display "Inactive" status for inactive products', async ({ page }) => {
@@ -167,12 +167,12 @@ test.describe('CMS Product Details View', () => {
       await page.locator('#stock').fill('5');
       await page.locator('#category').fill('Test');
 
-      const activeCheckbox = page.getByLabel(/active/i);
+      const activeCheckbox = page.getByLabel(tProduct('form.isActive'));
       if (await activeCheckbox.isChecked()) {
         await activeCheckbox.uncheck();
       }
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
       await page.waitForURL('**/cms/products');
       await page.waitForLoadState('networkidle');
 
@@ -182,7 +182,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
-      await expect(page.locator('text=/^inactive$/i')).toBeVisible();
+      await expect(page.locator(`text=/^${tProduct('details.inactive')}$/i`)).toBeVisible();
     });
 
     test('should display created and updated timestamps with date and time', async ({ page }) => {
@@ -197,8 +197,8 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
-      const createdLabels = await page.getByText(/created/i).all();
-      const updatedLabels = await page.getByText(/updated/i).all();
+      const createdLabels = await page.getByText(tProduct('details.created')).all();
+      const updatedLabels = await page.getByText(tProduct('details.updated')).all();
 
       await expect(createdLabels.length).toBeGreaterThan(0);
       await expect(updatedLabels.length).toBeGreaterThan(0);
@@ -220,7 +220,7 @@ test.describe('CMS Product Details View', () => {
       await page.locator('#stock').fill('20');
       await page.locator('#category').fill('Premium');
 
-      await page.getByRole('button', { name: /create product/i }).click();
+      await page.getByRole('button', { name: tProduct('form.submit') }).click();
       await page.waitForURL('**/cms/products');
       await page.waitForLoadState('networkidle');
 
@@ -276,7 +276,7 @@ test.describe('CMS Product Details View', () => {
 
       await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
 
-      const backButton = page.getByRole('button', { name: /back/i });
+      const backButton = page.getByRole('button', { name: tProduct('details.back') });
       await backButton.click();
 
       await page.waitForURL(`**/${testLocale}/cms/products`);
@@ -303,20 +303,20 @@ test.describe('CMS Product Details View', () => {
       const fakeId = '507f1f77bcf86cd799439011';
       await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
 
-      await expect(page.getByText(/not found/i)).toBeVisible();
+      await expect(page.getByText(tProduct('details.notFound'))).toBeVisible();
     });
 
     test('should display error message for invalid product ID format', async ({ page }) => {
       await page.goto(`${serverUrl}/${testLocale}/cms/products/invalid-id`);
 
-      await expect(page.getByText(/not found|failed/i)).toBeVisible();
+      await expect(page.getByText(tProduct('details.notFound'))).toBeVisible();
     });
 
     test('should have back button visible even when error occurs', async ({ page }) => {
       const fakeId = '507f1f77bcf86cd799439011';
       await page.goto(`${serverUrl}/${testLocale}/cms/products/${fakeId}`);
 
-      const backButton = page.getByRole('button', { name: /back/i });
+      const backButton = page.getByRole('button', { name: tProduct('details.back') });
       await expect(backButton).toBeVisible();
 
       await backButton.click();
