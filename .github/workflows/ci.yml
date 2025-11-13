@@ -126,8 +126,9 @@ jobs:
       NEXTAUTH_URL: http://localhost:2137
       TEST_SERVER_URL: http://localhost:2137
       TEST_LOCALE: ${{ matrix.locale }}
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 2137
+      AUTH_TRUST_HOST: http://localhost:3000
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -139,7 +140,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
+
+      - name: Build project
+        run: npm run build
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
