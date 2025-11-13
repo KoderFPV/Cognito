@@ -49,8 +49,11 @@ jobs:
         run: npm run type-check
 
   unit-tests:
-    name: Unit Tests
+    name: Unit Tests (${{ matrix.locale }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        locale: ['en', 'pl']
     services:
       mongodb:
         image: mongo:7
@@ -63,6 +66,7 @@ jobs:
           --health-retries 5
     env:
       MONGODB_URI: mongodb://localhost:27017/cognito-test
+      TEST_LOCALE: ${{ matrix.locale }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -98,9 +102,14 @@ jobs:
       - name: Build project
         run: npm run build
 
-  e2e-tests-mobile:
-    name: E2E Tests (Mobile Chrome)
+  e2e-tests:
+    name: E2E Tests (${{ matrix.locale }} - ${{ matrix.browser }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: ['en', 'pl']
+        browser: ['Mobile Chrome', 'Desktop Chrome']
     services:
       mongodb:
         image: mongo:7
@@ -116,6 +125,7 @@ jobs:
       NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
       NEXTAUTH_URL: http://localhost:2137
       TEST_SERVER_URL: http://localhost:2137
+      TEST_LOCALE: ${{ matrix.locale }}
       NODE_ENV: development
       PORT: 2137
     steps:
@@ -134,60 +144,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run E2E tests (Mobile Chrome)
-        run: npm run test:e2e -- --project='Mobile Chrome'
+      - name: Run E2E tests
+        run: npm run test:e2e -- --project='${{ matrix.browser }}'
 
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-mobile
-          path: playwright-report/
-          retention-days: 7
-
-  e2e-tests-desktop:
-    name: E2E Tests (Desktop Chrome)
-    runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    env:
-      MONGODB_URI: mongodb://localhost:27017/cognito-e2e
-      NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
-      NEXTAUTH_URL: http://localhost:2137
-      TEST_SERVER_URL: http://localhost:2137
-      NODE_ENV: development
-      PORT: 2137
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Run E2E tests (Desktop Chrome)
-        run: npm run test:e2e -- --project='Desktop Chrome'
-
-      - name: Upload Playwright report on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-desktop
+          name: playwright-report-${{ matrix.locale }}-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 7

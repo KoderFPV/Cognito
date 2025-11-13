@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { buildApiUrl } from '@/test/utils/apiTestUtils';
+import { getTestLocale } from '@/test/utils/localeTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
@@ -49,7 +50,7 @@ describe('/api/products/[id] route', () => {
 
   it('should return product by valid ID', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -59,7 +60,7 @@ describe('/api/products/[id] route', () => {
 
   it('should call getProductById with correct parameters', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     await GET(request, { params });
 
     expect(vi.mocked(getProductById)).toHaveBeenCalledWith(mockDb, '507f1f77bcf86cd799439011');
@@ -69,7 +70,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockResolvedValue(null);
 
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -79,7 +80,7 @@ describe('/api/products/[id] route', () => {
 
   it('should return 404 when ID is empty', async () => {
     const params = Promise.resolve({ id: '' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -91,7 +92,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockRejectedValue(new Error('Database error'));
 
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -101,18 +102,18 @@ describe('/api/products/[id] route', () => {
 
   it('should call getTranslations with correct namespace', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     await GET(request, { params });
 
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'en',
+      locale: getTestLocale(),
       namespace: 'api.product',
     });
   });
 
   it('should return product with all fields', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -133,7 +134,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockResolvedValue(productWithoutImage as any);
 
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -146,7 +147,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockResolvedValue(deletedProduct as any);
 
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -158,7 +159,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockResolvedValue(null);
 
     const params = Promise.resolve({ id: 'invalid-id-format' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/invalid-id-format')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/invalid-id-format')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -171,7 +172,7 @@ describe('/api/products/[id] route', () => {
     vi.mocked(getProductById).mockResolvedValue(inactiveProduct as any);
 
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
     const data = await response.json();
 
@@ -179,14 +180,14 @@ describe('/api/products/[id] route', () => {
     expect(data.data.isActive).toBe(false);
   });
 
-  it('should work with Polish locale URL', async () => {
+  it('should work regardless of TEST_LOCALE setting', async () => {
     const params = Promise.resolve({ id: '507f1f77bcf86cd799439011' });
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/507f1f77bcf86cd799439011')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/507f1f77bcf86cd799439011')));
     const response = await GET(request, { params });
 
     expect(response.status).toBe(200);
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'pl',
+      locale: getTestLocale(),
       namespace: 'api.product',
     });
   });

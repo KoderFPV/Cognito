@@ -87,7 +87,7 @@ export const useRegistrationForm = () => {
         email,
         password,
         termsAccepted,
-      });
+      }, locale);
 
       router.push(`/${locale}`);
     } catch (err) {

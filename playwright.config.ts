@@ -4,6 +4,23 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local'), quiet: true });
 
+const testLocale = process.env.TEST_LOCALE;
+
+if (!testLocale) {
+  throw new Error(
+    'TEST_LOCALE environment variable must be set to run E2E tests. ' +
+    'Supported values: en, pl'
+  );
+}
+
+if (!['en', 'pl'].includes(testLocale)) {
+  throw new Error(
+    `Invalid TEST_LOCALE="${testLocale}". Supported values: en, pl`
+  );
+}
+
+console.log(`\n✓ Running E2E tests for locale: ${testLocale}\n`);
+
 /**
  * Playwright configuration for Desktop and Mobile Chrome testing
  * See https://playwright.dev/docs/test-configuration.
@@ -56,11 +73,11 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
+  /* Run your local dev server before starting the tests - only if TEST_LOCALE is set */
+  webServer: process.env.TEST_LOCALE ? {
     command: 'npm run dev',
     url: 'http://localhost:2137',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
-  },
+  } : undefined,
 });

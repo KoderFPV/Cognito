@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { buildApiUrl } from '@/test/utils/apiTestUtils';
+import { getTestLocale } from '@/test/utils/localeTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
@@ -41,7 +42,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should return products with default pagination', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -54,21 +55,21 @@ describe('/api/products/list route', () => {
   });
 
   it('should return products with custom page and pageSize', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list?page=2&pageSize=25')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=2&pageSize=25')));
     await GET(request);
 
     expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 25, 25);
   });
 
   it('should calculate correct offset based on page and pageSize', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list?page=3&pageSize=10')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=3&pageSize=10')));
     await GET(request);
 
     expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 10, 20);
   });
 
   it('should return error for page less than 1', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list?page=0&pageSize=10')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=0&pageSize=10')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -77,7 +78,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should return error for pageSize less than 1', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list?page=1&pageSize=0')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=1&pageSize=0')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -86,7 +87,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should return error for pageSize greater than 100', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list?page=1&pageSize=101')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=1&pageSize=101')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -100,7 +101,7 @@ describe('/api/products/list route', () => {
       total: 100,
     });
 
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list?page=1&pageSize=100')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=1&pageSize=100')));
     const response = await GET(request);
 
     expect(response.status).toBe(200);
@@ -109,7 +110,7 @@ describe('/api/products/list route', () => {
   it('should handle database errors gracefully', async () => {
     vi.mocked(findAllProducts).mockRejectedValue(new Error('Database error'));
 
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -118,11 +119,11 @@ describe('/api/products/list route', () => {
   });
 
   it('should call getTranslations with correct namespace', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list')));
     await GET(request);
 
     expect(vi.mocked(getTranslations)).toHaveBeenCalledWith({
-      locale: 'en',
+      locale: getTestLocale(),
       namespace: 'api.products',
     });
   });
@@ -133,7 +134,7 @@ describe('/api/products/list route', () => {
       total: 25,
     });
 
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list?pageSize=10')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?pageSize=10')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -146,7 +147,7 @@ describe('/api/products/list route', () => {
       total: 0,
     });
 
-    const request = new NextRequest(new URL(buildApiUrl('en', '/api/products/list')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list')));
     const response = await GET(request);
     const data = await response.json();
 
@@ -157,7 +158,7 @@ describe('/api/products/list route', () => {
   });
 
   it('should parse query parameters correctly', async () => {
-    const request = new NextRequest(new URL(buildApiUrl('pl', '/api/products/list?page=5&pageSize=50')));
+    const request = new NextRequest(new URL(buildApiUrl('/api/products/list?page=5&pageSize=50')));
     await GET(request);
 
     expect(vi.mocked(findAllProducts)).toHaveBeenCalledWith(mockDb, 50, 200);

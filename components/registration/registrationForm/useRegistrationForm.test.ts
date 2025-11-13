@@ -12,8 +12,10 @@ const mockRouter = {
   prefetch: vi.fn(),
 };
 
+const testLocale = process.env.TEST_LOCALE || 'en';
+
 const mockParams = {
-  locale: 'en',
+  locale: testLocale,
 };
 
 vi.mock('next-intl', () => ({
@@ -207,11 +209,14 @@ describe('useRegistrationForm', () => {
     });
 
     await waitFor(() => {
-      expect(registerUser).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'Password123',
-        termsAccepted: true,
-      });
+      expect(registerUser).toHaveBeenCalledWith(
+        {
+          email: 'test@example.com',
+          password: 'Password123',
+          termsAccepted: true,
+        },
+        testLocale
+      );
     });
   });
 

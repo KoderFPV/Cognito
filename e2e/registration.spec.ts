@@ -1,158 +1,102 @@
 import { test, expect } from '@playwright/test';
+import { getTestLocale } from './helpers/testConfig';
+import { createTranslationHelper } from './helpers/translations';
 
 test.describe('Registration Form', () => {
   const generateUniqueEmail = () => `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+  const testLocale = getTestLocale();
+  const t = createTranslationHelper(testLocale);
 
-  test.describe('English Locale (/en/registration)', () => {
+  test.describe(`${testLocale === 'pl' ? 'Polish' : 'English'} Locale (/${testLocale}/registration)`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/en/registration');
+      await page.goto(`/${testLocale}/registration`);
     });
 
     test('should display registration form with all fields', async ({ page }) => {
-      await expect(page).toHaveURL(/\/en\/registration/);
+      await expect(page).toHaveURL(new RegExp(`/${testLocale}/registration`));
 
-      await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: t('registration')('title') })).toBeVisible();
 
-      await expect(page.getByLabel(/email/i)).toBeVisible();
-      await expect(page.getByLabel(/^password$/i)).toBeVisible();
-      await expect(page.getByLabel(/confirm password/i)).toBeVisible();
+      await expect(page.locator('#email')).toBeVisible();
+      await expect(page.locator('#password')).toBeVisible();
+      await expect(page.locator('#confirmPassword')).toBeVisible();
       await expect(page.getByRole('checkbox')).toBeVisible();
 
-      await expect(page.getByRole('button', { name: /register/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /cancel/i })).toBeVisible();
+      await expect(page.getByRole('button', { name: t('registration')('submit') })).toBeVisible();
+      await expect(page.getByRole('button', { name: t('registration')('cancel') })).toBeVisible();
     });
 
     test('should show validation error for invalid email', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('invalidemail');
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/invalid email format/i)).toBeVisible();
-    });
-
-    test('should show validation error for password without uppercase', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('test@example.com');
-      await page.getByLabel(/^password$/i).fill('password123');
-      await page.getByLabel(/confirm password/i).fill('password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/uppercase/i)).toBeVisible();
-    });
-
-    test('should show validation error for password without number', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('test@example.com');
-      await page.getByLabel(/^password$/i).fill('PasswordABC');
-      await page.getByLabel(/confirm password/i).fill('PasswordABC');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/number/i)).toBeVisible();
-    });
-
-    test('should show validation error for short password', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('test@example.com');
-      await page.getByLabel(/^password$/i).fill('Pass1');
-      await page.getByLabel(/confirm password/i).fill('Pass1');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/8 character/i)).toBeVisible();
-    });
-
-    test('should show validation error for password mismatch', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('test@example.com');
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('DifferentPassword123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/do not match/i)).toBeVisible();
-    });
-
-    test('should clear validation error when field is corrected', async ({ page }) => {
-      await page.getByLabel(/email/i).fill('invalidemail');
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/invalid email format/i)).toBeVisible();
-
-      await page.getByLabel(/email/i).fill('valid@example.com');
-
-      await expect(page.getByText(/invalid email format/i)).not.toBeVisible();
-    });
-
-    test('should successfully register a new user', async ({ page }) => {
-      const uniqueEmail = generateUniqueEmail();
-
-      await page.getByLabel(/email/i).fill(uniqueEmail);
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-    });
-
-    test('should show error when registering with existing email', async ({ page }) => {
-      const existingEmail = generateUniqueEmail();
-
-      await page.getByLabel(/email/i).fill(existingEmail);
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await page.goto('/en/registration');
-
-      await page.getByLabel(/email/i).fill(existingEmail);
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
-      await page.getByRole('checkbox').check();
-
-      await page.getByRole('button', { name: /register/i }).click();
-
-      await expect(page.getByText(/user with this email already exists/i)).toBeVisible();
-    });
-
-  });
-
-  test.describe('Polish Locale (/pl/registration)', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/pl/registration');
-    });
-
-    test('should display registration form in Polish', async ({ page }) => {
-      await expect(page).toHaveURL(/\/pl\/registration/);
-
-      await expect(page.getByRole('heading', { name: /zaB�| konto/i })).toBeVisible();
-
-      await expect(page.getByRole('button', { name: /zarejestruj/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /anuluj/i })).toBeVisible();
-    });
-
-    test('should show validation errors in Polish', async ({ page }) => {
       await page.locator('#email').fill('invalidemail');
       await page.locator('#password').fill('Password123');
       await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
-      await page.getByRole('button', { name: /zarejestruj/i }).click();
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
 
-      await expect(page.getByText(/nieprawidłowy format adresu email/i)).toBeVisible();
+      await expect(page.getByText(t('registration')('validation.emailInvalid'))).toBeVisible();
     });
 
-    test('should successfully register a new user in Polish locale', async ({ page }) => {
+    test('should show validation error for password without uppercase', async ({ page }) => {
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('password123');
+      await page.locator('#confirmPassword').fill('password123');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+
+      await expect(page.getByText(t('registration')('validation.passwordUppercase'))).toBeVisible();
+    });
+
+    test('should show validation error for password without number', async ({ page }) => {
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('PasswordABC');
+      await page.locator('#confirmPassword').fill('PasswordABC');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+
+      await expect(page.getByText(t('registration')('validation.passwordNumber'))).toBeVisible();
+    });
+
+    test('should show validation error for short password', async ({ page }) => {
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('Pass1');
+      await page.locator('#confirmPassword').fill('Pass1');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+
+      await expect(page.getByText(t('registration')('validation.passwordMinLength'))).toBeVisible();
+    });
+
+    test('should show validation error for password mismatch', async ({ page }) => {
+      await page.locator('#email').fill('test@example.com');
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('DifferentPassword123');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+
+      await expect(page.getByText(t('registration')('validation.passwordMismatch'))).toBeVisible();
+    });
+
+    test('should clear validation error when field is corrected', async ({ page }) => {
+      await page.locator('#email').fill('invalidemail');
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+
+      await expect(page.getByText(t('registration')('validation.emailInvalid'))).toBeVisible();
+
+      await page.locator('#email').fill('valid@example.com');
+
+      await expect(page.getByText(t('registration')('validation.emailInvalid'))).not.toBeVisible();
+    });
+
+    test('should successfully register a new user', async ({ page }) => {
       const uniqueEmail = generateUniqueEmail();
 
       await page.locator('#email').fill(uniqueEmail);
@@ -160,37 +104,62 @@ test.describe('Registration Form', () => {
       await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
-      await page.getByRole('button', { name: /zarejestruj/i }).click();
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
     });
+
+    test('should show error when registering with existing email', async ({ page }) => {
+      const existingEmail = generateUniqueEmail();
+
+      await page.locator('#email').fill(existingEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+      await page.waitForLoadState('networkidle');
+
+      await page.goto(`/${testLocale}/registration`);
+
+      await page.locator('#email').fill(existingEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
+      await page.getByRole('checkbox').check();
+
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
+      await page.waitForLoadState('networkidle');
+
+      await expect(page.getByText(t('registration')('errors.userExists'))).toBeVisible();
+    });
+
   });
 
   test.describe('Mobile Responsiveness', () => {
     test('should work on mobile viewport', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto('/en/registration');
+      await page.goto(`/${testLocale}/registration`);
 
-      await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: t('registration')('title') })).toBeVisible();
 
       const uniqueEmail = generateUniqueEmail();
 
-      await page.getByLabel(/email/i).fill(uniqueEmail);
-      await page.getByLabel(/^password$/i).fill('Password123');
-      await page.getByLabel(/confirm password/i).fill('Password123');
+      await page.locator('#email').fill(uniqueEmail);
+      await page.locator('#password').fill('Password123');
+      await page.locator('#confirmPassword').fill('Password123');
       await page.getByRole('checkbox').check();
 
-      await page.getByRole('button', { name: /register/i }).click();
+      await page.getByRole('button', { name: t('registration')('submit') }).click();
     });
   });
 
   test.describe('Form Interaction', () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/en/registration');
+      await page.goto(`/${testLocale}/registration`);
     });
 
     test('should allow typing in all fields', async ({ page }) => {
-      const emailInput = page.getByLabel(/email/i);
-      const passwordInput = page.getByLabel(/^password$/i);
-      const confirmPasswordInput = page.getByLabel(/confirm password/i);
+      const emailInput = page.locator('#email');
+      const passwordInput = page.locator('#password');
+      const confirmPasswordInput = page.locator('#confirmPassword');
 
       await emailInput.fill('test@example.com');
       await expect(emailInput).toHaveValue('test@example.com');

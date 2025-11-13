@@ -1,124 +1,68 @@
 import { test, expect } from '@playwright/test';
+import { getTestLocale } from './helpers/testConfig';
+import { createTranslationHelper } from './helpers/translations';
 
 test.describe('i18n Routing', () => {
+  const testLocale = getTestLocale();
+  const t = createTranslationHelper(testLocale);
+  const localeDisplay = testLocale === 'pl' ? 'Polish' : 'English';
+
   test.describe('Locale Detection and Redirect', () => {
-    test('should redirect root / to /en/ (default locale)', async ({ page }) => {
+    test('should redirect root / to default locale', async ({ page }) => {
       await page.goto('/');
 
-      // Should redirect to /en/
-      await expect(page).toHaveURL(/\/en\/?/);
+      await expect(page).toHaveURL(new RegExp(`\\/en\\/?`));
     });
 
     test('should handle non-existent locale by redirecting to default', async ({ page }) => {
       const response = await page.goto('/de/');
 
-      // Should either 404 or redirect to default locale
-      // Based on next-intl config, it should show 404
       expect(response?.status()).toBe(404);
     });
   });
 
-  test.describe('English Locale (/en/)', () => {
-    test('should load English homepage', async ({ page }) => {
-      await page.goto('/en/');
+  test.describe(`${localeDisplay} Locale (/${testLocale}/)`, () => {
+    test('should load homepage', async ({ page }) => {
+      await page.goto(`/${testLocale}/`);
 
-      // Check URL
-      await expect(page).toHaveURL(/\/en\/?/);
+      await expect(page).toHaveURL(new RegExp(`\/${testLocale}\/?`));
 
-      // Check page loads successfully
       expect(await page.title()).toBeTruthy();
     });
 
-    test('should load CMS login page in English', async ({ page }) => {
-      await page.goto('/en/cms/login');
+    test('should load CMS login page', async ({ page }) => {
+      await page.goto(`/${testLocale}/cms/login`);
 
-      // Check URL
-      await expect(page).toHaveURL(/\/en\/cms\/login/);
+      await expect(page).toHaveURL(new RegExp(`\/${testLocale}\/cms\/login`));
 
-      // Check page loads successfully
       expect(await page.title()).toBeTruthy();
     });
 
-    test('should display English translations on homepage', async ({ page }) => {
-      await page.goto('/en/');
+    test('should display correct translations on homepage', async ({ page }) => {
+      await page.goto(`/${testLocale}/`);
 
-      // Check for English text from messages/en.json
       const content = await page.textContent('body');
-      expect(content).toContain('Welcome to Cognito');
-    });
-  });
-
-  test.describe('Polish Locale (/pl/)', () => {
-    test('should load Polish homepage', async ({ page }) => {
-      await page.goto('/pl/');
-
-      // Check URL
-      await expect(page).toHaveURL(/\/pl\/?/);
-
-      // Check page loads successfully
-      expect(await page.title()).toBeTruthy();
-    });
-
-    test('should load CMS login page in Polish', async ({ page }) => {
-      await page.goto('/pl/cms/login');
-
-      // Check URL
-      await expect(page).toHaveURL(/\/pl\/cms\/login/);
-
-      // Check page loads successfully
-      expect(await page.title()).toBeTruthy();
-    });
-
-    test('should display Polish translations on homepage', async ({ page }) => {
-      await page.goto('/pl/');
-
-      // Check for Polish text from messages/pl.json
-      const content = await page.textContent('body');
-      expect(content).toContain('Witaj w Cognito');
+      const expectedText = testLocale === 'pl' ? 'Witaj w Cognito' : 'Welcome to Cognito';
+      expect(content).toContain(expectedText);
     });
   });
 
   test.describe('Locale Persistence', () => {
-    test('should maintain English locale when navigating', async ({ page }) => {
-      await page.goto('/en/');
+    test('should maintain locale when navigating', async ({ page }) => {
+      await page.goto(`/${testLocale}/`);
 
-      // Navigate to login page (if link exists)
-      // For now, just verify direct navigation works
-      await page.goto('/en/cms/login');
+      await page.goto(`/${testLocale}/cms/login`);
 
-      // Should still be in English locale
-      await expect(page).toHaveURL(/\/en\/cms\/login/);
-    });
-
-    test('should maintain Polish locale when navigating', async ({ page }) => {
-      await page.goto('/pl/');
-
-      // Navigate to login page
-      await page.goto('/pl/cms/login');
-
-      // Should still be in Polish locale
-      await expect(page).toHaveURL(/\/pl\/cms\/login/);
+      await expect(page).toHaveURL(new RegExp(`\/${testLocale}\/cms\/login`));
     });
   });
 
   test.describe('Mobile Responsiveness', () => {
-    test('should work on mobile viewport for English', async ({ page, browserName }) => {
-      // This test will run on both Desktop and Mobile Chrome
-      await page.goto('/en/');
+    test('should work on mobile viewport', async ({ page }) => {
+      await page.goto(`/${testLocale}/`);
 
-      await expect(page).toHaveURL(/\/en\/?/);
+      await expect(page).toHaveURL(new RegExp(`\/${testLocale}\/?`));
 
-      // Check page is accessible
-      const content = await page.textContent('body');
-      expect(content).toBeTruthy();
-    });
-
-    test('should work on mobile viewport for Polish', async ({ page, browserName }) => {
-      await page.goto('/pl/');
-
-      await expect(page).toHaveURL(/\/pl\/?/);
-
-      // Check page is accessible
       const content = await page.textContent('body');
       expect(content).toBeTruthy();
     });
