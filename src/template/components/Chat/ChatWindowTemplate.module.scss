@@ -1,0 +1,167 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.chatWindow {
+  @include flex-column;
+  height: 100vh;
+  background-color: $gray-50;
+
+  @include mobile {
+    height: calc(100vh - 60px);
+  }
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+
+  @include mobile {
+    padding: $spacing-md;
+  }
+}
+
+.emptyState {
+  @include flex-center;
+  height: 100%;
+  color: $gray-500;
+  font-size: $font-size-base;
+  text-align: center;
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.message {
+  display: flex;
+  margin-bottom: $spacing-md;
+
+  &.user {
+    justify-content: flex-end;
+  }
+
+  &.assistant {
+    justify-content: flex-start;
+  }
+}
+
+.messageBubble {
+  max-width: 70%;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $border-radius-lg;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  @include mobile {
+    max-width: 85%;
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .user & {
+    background-color: $primary-500;
+    color: white;
+    border-bottom-right-radius: $border-radius-sm;
+  }
+
+  .assistant & {
+    background-color: white;
+    color: $gray-900;
+    border: 1px solid $gray-300;
+    border-bottom-left-radius: $border-radius-sm;
+  }
+}
+
+.loader {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+  height: 20px;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $primary-500;
+    animation: pulse 1.4s infinite;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $primary-500;
+    animation: pulse 1.4s infinite 0.2s;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+
+.errorMessage {
+  padding: $spacing-md;
+  margin: $spacing-md;
+  background-color: #fee;
+  color: $error;
+  border-radius: $border-radius-sm;
+  border: 1px solid $error;
+  font-size: $font-size-small;
+}
+
+.inputContainer {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background-color: white;
+  border-top: 1px solid $gray-300;
+
+  @include mobile {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+}
+
+.input {
+  flex: 1;
+  @include input-base;
+  resize: none;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+
+  &:disabled {
+    background-color: $gray-100;
+    color: $gray-500;
+  }
+}
+
+.sendButton {
+  @include button-primary;
+  padding: $spacing-md $spacing-lg;
+  white-space: nowrap;
+
+  @include mobile {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-small;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

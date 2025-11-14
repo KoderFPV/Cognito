@@ -149,5 +149,10 @@
     },
     "empty": "Nie znaleziono danych",
     "loading": "Ładowanie..."
+  },
+  "chat": {
+    "inputPlaceholder": "Wpisz wiadomość... (Shift+Enter dla nowej linii)",
+    "sendButton": "Wyślij",
+    "emptyState": "Rozpocznij rozmowę, aby znaleźć produkty"
   }
 }

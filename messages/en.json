@@ -149,5 +149,10 @@
     },
     "empty": "No data found",
     "loading": "Loading..."
+  },
+  "chat": {
+    "inputPlaceholder": "Type your message here... (Shift+Enter for new line)",
+    "sendButton": "Send",
+    "emptyState": "Start a conversation to find products"
   }
 }
