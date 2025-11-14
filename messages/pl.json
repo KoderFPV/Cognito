@@ -58,8 +58,10 @@
     },
     "product": {
       "created": "Produkt utworzony pomyślnie",
+      "deleted": "Produkt usunięty pomyślnie",
       "validationFailed": "Walidacja produktu nie powiodła się",
       "creationFailed": "Nie udało się utworzyć produktu",
+      "deletionFailed": "Nie udało się usunąć produktu",
       "notFound": "Produkt nie znaleziony",
       "fetchFailed": "Nie udało się pobrać produktu"
     },
@@ -109,6 +111,7 @@
     },
     "details": {
       "back": "Wstecz",
+      "delete": "Usuń",
       "loading": "Ładowanie szczegółów produktu...",
       "notFound": "Produkt nie znaleziony",
       "fetchFailed": "Nie udało się pobrać szczegółów produktu",
@@ -123,7 +126,13 @@
       "inactive": "Nieaktywny",
       "deleted": "Usunięty",
       "created": "Utworzono",
-      "updated": "Zaktualizowano"
+      "updated": "Zaktualizowano",
+      "deleteConfirmationTitle": "Usuń produkt",
+      "deleteConfirmationMessage": "Czy na pewno chcesz usunąć ten produkt? Tej akcji nie można cofnąć.",
+      "deleteConfirmationButton": "Usuń",
+      "deleteConfirmationCancel": "Anuluj",
+      "deleteSuccess": "Produkt został usunięty pomyślnie! Przekierowywanie...",
+      "deleteFailed": "Nie udało się usunąć produktu. Spróbuj ponownie."
     }
   },
   "table": {

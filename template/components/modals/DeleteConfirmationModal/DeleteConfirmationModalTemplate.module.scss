@@ -1,0 +1,93 @@
+@use '@/template/styles/variables' as *;
+@use '@/template/styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+}
+
+.modal {
+  background-color: $background-color;
+  border-radius: $border-radius-lg;
+  padding: $spacing-2xl;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: $shadow-lg;
+}
+
+.title {
+  margin: 0 0 $spacing-lg 0;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.message {
+  margin: 0 0 $spacing-md 0;
+  font-size: $font-size-base;
+  color: $text-secondary;
+  line-height: $line-height-base;
+}
+
+.productName {
+  margin: $spacing-lg 0 $spacing-xl 0;
+  padding: $spacing-lg;
+  background-color: $background-secondary;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: flex-end;
+}
+
+.cancelButton,
+.deleteButton {
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background-color: $background-secondary;
+  color: $text-primary;
+  border: $border-width solid $border-color;
+
+  &:hover:not(:disabled) {
+    background-color: $border-color;
+  }
+}
+
+.deleteButton {
+  background-color: $error-color;
+  color: white;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}

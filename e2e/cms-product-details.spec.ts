@@ -323,4 +323,138 @@ test.describe('CMS Product Details View', () => {
       await page.waitForURL(`**/${testLocale}/cms/products`);
     });
   });
+
+  test.describe('Product Deletion', () => {
+    const deleteAdminEmail = generateTestUserEmail('admin-delete');
+
+    test.beforeAll(async () => {
+      await createAdminUser(deleteAdminEmail, TEST_USER_PASSWORD);
+    });
+
+    test.afterAll(async () => {
+      await deleteUser(deleteAdminEmail);
+    });
+
+    test.beforeEach(async ({ page }) => {
+      await loginAsAdmin(page, deleteAdminEmail);
+    });
+
+    test('should display delete button on product details page', async ({ page }) => {
+      const productName = `Delete Button Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await createTestProduct(page, productName, uniqueSKU);
+
+      const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
+      await productRow.click();
+
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+
+      const deleteButton = page.getByRole('button', { name: tProduct('details.delete') });
+      await expect(deleteButton).toBeVisible();
+    });
+
+    test('should show confirmation dialog when delete button is clicked', async ({ page }) => {
+      const productName = `Delete Confirmation Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await createTestProduct(page, productName, uniqueSKU);
+
+      const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
+      await productRow.click();
+
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+
+      const deleteButton = page.getByRole('button', { name: tProduct('details.delete') });
+      await deleteButton.click();
+
+      await expect(page.getByText(tProduct('details.deleteConfirmationTitle'))).toBeVisible();
+      await expect(page.getByText(tProduct('details.deleteConfirmationMessage'))).toBeVisible();
+    });
+
+    test('should cancel deletion when cancel button is clicked', async ({ page }) => {
+      const productName = `Delete Cancel Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await createTestProduct(page, productName, uniqueSKU);
+
+      const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
+      await productRow.click();
+
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+
+      const deleteButton = page.getByRole('button', { name: tProduct('details.delete') });
+      await deleteButton.click();
+
+      const cancelButton = page.getByRole('button', { name: tProduct('details.deleteConfirmationCancel') });
+      await cancelButton.click();
+
+      const modalTitle = page.getByText(tProduct('details.deleteConfirmationTitle'));
+      await expect(modalTitle).not.toBeVisible();
+
+      await expect(deleteButton).toBeVisible();
+    });
+
+    test('should delete product when confirmed', async ({ page }) => {
+      const productName = `Delete Success Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await createTestProduct(page, productName, uniqueSKU);
+
+      const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
+      await productRow.click();
+
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+
+      const deleteButtons = await page.locator('button').filter({ hasText: tProduct('details.delete') }).all();
+      const deleteButton = deleteButtons[0];
+      await deleteButton.click();
+
+      const modal = page.locator('div').filter({ has: page.getByText(tProduct('details.deleteConfirmationTitle')) });
+      const confirmButton = modal.getByRole('button', { name: tProduct('details.deleteConfirmationButton') });
+      await confirmButton.click();
+
+      await page.waitForURL(`**/${testLocale}/cms/products`);
+      await page.waitForLoadState('networkidle');
+
+      await expect(page).toHaveURL(new RegExp(`\\/${testLocale}\\/cms\\/products$`));
+
+      const deletedProductRow = page.getByRole('button', { name: new RegExp(productName) });
+      await expect(deletedProductRow).not.toBeVisible();
+    });
+
+    test('should not display delete button for deleted products when accessed directly', async ({ page }) => {
+      const productName = `Delete No-Button Test ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const uniqueSKU = generateUniqueSKU();
+
+      await createTestProduct(page, productName, uniqueSKU);
+
+      const productRow = page.getByRole('button', { name: new RegExp(productName) }).first();
+      await productRow.waitFor({ state: 'visible' });
+      await productRow.click();
+
+      await page.waitForURL(new RegExp(`\\/${testLocale}\\/cms\\/products\\/[a-f0-9]{24}`));
+
+      const currentUrl = page.url();
+      const deleteButtons = await page.locator('button').filter({ hasText: tProduct('details.delete') }).all();
+      const deleteButton = deleteButtons[0];
+      await deleteButton.click();
+
+      const modal = page.locator('div').filter({ has: page.getByText(tProduct('details.deleteConfirmationTitle')) });
+      const confirmButton = modal.getByRole('button', { name: tProduct('details.deleteConfirmationButton') });
+      await confirmButton.click();
+
+      await page.waitForURL(`**/${testLocale}/cms/products`);
+      await page.waitForLoadState('networkidle');
+      await page.goto(currentUrl);
+      await page.waitForLoadState('networkidle');
+
+      const deleteButtonAfterDelete = page.locator('button').filter({ hasText: tProduct('details.delete') });
+      await expect(deleteButtonAfterDelete).not.toBeVisible();
+    });
+  });
 });

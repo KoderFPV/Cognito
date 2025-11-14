@@ -78,3 +78,22 @@ export const findAllProducts = async (
     total,
   };
 };
+
+export const deleteProduct = async (
+  db: Db,
+  productId: string
+): Promise<boolean> => {
+  const collection = db.collection<IProductMongo>(PRODUCTS_COLLECTION);
+
+  try {
+    const objectId = new ObjectId(productId);
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $set: { deleted: true, updatedAt: new Date() } }
+    );
+
+    return result.matchedCount > 0;
+  } catch {
+    return false;
+  }
+};

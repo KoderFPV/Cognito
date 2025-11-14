@@ -7,13 +7,17 @@ import styles from './ProductDetailsTemplate.module.scss';
 export interface IProductDetailsTemplateProps {
   product: IProduct | null;
   error?: string | null;
+  deleteError?: string | null;
   onBack: () => void;
+  onDelete?: () => void;
 }
 
 export const ProductDetailsTemplate = ({
   product,
   error,
+  deleteError,
   onBack,
+  onDelete,
 }: IProductDetailsTemplateProps) => {
   const t = useTranslations('product.details');
 
@@ -30,9 +34,19 @@ export const ProductDetailsTemplate = ({
 
   return (
     <div className={styles.container}>
-      <button className={styles.backButton} onClick={onBack}>
-        ← {t('back')}
-      </button>
+      <div className={styles.header}>
+        <button className={styles.backButton} onClick={onBack}>
+          ← {t('back')}
+        </button>
+
+        {!product.deleted && onDelete && (
+          <button className={styles.deleteButton} onClick={onDelete}>
+            {t('delete')}
+          </button>
+        )}
+      </div>
+
+      {deleteError && <div className={styles.errorMessage}>{deleteError}</div>}
 
       <div className={styles.content}>
         <div className={styles.imageSection}>
