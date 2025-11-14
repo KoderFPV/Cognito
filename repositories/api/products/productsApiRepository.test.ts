@@ -18,6 +18,7 @@ describe('productsApiRepository', () => {
         sku: 'TEST-SKU-001',
         stock: 10,
         category: 'Electronics',
+        isActive: true,
       };
 
       const mockResponse: IProductCreationResponse = {
@@ -50,6 +51,7 @@ describe('productsApiRepository', () => {
         stock: 5,
         category: 'Clothing',
         imageUrl: 'https://example.com/image.jpg',
+        isActive: true,
       };
 
       const mockResponse: IProductCreationResponse = {
@@ -80,6 +82,7 @@ describe('productsApiRepository', () => {
         sku: 'TEST-SKU-001',
         stock: 10,
         category: 'Electronics',
+        isActive: true,
       };
 
       const errorMessage = 'Product validation failed';
@@ -100,6 +103,7 @@ describe('productsApiRepository', () => {
         sku: 'TEST-SKU-001',
         stock: 10,
         category: 'Electronics',
+        isActive: true,
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -118,6 +122,7 @@ describe('productsApiRepository', () => {
         sku: 'TEST-SKU-001',
         stock: 10,
         category: 'Electronics',
+        isActive: true,
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -145,6 +150,7 @@ describe('productsApiRepository', () => {
         sku: 'JSON-SKU-001',
         stock: 50,
         category: 'Special',
+        isActive: true,
       };
 
       mockFetch.mockResolvedValueOnce({
