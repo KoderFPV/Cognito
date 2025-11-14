@@ -89,15 +89,15 @@ The platform will leverage multiple AI models to create an intelligent, safe, an
 
 Project in initialization phase.
 
-## Progress
+## MVP Progress
 
 | Feature | Status |
 |---------|--------|
-| Login | ❌ |
+| Login | ✅ |
 | Product Search | ❌ |
 | Checkout | ❌ |
 | Payments | ❌ |
-| Add New Products | ❌ |
+| Add New Products | ✅ |
 | Store Configuration | ❌ |
 | Browse Orders | ❌ |
 | Browse Users | ❌ |
