@@ -1,0 +1,18 @@
+@use '@/template/styles/variables' as *;
+
+.message {
+  margin: 0 0 $spacing-lg 0;
+  font-size: $font-size-base;
+  color: $text-secondary;
+  line-height: $line-height-base;
+}
+
+.productName {
+  margin: 0;
+  padding: $spacing-lg;
+  background-color: $background-secondary;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  word-break: break-word;
+}

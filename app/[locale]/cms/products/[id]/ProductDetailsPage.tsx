@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { IProduct } from '@/domain/product';
 import { ProductDetailsTemplate } from '@/template/app/[locale]/cms/products/[id]/ProductDetailsTemplate';
-import { DeleteConfirmationModal } from '@/components/modals/DeleteConfirmationModal/DeleteConfirmationModal';
+import { DeleteProductModal } from '@/components/modals/DeleteProductModal/DeleteProductModal';
 import { useDeleteProductModal } from './useDeleteProductModal';
 
 export const ProductDetailsPage = ({
@@ -40,7 +40,7 @@ export const ProductDetailsPage = ({
       />
 
       {product && (
-        <DeleteConfirmationModal
+        <DeleteProductModal
           isOpen={isDeleteModalOpen}
           productId={product._id}
           productName={product.name}
