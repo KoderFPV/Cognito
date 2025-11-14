@@ -5,7 +5,11 @@
     "email": "Email",
     "password": "Password",
     "submit": "Submit",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "errors": {
+      "unauthorized": "Unauthorized",
+      "forbidden": "Forbidden"
+    }
   },
   "home": {
     "title": "Welcome to Cognito",
@@ -58,8 +62,10 @@
     },
     "product": {
       "created": "Product created successfully",
+      "deleted": "Product deleted successfully",
       "validationFailed": "Product validation failed",
       "creationFailed": "Failed to create product",
+      "deletionFailed": "Failed to delete product",
       "notFound": "Product not found",
       "fetchFailed": "Failed to fetch product"
     },
@@ -109,6 +115,7 @@
     },
     "details": {
       "back": "Back",
+      "delete": "Delete",
       "loading": "Loading product details...",
       "notFound": "Product not found",
       "fetchFailed": "Failed to fetch product details",
@@ -123,7 +130,13 @@
       "inactive": "Inactive",
       "deleted": "Deleted",
       "created": "Created",
-      "updated": "Updated"
+      "updated": "Updated",
+      "deleteConfirmationTitle": "Delete Product",
+      "deleteConfirmationMessage": "Are you sure you want to delete this product? This action cannot be undone.",
+      "deleteConfirmationButton": "Delete",
+      "deleteConfirmationCancel": "Cancel",
+      "deleteSuccess": "Product deleted successfully! Redirecting...",
+      "deleteFailed": "Failed to delete product. Please try again."
     }
   },
   "table": {

@@ -5,6 +5,19 @@
   padding: $spacing-xl;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  gap: $spacing-md;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .backButton {
   padding: $spacing-sm $spacing-md;
   background-color: transparent;
@@ -14,7 +27,6 @@
   font-size: $font-size-base;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: $spacing-lg;
   transition: all 0.2s ease;
 
   &:hover {
@@ -26,6 +38,41 @@
     outline: 2px solid $primary-color;
     outline-offset: 2px;
   }
+}
+
+.deleteButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #b91c1c;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+  }
+}
+
+.errorMessage {
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  border-radius: $border-radius-md;
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+  font-size: $font-size-base;
 }
 
 .error {

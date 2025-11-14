@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Db, ObjectId } from 'mongodb';
-import { createProduct, findAllProducts, getProductById } from './productsModel';
+import { createProduct, findAllProducts, getProductById, deleteProduct } from './productsModel';
 import { setupMongoTest, teardownMongoTest, IMongoTestContext } from '@/test/utils/mongoTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb', () => ({
@@ -416,6 +416,154 @@ describe('productsModel', () => {
       const retrievedProduct = await getProductById(db, createdProduct._id);
 
       expect(retrievedProduct?.isActive).toBe(false);
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('should delete a product by marking it as deleted', async () => {
+      const productData = {
+        name: 'Product to Delete',
+        description: 'This product will be deleted',
+        price: 29.99,
+        sku: 'DELETE-001',
+        stock: 5,
+        category: 'Testing',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const deleted = await deleteProduct(db, createdProduct._id);
+
+      expect(deleted).toBe(true);
+
+      const deletedProduct = await getProductById(db, createdProduct._id);
+      expect(deletedProduct?.deleted).toBe(true);
+    });
+
+    it('should update the updatedAt timestamp when deleting', async () => {
+      const productData = {
+        name: 'Product for Timestamp Update',
+        description: 'Testing timestamp update on delete',
+        price: 19.99,
+        sku: 'TSTMP-DELETE-001',
+        stock: 3,
+        category: 'Testing',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      const createdAt = new Date(createdProduct.createdAt);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      await deleteProduct(db, createdProduct._id);
+
+      const deletedProduct = await getProductById(db, createdProduct._id);
+      const updatedAt = new Date(deletedProduct?.updatedAt || 0);
+
+      expect(updatedAt.getTime()).toBeGreaterThan(createdAt.getTime());
+    });
+
+    it('should return false for non-existent product ID', async () => {
+      const nonExistentId = '507f1f77bcf86cd799439011';
+      const deleted = await deleteProduct(db, nonExistentId);
+
+      expect(deleted).toBe(false);
+    });
+
+    it('should return false for invalid ObjectId format', async () => {
+      const invalidId = 'invalid-id-format';
+      const deleted = await deleteProduct(db, invalidId);
+
+      expect(deleted).toBe(false);
+    });
+
+    it('should exclude deleted products from findAllProducts', async () => {
+      const { connectToMongo } = await import('@/clients/mongodb/mongodb');
+      vi.mocked(connectToMongo).mockResolvedValue(db);
+
+      const product1 = await createProduct({
+        name: 'Active Product',
+        description: 'This should be visible',
+        price: 50.0,
+        sku: 'ACTIVE-DELETE-001',
+        stock: 10,
+        category: 'Electronics',
+        isActive: true,
+      });
+
+      const product2 = await createProduct({
+        name: 'Product to Delete',
+        description: 'This should be hidden after deletion',
+        price: 75.0,
+        sku: 'DELETE-002',
+        stock: 8,
+        category: 'Electronics',
+        isActive: true,
+      });
+
+      await deleteProduct(db, product2._id);
+
+      const { products, total } = await findAllProducts(db, 100, 0);
+
+      expect(products).toHaveLength(1);
+      expect(total).toBe(1);
+      expect(products[0]._id).toBe(product1._id);
+      expect(products[0].name).toBe('Active Product');
+    });
+
+    it('should still allow retrieval of deleted product by ID', async () => {
+      const productData = {
+        name: 'Deleted Product Access',
+        description: 'Testing access to deleted product',
+        price: 39.99,
+        sku: 'DELETED-ACCESS-001',
+        stock: 2,
+        category: 'Testing',
+        isActive: true,
+      };
+
+      const createdProduct = await createProduct(productData);
+      await deleteProduct(db, createdProduct._id);
+
+      const deletedProduct = await getProductById(db, createdProduct._id);
+
+      expect(deletedProduct).toBeDefined();
+      expect(deletedProduct?.deleted).toBe(true);
+      expect(deletedProduct?._id).toBe(createdProduct._id);
+    });
+
+    it('should handle multiple deletions correctly', async () => {
+      const product1 = await createProduct({
+        name: 'Product 1',
+        description: 'First product',
+        price: 10.0,
+        sku: 'MULTI-DELETE-001',
+        stock: 5,
+        category: 'General',
+        isActive: true,
+      });
+
+      const product2 = await createProduct({
+        name: 'Product 2',
+        description: 'Second product',
+        price: 20.0,
+        sku: 'MULTI-DELETE-002',
+        stock: 5,
+        category: 'General',
+        isActive: true,
+      });
+
+      const delete1 = await deleteProduct(db, product1._id);
+      const delete2 = await deleteProduct(db, product2._id);
+
+      expect(delete1).toBe(true);
+      expect(delete2).toBe(true);
+
+      const { products, total } = await findAllProducts(db, 100, 0);
+
+      expect(products).toHaveLength(0);
+      expect(total).toBe(0);
     });
   });
 });

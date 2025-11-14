@@ -1,13 +1,19 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { GET } from './route';
 import { buildApiUrl } from '@/test/utils/apiTestUtils';
 import { getTestLocale } from '@/test/utils/localeTestUtils';
 
 vi.mock('@/clients/mongodb/mongodb');
 vi.mock('@/models/products/productsModel');
 vi.mock('next-intl/server');
+vi.mock('@/services/auth/auth.helpers', () => ({
+  isAdminInApiRoute: vi.fn(),
+}));
 
+import { GET } from './route';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { getProductById } from '@/models/products/productsModel';
 import { getTranslations } from 'next-intl/server';

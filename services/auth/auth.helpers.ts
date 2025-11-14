@@ -1,3 +1,5 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 import { auth } from './auth.config';
 import { redirect } from 'next/navigation';
 import { ROLE } from '@/domain/user';
@@ -39,4 +41,13 @@ export const hasRole = async (role: ROLE): Promise<boolean> => {
 export const isAuthenticated = async (): Promise<boolean> => {
   const user = await getCurrentUser();
   return user !== null;
+};
+
+export const isAdminInApiRoute = async (request: NextRequest): Promise<boolean> => {
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  return !!token && token.role === ROLE.ADMIN;
 };

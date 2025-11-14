@@ -363,6 +363,34 @@ const authenticated = await isAuthenticated();
 // authenticated: boolean
 ```
 
+### `isAdminInApiRoute(request: NextRequest)`
+
+Checks if user has ADMIN role in API routes. Returns a boolean.
+
+**Used in API routes that require admin authentication.**
+
+```typescript
+import { isAdminInApiRoute } from '@/services/auth/auth.helpers';
+
+export const DELETE = async (request: NextRequest) => {
+  const locale = getLocaleFromRequest(request);
+  const tCommon = await getTranslations({ locale, namespace: 'common.errors' });
+
+  const isAdmin = await isAdminInApiRoute(request);
+  if (!isAdmin) {
+    return NextResponse.json({ error: tCommon('forbidden') }, { status: 403 });
+  }
+
+  // Protected logic here
+};
+```
+
+**Returns:**
+- `true` - User is authenticated and has ADMIN role
+- `false` - User is not authenticated OR is not admin
+
+**Note:** The API endpoint is responsible for handling the HTTP response (401/403) and translating error messages.
+
 ## Middleware Protection
 
 The middleware automatically protects routes based on authentication and roles.
