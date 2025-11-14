@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import { getProductById, deleteProduct } from '@/models/products/productsModel';
 import { getLocaleFromRequest } from '@/services/locale/locale.service';
-import { requireAdminInApiRoute } from '@/services/auth/auth.helpers';
+import { isAdminInApiRoute } from '@/services/auth/auth.helpers';
 
 export const GET = async (
   request: NextRequest,
@@ -39,10 +39,11 @@ export const DELETE = async (
   const { id } = await params;
   const locale = getLocaleFromRequest(request);
   const t = await getTranslations({ locale, namespace: 'api.product' });
+  const tCommon = await getTranslations({ locale, namespace: 'common.errors' });
 
-  const adminCheck = await requireAdminInApiRoute(request);
-  if (adminCheck !== null) {
-    return adminCheck;
+  const isAdmin = await isAdminInApiRoute(request);
+  if (!isAdmin) {
+    return NextResponse.json({ error: tCommon('forbidden') }, { status: 403 });
   }
 
   if (!id) {

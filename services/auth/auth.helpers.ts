@@ -43,25 +43,11 @@ export const isAuthenticated = async (): Promise<boolean> => {
   return user !== null;
 };
 
-export const requireAdminInApiRoute = async (request: NextRequest) => {
+export const isAdminInApiRoute = async (request: NextRequest): Promise<boolean> => {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!token) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  if (token.role !== ROLE.ADMIN) {
-    return NextResponse.json(
-      { error: 'Forbidden' },
-      { status: 403 }
-    );
-  }
-
-  return null;
+  return !!token && token.role === ROLE.ADMIN;
 };

@@ -5,7 +5,11 @@
     "email": "Email",
     "password": "Hasło",
     "submit": "Wyślij",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "errors": {
+      "unauthorized": "Brak dostępu",
+      "forbidden": "Dostęp zabroniony"
+    }
   },
   "home": {
     "title": "Witaj w Cognito",
