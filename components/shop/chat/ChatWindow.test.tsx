@@ -1,8 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ChatWindow } from './ChatWindow';
 
-const mockUseChatWindow = vi.fn();
+const { mockUseChatWindow } = vi.hoisted(() => ({
+  mockUseChatWindow: vi.fn(() => ({
+    messages: [],
+    inputValue: '',
+    isLoading: false,
+    error: null,
+    setInputValue: vi.fn(),
+    handleSendMessage: vi.fn(),
+    handleKeyDown: vi.fn(),
+  })),
+}));
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => {
@@ -19,8 +28,10 @@ vi.mock('./useChatWindow', () => ({
   useChatWindow: mockUseChatWindow,
 }));
 
+import { ChatWindow } from './ChatWindow';
+
 vi.mock('@/template/components/Chat/ChatWindowTemplate', () => ({
-  ChatWindowTemplate: ({ messages, inputValue, isLoading, error, placeholder, sendButtonLabel, emptyStateMessage }: any) => (
+  ChatWindowTemplate: ({ messages, inputValue, isLoading, error, placeholder, sendButtonLabel, emptyStateMessage, textareaRef }: any) => (
     <div data-testid="chat-template">
       <div data-testid="messages-count">{messages.length}</div>
       <div data-testid="input-value">{inputValue}</div>
@@ -29,6 +40,7 @@ vi.mock('@/template/components/Chat/ChatWindowTemplate', () => ({
       <div data-testid="placeholder">{placeholder}</div>
       <div data-testid="send-button-label">{sendButtonLabel}</div>
       <div data-testid="empty-state">{emptyStateMessage}</div>
+      <textarea ref={textareaRef} data-testid="textarea-ref" />
     </div>
   ),
 }));

@@ -28,6 +28,10 @@ export const useChatWindow = () => {
     setError(null);
 
     // TODO: Integration with chat API will go here
+    // For now, simulate sending by clearing loading state after a delay
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

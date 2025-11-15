@@ -114,6 +114,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue(testMessage);
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 
@@ -150,6 +153,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('Test message');
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 
@@ -165,6 +171,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('New message');
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 
@@ -176,6 +185,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('Message to clear');
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 
@@ -192,6 +204,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('Test message');
+    });
+
+    act(() => {
       result.current.handleKeyDown(mockEvent);
     });
 
@@ -238,6 +253,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('First user message');
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 
@@ -247,6 +265,9 @@ describe('useChatWindow', () => {
 
     act(() => {
       result.current.setInputValue('Second user message');
+    });
+
+    act(() => {
       result.current.handleSendMessage();
     });
 

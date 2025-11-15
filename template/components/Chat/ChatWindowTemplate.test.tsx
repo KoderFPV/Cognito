@@ -54,9 +54,9 @@ describe('ChatWindowTemplate', () => {
     render(<ChatWindowTemplate {...defaultProps} messages={messages} />);
 
     const message = screen.getByText('Hello');
-    const messageContainer = message.closest('[class*="message"]');
+    const messageContainer = message.closest('[data-sender="user"]');
 
-    expect(messageContainer).toHaveClass('user');
+    expect(messageContainer).toHaveAttribute('data-sender', 'user');
   });
 
   it('should render assistant message with correct styling', () => {
@@ -72,9 +72,9 @@ describe('ChatWindowTemplate', () => {
     render(<ChatWindowTemplate {...defaultProps} messages={messages} />);
 
     const message = screen.getByText('Hi there');
-    const messageContainer = message.closest('[class*="message"]');
+    const messageContainer = message.closest('[data-sender="assistant"]');
 
-    expect(messageContainer).toHaveClass('assistant');
+    expect(messageContainer).toHaveAttribute('data-sender', 'assistant');
   });
 
   it('should render multiple messages', () => {

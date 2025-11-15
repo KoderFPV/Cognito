@@ -18,6 +18,7 @@ export interface ChatWindowTemplateProps {
   onInputChange: (value: string) => void;
   onSendMessage: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  textareaRef?: React.RefObject<HTMLTextAreaElement>;
 }
 
 export const ChatWindowTemplate = ({
@@ -31,11 +32,12 @@ export const ChatWindowTemplate = ({
   onInputChange,
   onSendMessage,
   onKeyDown,
+  textareaRef,
 }: ChatWindowTemplateProps) => {
   return (
     <div className={styles.chatWindow}>
       <div className={styles.messagesContainer}>
-        {messages.length === 0 ? (
+        {messages.length === 0 && !isLoading ? (
           <div className={styles.emptyState}>
             <p>{emptyStateMessage}</p>
           </div>
@@ -45,12 +47,13 @@ export const ChatWindowTemplate = ({
               <div
                 key={message.id}
                 className={`${styles.message} ${styles[message.sender]}`}
+                data-sender={message.sender}
               >
                 <div className={styles.messageBubble}>{message.content}</div>
               </div>
             ))}
             {isLoading && (
-              <div className={`${styles.message} ${styles.assistant}`}>
+              <div className={`${styles.message} ${styles.assistant}`} data-sender="assistant">
                 <div className={styles.messageBubble}>
                   <div className={styles.loader} />
                 </div>
@@ -64,6 +67,7 @@ export const ChatWindowTemplate = ({
 
       <div className={styles.inputContainer}>
         <textarea
+          ref={textareaRef}
           value={inputValue}
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={onKeyDown}
