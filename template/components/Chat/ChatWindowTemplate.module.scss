@@ -5,10 +5,6 @@
   @include flex-column;
   height: 100vh;
   background-color: $gray-50;
-
-  @include mobile {
-    height: calc(100vh - 60px);
-  }
 }
 
 .messagesContainer {
