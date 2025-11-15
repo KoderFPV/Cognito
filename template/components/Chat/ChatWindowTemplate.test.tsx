@@ -195,7 +195,7 @@ describe('ChatWindowTemplate', () => {
     expect(button).not.toBeDisabled();
   });
 
-  it('should disable textarea during loading', () => {
+  it('should make textarea readonly during loading', () => {
     render(
       <ChatWindowTemplate
         {...defaultProps}
@@ -203,8 +203,8 @@ describe('ChatWindowTemplate', () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText('Type your message...');
-    expect(textarea).toBeDisabled();
+    const textarea = screen.getByPlaceholderText('Type your message...') as HTMLTextAreaElement;
+    expect(textarea).toHaveAttribute('readOnly');
   });
 
   it('should disable send button during loading', () => {

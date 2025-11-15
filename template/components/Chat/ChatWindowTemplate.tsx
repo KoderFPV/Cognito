@@ -73,7 +73,7 @@ export const ChatWindowTemplate = ({
           onKeyDown={onKeyDown}
           placeholder={placeholder}
           className={styles.input}
-          disabled={isLoading}
+          readOnly={isLoading}
           rows={3}
         />
         <button
