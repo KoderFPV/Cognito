@@ -6,7 +6,7 @@ const { mockUseChatWindow } = vi.hoisted(() => ({
     messages: [],
     inputValue: '',
     isLoading: false,
-    error: null,
+    error: null as string | null,
     setInputValue: vi.fn(),
     handleSendMessage: vi.fn(),
     handleKeyDown: vi.fn(),
@@ -184,7 +184,7 @@ describe('ChatWindow', () => {
       setInputValue: vi.fn(),
       handleSendMessage: vi.fn(),
       handleKeyDown: vi.fn(),
-    });
+    } as any);
 
     render(<ChatWindow />);
 

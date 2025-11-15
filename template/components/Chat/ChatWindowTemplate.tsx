@@ -18,7 +18,7 @@ export interface ChatWindowTemplateProps {
   onInputChange: (value: string) => void;
   onSendMessage: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  textareaRef?: React.RefObject<HTMLTextAreaElement>;
+  textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
 }
 
 export const ChatWindowTemplate = ({
