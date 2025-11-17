@@ -11,3 +11,17 @@ export const getMongoDbUri = (): string => {
 
   return uri;
 };
+
+export const getWeaviateUrl = (): string => {
+  const url = process.env.WEAVIATE_URL;
+
+  if (!url || !url.trim()) {
+    throw new Error('WEAVIATE_URL environment variable is required');
+  }
+
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    throw new Error('WEAVIATE_URL must start with http:// or https://');
+  }
+
+  return url;
+};
