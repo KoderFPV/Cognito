@@ -5,14 +5,28 @@ const mockWeaviateClient = {
   close: vi.fn().mockResolvedValue(undefined),
 };
 
+class MockApiKey {
+  _apiKey: string;
+
+  constructor(key: string) {
+    this._apiKey = key;
+  }
+}
+
 vi.mock('weaviate-client', () => ({
   default: {
     connectToCustom: vi.fn().mockResolvedValue(mockWeaviateClient),
+    ApiKey: MockApiKey,
   },
 }));
 
 vi.mock('@/services/config/config.service', () => ({
-  getWeaviateUrl: vi.fn(() => 'http://localhost:8080'),
+  getWeaviateHttpHost: vi.fn(() => 'localhost'),
+  getWeaviateHttpPort: vi.fn(() => 8083),
+  getWeaviateGrpcHost: vi.fn(() => 'localhost'),
+  getWeaviateGrpcPort: vi.fn(() => 50053),
+  isWeaviateSecure: vi.fn(() => false),
+  getWeaviateApiKey: vi.fn(() => 'test-api-key'),
 }));
 
 describe('weaviate client', () => {
@@ -21,7 +35,7 @@ describe('weaviate client', () => {
     await vi.resetModules();
   });
 
-  it('should connect to Weaviate on first call', async () => {
+  it('should connect to Weaviate on first call with proper gRPC configuration', async () => {
     const weaviate = await import('weaviate-client');
     const { connectToWeaviate } = await import('./weaviate');
 
@@ -30,7 +44,15 @@ describe('weaviate client', () => {
     expect(client).toBeDefined();
     expect(weaviate.default.connectToCustom).toHaveBeenCalledTimes(1);
     expect(weaviate.default.connectToCustom).toHaveBeenCalledWith({
-      httpHost: 'http://localhost:8080',
+      httpHost: 'localhost',
+      httpPort: 8083,
+      httpSecure: false,
+      grpcHost: 'localhost',
+      grpcPort: 50053,
+      grpcSecure: false,
+      authCredentials: expect.objectContaining({
+        _apiKey: 'test-api-key',
+      }),
     });
   });
 

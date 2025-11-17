@@ -1,5 +1,12 @@
 import weaviate, { WeaviateClient } from 'weaviate-client';
-import { getWeaviateUrl } from '@/services/config/config.service';
+import {
+  getWeaviateHttpHost,
+  getWeaviateHttpPort,
+  getWeaviateGrpcHost,
+  getWeaviateGrpcPort,
+  isWeaviateSecure,
+  getWeaviateApiKey,
+} from '@/services/config/config.service';
 
 let cachedClient: WeaviateClient | null = null;
 
@@ -8,10 +15,21 @@ export const connectToWeaviate = async (): Promise<WeaviateClient> => {
     return cachedClient;
   }
 
-  const url = getWeaviateUrl();
+  const httpHost = getWeaviateHttpHost();
+  const httpPort = getWeaviateHttpPort();
+  const grpcHost = getWeaviateGrpcHost();
+  const grpcPort = getWeaviateGrpcPort();
+  const secure = isWeaviateSecure();
+  const apiKey = getWeaviateApiKey();
 
   const client = await weaviate.connectToCustom({
-    httpHost: url,
+    httpHost,
+    httpPort,
+    httpSecure: secure,
+    grpcHost,
+    grpcPort,
+    grpcSecure: secure,
+    authCredentials: new weaviate.ApiKey(apiKey),
   });
 
   cachedClient = client;
