@@ -17,20 +17,16 @@ services:
     restart: unless-stopped
     networks:
       - cognito-network
-
-  # MongoDB Database
   mongo:
     image: mongo:7
     container_name: cognito-mongo
     ports:
-      - "27018:27017"
+      - "2138:27017"
     environment:
       - MONGO_INITDB_DATABASE=cognito
     volumes:
       - mongo-data:/data/db
     restart: unless-stopped
-    networks:
-      - cognito-network
 
   weaviate:
     image: docker.io/semitechnologies/weaviate:1.30.1
@@ -44,8 +40,6 @@ services:
       LOG_LEVEL: "debug"
       QUERY_DEFAULTS_LIMIT: 1000
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
-      DEFAULT_VECTORIZER_MODULE: multi2vec-clip
-      CLIP_INFERENCE_API: "http://multi2vec-clip:8080"
       ENABLE_MODULES: "multi2vec-clip, backup-filesystem"
       BACKUP_FILESYSTEM_PATH: "/var/lib/weaviate/backups"
       CLUSTER_HOSTNAME: "node1"
@@ -58,28 +52,10 @@ services:
       AUTHENTICATION_DB_USERS_ENABLED: "true"
 
   multi2vec-clip:
-    image: kodercloud/snowflake-l-2-0-weaviate
+    image: cr.weaviate.io/semitechnologies/multi2vec-clip:sentence-transformers-clip-ViT-B-32-multilingual-v1
 
-  vllm-qwen3:
-    image: vllm/vllm-openai:latest
-    volumes:
-      - "./hfmodels:/root/.cache/huggingface"
-    ports:
-      - "2142:8000"
-    command: >
-      --host 0.0.0.0
-      --port 8000
-      --model Qwen/Qwen3-8B-FP8
-      --enforce-eager
-      --gpu-memory-utilization 0.50
-      --max-model-len 3070
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ["0"]
-              capabilities: [gpu]
+  text2vec-snowflake:
+    image: kodercloud/snowflake-l-2-0-weaviate
 
   vllm-qwen3-vl:
     image: vllm/vllm-openai:latest
@@ -100,6 +76,27 @@ services:
           devices:
             - driver: nvidia
               device_ids: ["1"]
+              capabilities: [gpu]
+
+  vllm-qwen3:
+    image: vllm/vllm-openai:latest
+    volumes:
+      - "./hfmodels:/root/.cache/huggingface"
+    ports:
+      - "2142:8000"
+    command: >
+      --host 0.0.0.0
+      --port 8000
+      --model Qwen/Qwen3-8B-FP8
+      --enforce-eager
+      --gpu-memory-utilization 0.50
+      --max-model-len 3070
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
               capabilities: [gpu]
 
 volumes:
