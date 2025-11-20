@@ -58,7 +58,10 @@ export const DELETE = async (
       return NextResponse.json({ error: t('notFound') }, { status: 404 });
     }
 
-    const deleted = await deleteProduct(db, id);
+    const { deleteProductWithWeaviate } = await import(
+      '@/services/product/productService'
+    );
+    const deleted = await deleteProductWithWeaviate(id, locale);
 
     if (!deleted) {
       return NextResponse.json({ error: t('deletionFailed') }, { status: 500 });

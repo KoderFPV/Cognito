@@ -7,8 +7,10 @@ import {
   isWeaviateSecure,
   getWeaviateApiKey,
 } from '@/services/config/config.service';
+import { createWeaviateProductsCollection } from '@/clients/weaviate/productsSchema';
 
 let cachedClient: WeaviateClient | null = null;
+let schemaInitialized = false;
 
 export const connectToWeaviate = async (): Promise<WeaviateClient> => {
   if (cachedClient) {
@@ -33,6 +35,18 @@ export const connectToWeaviate = async (): Promise<WeaviateClient> => {
   });
 
   cachedClient = client;
+
+  if (!schemaInitialized) {
+    try {
+      await createWeaviateProductsCollection(client);
+    } catch (error) {
+      console.error(
+        'Failed to initialize Weaviate products schema:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+    }
+    schemaInitialized = true;
+  }
 
   return client;
 };
