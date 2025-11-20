@@ -6,33 +6,6 @@ import {
 
 const PRODUCTS_COLLECTION = 'Product';
 
-const buildTextVectorizerConfig = () => {
-  const config: Record<string, any> = {
-    vectorizeCollectionName: false,
-  };
-
-  const snowflakeUrl = getSnowflakeInferenceUrl();
-  if (snowflakeUrl) {
-    config.inferenceUrl = snowflakeUrl;
-  }
-
-  return config;
-};
-
-const buildImageVectorizerConfig = () => {
-  const config: Record<string, any> = {
-    imageFields: ['imageUrl'],
-    textFields: [],
-  };
-
-  const clipUrl = getOpenClipInferenceUrl();
-  if (clipUrl) {
-    config.inferenceUrl = clipUrl;
-  }
-
-  return config;
-};
-
 export const createWeaviateProductsCollection = async (
   client: WeaviateClient
 ): Promise<void> => {
@@ -42,10 +15,7 @@ export const createWeaviateProductsCollection = async (
     return;
   }
 
-  const textConfig = buildTextVectorizerConfig();
-  const imageConfig = buildImageVectorizerConfig();
-
-  const config: Record<string, any> = {
+  await (client.collections as any).create({
     name: PRODUCTS_COLLECTION,
     properties: [
       { name: 'id', dataType: 'text' },
@@ -60,14 +30,26 @@ export const createWeaviateProductsCollection = async (
     vectorizers: [
       {
         name: 'text_vector',
-        vectorizer: { name: 'text2vec-transformers', config: textConfig },
+        vectorizer: {
+          name: 'text2vec-transformers',
+          config: {
+            sourceProperties: ['name', 'description', 'category'],
+            vectorizeCollectionName: false,
+            inferenceUrl: getSnowflakeInferenceUrl(),
+          },
+        },
       },
       {
         name: 'image_vector',
-        vectorizer: { name: 'multi2vec-clip', config: imageConfig },
+        vectorizer: {
+          name: 'multi2vec-clip',
+          config: {
+            imageFields: ['imageUrl'],
+            textFields: [],
+            inferenceUrl: getOpenClipInferenceUrl(),
+          },
+        },
       },
     ],
-  };
-
-  await (client.collections as any).create(config);
+  });
 };
