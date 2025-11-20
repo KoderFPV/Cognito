@@ -3,8 +3,8 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  createProductWithWeaviate,
-  deleteProductWithWeaviate,
+  createProduct,
+  deleteProduct,
 } from './productService';
 import { IProduct } from '@/domain/product';
 
@@ -68,7 +68,7 @@ describe('productService', () => {
     vi.mocked(getProductById).mockResolvedValue(mockProduct);
   });
 
-  describe('createProductWithWeaviate', () => {
+  describe('createProduct', () => {
     it('should create product in both MongoDB and Weaviate', async () => {
       const productData = {
         name: 'Test Product',
@@ -81,7 +81,7 @@ describe('productService', () => {
         isActive: true,
       };
 
-      const result = await createProductWithWeaviate(productData, locale);
+      const result = await createProduct(productData, locale);
 
       expect(vi.mocked(validateProductData)).toHaveBeenCalledWith(
         productData,
@@ -111,7 +111,7 @@ describe('productService', () => {
       };
 
       await expect(
-        createProductWithWeaviate(productData, locale)
+        createProduct(productData, locale)
       ).rejects.toThrow('Failed to sync product to Weaviate');
 
       expect(vi.mocked(deleteProduct)).toHaveBeenCalledWith(
@@ -126,7 +126,7 @@ describe('productService', () => {
       );
 
       await expect(
-        createProductWithWeaviate({}, locale)
+        createProduct({}, locale)
       ).rejects.toThrow('Validation failed');
 
       expect(vi.mocked(createProduct)).not.toHaveBeenCalled();
@@ -137,14 +137,14 @@ describe('productService', () => {
       vi.mocked(addProductToWeaviate).mockRejectedValueOnce(weaviateError);
 
       await expect(
-        createProductWithWeaviate({} as any, locale)
+        createProduct({} as any, locale)
       ).rejects.toThrow('Failed to sync product to Weaviate: Specific Weaviate error message');
     });
   });
 
-  describe('deleteProductWithWeaviate', () => {
+  describe('deleteProduct', () => {
     it('should delete product from both MongoDB and Weaviate', async () => {
-      const result = await deleteProductWithWeaviate(mockProduct._id, locale);
+      const result = await deleteProduct(mockProduct._id, locale);
 
       expect(vi.mocked(getProductById)).toHaveBeenCalledWith(mockDb, mockProduct._id);
       expect(vi.mocked(deleteProduct)).toHaveBeenCalledWith(mockDb, mockProduct._id);
@@ -158,7 +158,7 @@ describe('productService', () => {
     it('should return false when product not found', async () => {
       vi.mocked(getProductById).mockResolvedValueOnce(null);
 
-      const result = await deleteProductWithWeaviate(mockProduct._id, locale);
+      const result = await deleteProduct(mockProduct._id, locale);
 
       expect(result).toBe(false);
       expect(vi.mocked(deleteProduct)).not.toHaveBeenCalled();
@@ -167,7 +167,7 @@ describe('productService', () => {
     it('should return false when MongoDB delete fails', async () => {
       vi.mocked(deleteProduct).mockResolvedValueOnce(false);
 
-      const result = await deleteProductWithWeaviate(mockProduct._id, locale);
+      const result = await deleteProduct(mockProduct._id, locale);
 
       expect(result).toBe(false);
     });
@@ -178,7 +178,7 @@ describe('productService', () => {
       );
 
       await expect(
-        deleteProductWithWeaviate(mockProduct._id, locale)
+        deleteProduct(mockProduct._id, locale)
       ).rejects.toThrow('Failed to sync product deletion to Weaviate');
 
       expect(vi.mocked(connectToMongo)).toHaveBeenCalledTimes(2);
@@ -189,7 +189,7 @@ describe('productService', () => {
       vi.mocked(deleteProductFromWeaviate).mockRejectedValueOnce(weaviateError);
 
       await expect(
-        deleteProductWithWeaviate(mockProduct._id, locale)
+        deleteProduct(mockProduct._id, locale)
       ).rejects.toThrow(
         'Failed to sync product deletion to Weaviate: Specific Weaviate error'
       );

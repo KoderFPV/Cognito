@@ -11,7 +11,7 @@ import {
 } from '@/services/product/productValidation.service';
 import { IProduct } from '@/domain/product';
 
-export const createProductWithWeaviate = async (
+export const createProduct = async (
   productData: unknown,
   locale: string
 ): Promise<IProduct> => {
@@ -42,7 +42,7 @@ export const createProductWithWeaviate = async (
   }
 };
 
-export const deleteProductWithWeaviate = async (
+export const deleteProduct = async (
   productId: string,
   locale: string
 ): Promise<boolean> => {

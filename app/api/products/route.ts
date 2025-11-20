@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { getTranslations } from 'next-intl/server';
-import { createProductWithWeaviate } from '@/services/product/productService';
+import { createProduct } from '@/services/product/productService';
 import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 export const POST = async (request: NextRequest) => {
@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
   try {
     const body = await request.json();
 
-    await createProductWithWeaviate(body, locale);
+    await createProduct(body, locale);
 
     return NextResponse.json(
       {
