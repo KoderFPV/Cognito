@@ -3,6 +3,10 @@ import { WeaviateClient } from 'weaviate-client';
 
 const mockWeaviateClient = {
   close: vi.fn().mockResolvedValue(undefined),
+  collections: {
+    exists: vi.fn().mockResolvedValue(false),
+    create: vi.fn().mockResolvedValue(undefined),
+  },
 };
 
 class MockApiKey {
@@ -27,6 +31,8 @@ vi.mock('@/services/config/config.service', () => ({
   getWeaviateGrpcPort: vi.fn(() => 50053),
   isWeaviateSecure: vi.fn(() => false),
   getWeaviateApiKey: vi.fn(() => 'test-api-key'),
+  getSnowflakeInferenceUrl: vi.fn(() => 'http://localhost:8080'),
+  getOpenClipInferenceUrl: vi.fn(() => 'http://localhost:8081'),
 }));
 
 describe('weaviate client', () => {

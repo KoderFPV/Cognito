@@ -43,7 +43,13 @@ describe('productService', () => {
     deleted: false,
   };
 
-  const mockDb = {};
+  const mockCollectionUpdateOne = vi.fn().mockResolvedValue({ modifiedCount: 1 });
+  const mockDbCollection = vi.fn().mockReturnValue({
+    updateOne: mockCollectionUpdateOne,
+  });
+  const mockDb = {
+    collection: mockDbCollection,
+  };
   const mockWeaviateClient = {};
   const locale = 'en';
 
@@ -87,7 +93,7 @@ describe('productService', () => {
         productData,
         locale
       );
-      expect(vi.mocked(createProduct)).toHaveBeenCalled();
+      expect(vi.mocked(createProductMongo)).toHaveBeenCalled();
       expect(vi.mocked(addProductToWeaviate)).toHaveBeenCalledWith(
         mockWeaviateClient,
         mockProduct
@@ -147,7 +153,7 @@ describe('productService', () => {
       const result = await deleteProduct(mockProduct._id, locale);
 
       expect(vi.mocked(getProductById)).toHaveBeenCalledWith(mockDb, mockProduct._id);
-      expect(vi.mocked(deleteProduct)).toHaveBeenCalledWith(mockDb, mockProduct._id);
+      expect(vi.mocked(deleteProductMongo)).toHaveBeenCalledWith(mockDb, mockProduct._id);
       expect(vi.mocked(deleteProductFromWeaviate)).toHaveBeenCalledWith(
         mockWeaviateClient,
         mockProduct._id
@@ -161,11 +167,11 @@ describe('productService', () => {
       const result = await deleteProduct(mockProduct._id, locale);
 
       expect(result).toBe(false);
-      expect(vi.mocked(deleteProduct)).not.toHaveBeenCalled();
+      expect(vi.mocked(deleteProductMongo)).not.toHaveBeenCalled();
     });
 
     it('should return false when MongoDB delete fails', async () => {
-      vi.mocked(deleteProduct).mockResolvedValueOnce(false);
+      vi.mocked(deleteProductMongo).mockResolvedValueOnce(false);
 
       const result = await deleteProduct(mockProduct._id, locale);
 

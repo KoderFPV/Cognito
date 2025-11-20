@@ -25,9 +25,10 @@ describe('weaviateProductsModel', () => {
     deleted: false,
   };
 
-  const mockFilter = {
+  const mockFilter: any = {
     equal: vi.fn(),
   };
+  mockFilter.equal.mockReturnValue(mockFilter);
 
   const mockCollection = {
     data: {
