@@ -1,6 +1,10 @@
 import { connectToWeaviate } from '@/clients/weaviate/weaviate';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
-import { createProduct, deleteProduct, getProductById } from '@/models/products/productsModel';
+import {
+  createProduct as createProductMongo,
+  deleteProduct as deleteProductMongo,
+  getProductById,
+} from '@/models/products/productsModel';
 import {
   addProductToWeaviate,
   deleteProductFromWeaviate,
@@ -21,13 +25,13 @@ export const createProduct = async (
   let createdProduct: IProduct;
 
   try {
-    createdProduct = await createProduct(validatedData);
+    createdProduct = await createProductMongo(validatedData);
 
     try {
       await addProductToWeaviate(weaviateClient, createdProduct);
     } catch (weaviateError) {
       const db = await connectToMongo();
-      await deleteProduct(db, createdProduct._id);
+      await deleteProductMongo(db, createdProduct._id);
 
       throw new Error(
         `Failed to sync product to Weaviate: ${
@@ -53,7 +57,7 @@ export const deleteProduct = async (
     return false;
   }
 
-  const wasDeleted = await deleteProduct(db, productId);
+  const wasDeleted = await deleteProductMongo(db, productId);
 
   if (!wasDeleted) {
     return false;

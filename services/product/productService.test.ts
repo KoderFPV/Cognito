@@ -17,8 +17,8 @@ vi.mock('@/services/product/productValidation.service');
 import { connectToWeaviate } from '@/clients/weaviate/weaviate';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
 import {
-  createProduct,
-  deleteProduct,
+  createProduct as createProductMongo,
+  deleteProduct as deleteProductMongo,
   getProductById,
 } from '@/models/products/productsModel';
 import {
@@ -61,9 +61,9 @@ describe('productService', () => {
       category: 'Electronics',
       isActive: true,
     } as any);
-    vi.mocked(createProduct).mockResolvedValue(mockProduct);
+    vi.mocked(createProductMongo).mockResolvedValue(mockProduct);
     vi.mocked(addProductToWeaviate).mockResolvedValue(undefined);
-    vi.mocked(deleteProduct).mockResolvedValue(true);
+    vi.mocked(deleteProductMongo).mockResolvedValue(true);
     vi.mocked(deleteProductFromWeaviate).mockResolvedValue(undefined);
     vi.mocked(getProductById).mockResolvedValue(mockProduct);
   });
@@ -114,7 +114,7 @@ describe('productService', () => {
         createProduct(productData, locale)
       ).rejects.toThrow('Failed to sync product to Weaviate');
 
-      expect(vi.mocked(deleteProduct)).toHaveBeenCalledWith(
+      expect(vi.mocked(deleteProductMongo)).toHaveBeenCalledWith(
         mockDb,
         mockProduct._id
       );
@@ -129,7 +129,7 @@ describe('productService', () => {
         createProduct({}, locale)
       ).rejects.toThrow('Validation failed');
 
-      expect(vi.mocked(createProduct)).not.toHaveBeenCalled();
+      expect(vi.mocked(createProductMongo)).not.toHaveBeenCalled();
     });
 
     it('should throw error with Weaviate error message when sync fails', async () => {
