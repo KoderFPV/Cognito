@@ -1,4 +1,4 @@
-import { WeaviateClient } from 'weaviate-client';
+import { WeaviateClient, CollectionConfigCreate, vectors, configure, dataType } from 'weaviate-client';
 import {
   getSnowflakeInferenceUrl,
   getOpenClipInferenceUrl,
@@ -15,41 +15,33 @@ export const createWeaviateProductsCollection = async (
     return;
   }
 
-  await (client.collections as any).create({
+  const config = {
     name: PRODUCTS_COLLECTION,
     properties: [
-      { name: 'id', dataType: 'text' },
-      { name: 'name', dataType: 'text' },
-      { name: 'description', dataType: 'text' },
-      { name: 'category', dataType: 'text' },
-      { name: 'price', dataType: 'number' },
-      { name: 'sku', dataType: 'text' },
-      { name: 'stock', dataType: 'int' },
-      { name: 'imageUrl', dataType: 'text' },
+      { name: 'id', dataType: dataType.TEXT },
+      { name: 'name', dataType: dataType.TEXT },
+      { name: 'description', dataType: dataType.TEXT },
+      { name: 'category', dataType: dataType.TEXT },
+      { name: 'price', dataType: dataType.NUMBER },
+      { name: 'sku', dataType: dataType.TEXT },
+      { name: 'stock', dataType: dataType.NUMBER },
+      { name: 'imageUrl', dataType: dataType.TEXT },
     ],
     vectorizers: [
-      {
+      vectors.text2VecTransformers({
         name: 'text_vector',
-        vectorizer: {
-          name: 'text2vec-transformers',
-          config: {
-            sourceProperties: ['name', 'description', 'category'],
-            vectorizeCollectionName: false,
-            inferenceUrl: getSnowflakeInferenceUrl(),
-          },
-        },
-      },
-      {
+        sourceProperties: ['name', 'description', 'category'],
+        vectorIndexConfig: configure.vectorIndex.hnsw(),
+        inferenceUrl: getSnowflakeInferenceUrl(),
+      }),
+      vectors.multi2VecClip({
         name: 'image_vector',
-        vectorizer: {
-          name: 'multi2vec-clip',
-          config: {
-            imageFields: ['imageUrl'],
-            textFields: [],
-            inferenceUrl: getOpenClipInferenceUrl(),
-          },
-        },
-      },
+        imageFields: ['imageUrl'],
+        vectorIndexConfig: configure.vectorIndex.hnsw(),
+        inferenceUrl: getOpenClipInferenceUrl(),
+      }),
     ],
-  });
+  };
+
+  await client.collections.create(config);
 };
