@@ -8,7 +8,7 @@ const PRODUCTS_COLLECTION = 'Product';
 
 export const createWeaviateProductsCollection = async (
   client: WeaviateClient
-): Promise<void> => {
+) => {
   const collectionExists = await client.collections.exists(PRODUCTS_COLLECTION);
 
   if (collectionExists) {
