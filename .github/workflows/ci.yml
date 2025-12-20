@@ -134,19 +134,6 @@ jobs:
           PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
           QUERY_DEFAULTS_LIMIT: "1000"
           CLUSTER_HOSTNAME: "node1"
-          ENABLE_MODULES: "multi2vec-clip, backup-filesystem, text2vec-ollama, text2vec-transformers"
-          CLIP_INFERENCE_API: "http://clip:8080"
-          TRANSFORMERS_INFERENCE_API: "http://snowflake:8080"
-          DEFAULT_QUANTIZATION: "rq-8"
-
-      snowflake:
-        image: cr.weaviate.io/semitechnologies/multi2vec-clip:sentence-transformers-clip-ViT-B-32-multilingual-v1
-
-      clip:
-        image: kodercloud/fashionclip:latest
-
-      reranker:
-        image: kodercloud/reranker-transformers:latest
 
     env:
       MONGODB_URI: mongodb://localhost:27017/cognito-e2e
