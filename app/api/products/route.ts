@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { getTranslations } from 'next-intl/server';
-import { validateProductData } from '@/services/product/productValidation.service';
-import { createProduct } from '@/models/products/productsModel';
+import { createProduct } from '@/services/product/productService';
 import { getLocaleFromRequest } from '@/services/locale/locale.service';
 
 export const POST = async (request: NextRequest) => {
@@ -12,9 +11,7 @@ export const POST = async (request: NextRequest) => {
   try {
     const body = await request.json();
 
-    const validatedData = await validateProductData(body, locale);
-
-    await createProduct(validatedData);
+    await createProduct(body, locale);
 
     return NextResponse.json(
       {

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { connectToMongo } from '@/clients/mongodb/mongodb';
-import { getProductById, deleteProduct } from '@/models/products/productsModel';
+import { getProductById } from '@/models/products/productsModel';
 import { getLocaleFromRequest } from '@/services/locale/locale.service';
 import { isAdminInApiRoute } from '@/services/auth/auth.helpers';
+import { deleteProduct } from '@/services/product/productService';
 
 export const GET = async (
   request: NextRequest,
@@ -58,7 +59,7 @@ export const DELETE = async (
       return NextResponse.json({ error: t('notFound') }, { status: 404 });
     }
 
-    const deleted = await deleteProduct(db, id);
+    const deleted = await deleteProduct(id, locale);
 
     if (!deleted) {
       return NextResponse.json({ error: t('deletionFailed') }, { status: 500 });

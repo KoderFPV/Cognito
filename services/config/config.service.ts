@@ -93,3 +93,9 @@ export const isWeaviateSecure = (): boolean => {
 
   return secure === 'true';
 };
+
+export const areVectorizersEnabled = (): boolean => {
+  const enabled = process.env.ENABLE_VECTORIZERS;
+
+  return enabled === 'true';
+};

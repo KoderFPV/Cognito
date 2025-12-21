@@ -3,6 +3,10 @@ import { WeaviateClient } from 'weaviate-client';
 
 const mockWeaviateClient = {
   close: vi.fn().mockResolvedValue(undefined),
+  collections: {
+    exists: vi.fn().mockResolvedValue(false),
+    create: vi.fn().mockResolvedValue(undefined),
+  },
 };
 
 class MockApiKey {
@@ -18,6 +22,19 @@ vi.mock('weaviate-client', () => ({
     connectToCustom: vi.fn().mockResolvedValue(mockWeaviateClient),
     ApiKey: MockApiKey,
   },
+  dataType: {
+    TEXT: 'text',
+    NUMBER: 'number',
+  },
+  vectors: {
+    text2VecTransformers: vi.fn(),
+    multi2VecClip: vi.fn(),
+  },
+  configure: {
+    vectorIndex: {
+      hnsw: vi.fn(),
+    },
+  },
 }));
 
 vi.mock('@/services/config/config.service', () => ({
@@ -27,6 +44,7 @@ vi.mock('@/services/config/config.service', () => ({
   getWeaviateGrpcPort: vi.fn(() => 50053),
   isWeaviateSecure: vi.fn(() => false),
   getWeaviateApiKey: vi.fn(() => 'test-api-key'),
+  areVectorizersEnabled: vi.fn(() => true),
 }));
 
 describe('weaviate client', () => {

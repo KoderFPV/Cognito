@@ -20,8 +20,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -39,8 +39,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        locale: ['en', 'pl']
+        locale: ["en", "pl"]
     services:
       mongodb:
         image: mongo:7
@@ -74,8 +74,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -93,8 +93,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -108,8 +108,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        locale: ['en', 'pl']
-        browser: ['Mobile Chrome', 'Desktop Chrome']
+        locale: ["en", "pl"]
+        browser: ["Mobile Chrome", "Desktop Chrome"]
     services:
       mongodb:
         image: mongo:7
@@ -120,8 +120,29 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+      weaviate:
+        image: semitechnologies/weaviate:1.34.4
+        ports:
+          - 8080:8080
+          - 50051:50051
+        env:
+          AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "false"
+          AUTHENTICATION_APIKEY_ENABLED: "true"
+          AUTHENTICATION_APIKEY_ALLOWED_KEYS: "e2e-test-key"
+          AUTHENTICATION_APIKEY_USERS: "e2e-test-user"
+          PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+          QUERY_DEFAULTS_LIMIT: "1000"
+          CLUSTER_HOSTNAME: "node1"
+
     env:
       MONGODB_URI: mongodb://localhost:27017/cognito-e2e
+      WEAVIATE_HTTP_HOST: localhost
+      WEAVIATE_HTTP_PORT: 8080
+      WEAVIATE_GRPC_HOST: localhost
+      WEAVIATE_GRPC_PORT: 50051
+      WEAVIATE_SECURE: false
+      WEAVIATE_API_KEY: e2e-test-key
       NEXTAUTH_SECRET: e2e-test-secret-key-change-in-production
       NEXTAUTH_URL: http://localhost:2137
       TEST_SERVER_URL: http://localhost:2137
@@ -136,8 +157,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --include=dev
