@@ -72,6 +72,11 @@
     "products": {
       "invalidPaginationParameters": "Invalid pagination parameters",
       "fetchFailed": "Failed to fetch products"
+    },
+    "chat": {
+      "success": "Message sent",
+      "validationFailed": "Invalid message format",
+      "processingFailed": "Failed to process message"
     }
   },
   "product": {
@@ -153,6 +158,13 @@
   "chat": {
     "inputPlaceholder": "Type your message here... (Shift+Enter for new line)",
     "sendButton": "Send",
-    "emptyState": "Start a conversation to find products"
+    "emptyState": "Start a conversation to find products",
+    "errors": {
+      "sessionNotFound": "Conversation session not found",
+      "messageEmpty": "Message cannot be empty",
+      "streamFailed": "Failed to generate response",
+      "agentError": "AI agent encountered an error",
+      "processingFailed": "Failed to process message"
+    }
   }
 }
