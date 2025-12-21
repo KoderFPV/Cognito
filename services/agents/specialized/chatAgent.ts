@@ -28,7 +28,9 @@ export const processChatMessage = async (
   const llm = createQwen3Client(CHAT_TEMPERATURE, CHAT_MAX_TOKENS);
   const systemPrompt = createChatSystemPrompt(state.locale);
 
-  const messages = [new SystemMessage(systemPrompt)];
+  const messages: (SystemMessage | HumanMessage | AIMessage)[] = [
+    new SystemMessage(systemPrompt),
+  ];
 
   for (const msg of state.messages) {
     if (msg.role === 'user') {

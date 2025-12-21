@@ -1,6 +1,6 @@
 import { IAgentMessage, IAgentState, AgentType } from '@/domain/agent';
 
-export { IAgentMessage, IAgentState, AgentType };
+export type { IAgentMessage, IAgentState, AgentType };
 
 export interface IStreamCallback {
   onToken: (token: string) => void;

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { ZodError } from 'zod';
 import { getLocaleFromRequest } from '@/services/locale/locale.service';
-import { init as initZodI18n } from '@/services/validation/validation.service';
+import { initZodI18n } from '@/services/validation/validation.service';
 import { chatMessageSchema } from '@/services/chat/schemas/chatSchemas';
 import { streamChatResponse } from '@/services/chat/chat.service';
 
