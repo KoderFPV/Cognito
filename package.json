@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 2137",
+    "dev:full": "concurrently \"npm run docker:up\" \"npm run dev\" --names \"docker,next\" --prefix-colors \"blue,green\"",
+    "dev:infra": "docker-compose up -d",
     "build": "next build",
     "start": "next start -p 2137",
     "lint": "next lint",
@@ -15,7 +17,12 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:all": "vitest run && playwright test",
-    "precommit": "npm run lint && npm run type-check && npm run build && vitest run && npm run test:e2e"
+    "precommit": "npm run lint && npm run type-check && npm run build && vitest run && npm run test:e2e",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "docker:clean": "docker-compose down -v"
   },
   "dependencies": {
     "@langchain/community": "^1.1.1",
@@ -47,6 +54,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.0",
+    "concurrently": "^9.2.1",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "^15.0.0",

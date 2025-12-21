@@ -105,22 +105,82 @@ Project in initialization phase.
 
 ## Running the Project
 
-### Local Development (Recommended)
+### Quick Start (Easiest)
 
+**Using Make (Recommended):**
 ```bash
-# Start infrastructure (MongoDB, Weaviate, Redis, etc.)
+# Start everything (Docker + Next.js) in one command
+make dev-full
+```
+
+**Using npm:**
+```bash
+npm run dev:full
+```
+
+This will start:
+- Docker services (MongoDB, Weaviate, vLLM)
+- Next.js development server
+
+### Manual Start
+
+**Step 1: Start Infrastructure**
+```bash
+# Using Make
+make dev-infra
+
+# OR using npm
+npm run docker:up
+
+# OR using docker-compose directly
 docker-compose up -d
+```
 
-# Install dependencies
-npm install
+**Step 2: Start Development Server**
+```bash
+# Using Make
+make dev
 
-# Run development server
+# OR using npm
 npm run dev
 ```
 
-Available services:
+### Available Commands
+
+**Make commands (easier to remember):**
+```bash
+make help         # Show all available commands
+make dev-full     # Start everything
+make dev          # Start only Next.js
+make dev-infra    # Start only Docker services
+make stop         # Stop Docker services
+make logs         # View Docker logs
+make restart      # Restart Docker services
+make clean        # Remove Docker volumes
+make test         # Run tests
+make build        # Build for production
+```
+
+**npm scripts:**
+```bash
+npm run dev           # Next.js dev server only
+npm run dev:full      # Docker + Next.js
+npm run docker:up     # Start Docker services
+npm run docker:down   # Stop Docker services
+npm run docker:logs   # View logs
+npm run test          # Run tests
+npm run build         # Build for production
+```
+
+### Available Services
+
 - **Application**: http://localhost:2137
-- **MongoDB**: localhost:27018 (mapped from container port 27017)
+  - Shop (AI Chat): http://localhost:2137/en/shop/chat
+  - CMS (Admin): http://localhost:2137/en/cms
+- **MongoDB**: localhost:2138
+- **Weaviate**: localhost:2139 (HTTP), localhost:2140 (gRPC)
+- **vLLM Qwen3-VL**: localhost:2141
+- **vLLM Qwen3**: localhost:2142
 
 ### Production Deployment
 
@@ -128,10 +188,6 @@ Available services:
 # Build and start all containers (app + infrastructure)
 docker-compose -f docker-compose.prod.yml up -d
 ```
-
-Available services:
-- **Application**: http://localhost:2137
-- **MongoDB**: localhost:27018 (mapped from container port 27017)
 
 ## Configuration
 
