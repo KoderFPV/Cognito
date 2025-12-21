@@ -57,7 +57,7 @@ describe('weaviateProductsModel', () => {
       await addProductToWeaviate(mockClient, mockProduct);
 
       expect(mockCollection.data.insert).toHaveBeenCalledWith({
-        id: mockProduct._id,
+        mongoId: mockProduct._id,
         name: mockProduct.name,
         description: mockProduct.description,
         category: mockProduct.category,
@@ -83,7 +83,7 @@ describe('weaviateProductsModel', () => {
 
       expect(mockCollection.data.insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: productWithoutImage._id,
+          mongoId: productWithoutImage._id,
           name: productWithoutImage.name,
           imageUrl: undefined,
         })
@@ -125,7 +125,7 @@ describe('weaviateProductsModel', () => {
       await deleteProductFromWeaviate(mockClient, mockProduct._id);
 
       expect(vi.mocked(mockCollection.filter.byProperty)).toHaveBeenCalledWith(
-        'id'
+        'mongoId'
       );
       expect(vi.mocked(mockFilter.equal)).toHaveBeenCalledWith(
         mockProduct._id

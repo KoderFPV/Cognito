@@ -94,30 +94,8 @@ export const isWeaviateSecure = (): boolean => {
   return secure === 'true';
 };
 
-export const getSnowflakeInferenceUrl = (): string | undefined => {
-  const url = process.env.SNOWFLAKE_INFERENCE_URL;
+export const areVectorizersEnabled = (): boolean => {
+  const enabled = process.env.ENABLE_VECTORIZERS;
 
-  if (!url || !url.trim()) {
-    return undefined;
-  }
-
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    throw new Error('SNOWFLAKE_INFERENCE_URL must start with http:// or https://');
-  }
-
-  return url;
-};
-
-export const getOpenClipInferenceUrl = (): string | undefined => {
-  const url = process.env.OPENCLIP_INFERENCE_URL;
-
-  if (!url || !url.trim()) {
-    return undefined;
-  }
-
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    throw new Error('OPENCLIP_INFERENCE_URL must start with http:// or https://');
-  }
-
-  return url;
+  return enabled === 'true';
 };

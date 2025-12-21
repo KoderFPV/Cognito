@@ -4,7 +4,7 @@ import { IProduct } from '@/domain/product';
 const PRODUCTS_COLLECTION = 'Product';
 
 interface IWeaviateProduct {
-  id: string;
+  mongoId: string;
   name: string;
   description: string;
   category: string;
@@ -15,7 +15,7 @@ interface IWeaviateProduct {
 }
 
 const mapProductToWeaviate = (product: IProduct): IWeaviateProduct => ({
-  id: product._id,
+  mongoId: product._id,
   name: product.name,
   description: product.description,
   category: product.category,
@@ -32,7 +32,7 @@ export const addProductToWeaviate = async (
   const weaviateProduct = mapProductToWeaviate(product);
   const collection = client.collections.get(PRODUCTS_COLLECTION);
 
-  await collection.data.insert(weaviateProduct);
+  await collection.data.insert(weaviateProduct as any);
 };
 
 export const deleteProductFromWeaviate = async (
@@ -41,6 +41,6 @@ export const deleteProductFromWeaviate = async (
 ): Promise<void> => {
   const collection = client.collections.get(PRODUCTS_COLLECTION);
 
-  const whereFilter = collection.filter.byProperty('id').equal(productId);
+  const whereFilter = collection.filter.byProperty('mongoId').equal(productId);
   await collection.data.deleteMany(whereFilter);
 };
