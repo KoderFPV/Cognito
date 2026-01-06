@@ -2,6 +2,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useChatWindow } from './useChatWindow';
 
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ locale: 'en' }),
+}));
+
+vi.mock('@/repositories/api/chat/chatApiRepository', () => ({
+  streamChatMessage: vi.fn(() => Promise.resolve()),
+}));
+
 describe('useChatWindow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -120,9 +128,11 @@ describe('useChatWindow', () => {
       result.current.handleSendMessage();
     });
 
-    expect(result.current.messages).toHaveLength(1);
+    expect(result.current.messages).toHaveLength(2);
     expect(result.current.messages[0].content).toBe(testMessage);
     expect(result.current.messages[0].sender).toBe('user');
+    expect(result.current.messages[1].sender).toBe('assistant');
+    expect(result.current.messages[1].content).toBe('');
     expect(result.current.inputValue).toBe('');
   });
 
@@ -211,7 +221,7 @@ describe('useChatWindow', () => {
     });
 
     expect(mockEvent.preventDefault).toHaveBeenCalled();
-    expect(result.current.messages).toHaveLength(1);
+    expect(result.current.messages).toHaveLength(2);
   });
 
   it('should not send on Enter when Shift is pressed', () => {
@@ -260,10 +270,6 @@ describe('useChatWindow', () => {
     });
 
     act(() => {
-      result.current.addMessage('AI response', 'assistant');
-    });
-
-    act(() => {
       result.current.setInputValue('Second user message');
     });
 
@@ -271,10 +277,13 @@ describe('useChatWindow', () => {
       result.current.handleSendMessage();
     });
 
-    expect(result.current.messages).toHaveLength(3);
+    expect(result.current.messages).toHaveLength(4);
     expect(result.current.messages[0].sender).toBe('user');
+    expect(result.current.messages[0].content).toBe('First user message');
     expect(result.current.messages[1].sender).toBe('assistant');
     expect(result.current.messages[2].sender).toBe('user');
+    expect(result.current.messages[2].content).toBe('Second user message');
+    expect(result.current.messages[3].sender).toBe('assistant');
   });
 
   it('should generate unique IDs for messages', () => {
