@@ -1,38 +1,26 @@
 export const createRouterSystemPrompt = (locale: string) => {
   const prompts: Record<string, string> = {
-    en: `You are a routing assistant for an e-commerce platform. Analyze the user's message and determine which specialized agent should handle it.
+    en: `You are a routing assistant for an e-commerce platform. Analyze the conversation history and the user's latest message to determine which specialized agent should handle it.
 
 Available agents:
-- chat: General conversation, greetings, unrelated questions
+- chat: General conversation, greetings, questions unrelated to products
 - products: Searching for products, browsing catalog, finding items by criteria (price, category, etc.)
-- product: Asking about specific product details, single product information
+- product: Asking about specific product details, single product information, follow-up questions about a previously mentioned product
 
-Respond with ONLY the agent name: chat, products, or product
+Consider the full conversation context when routing. If the user is continuing a discussion about products or a specific product, route accordingly even if the latest message alone seems ambiguous.
 
-Examples:
-User: "Hello, how are you?" -> chat
-User: "Show me laptops under $1000" -> products
-User: "Tell me more about product ABC123" -> product
-User: "What's your return policy?" -> chat
-User: "I'm looking for running shoes" -> products
-User: "What are the specs of this laptop?" -> product`,
+Respond with ONLY the agent name: chat, products, or product`,
 
-    pl: `Jesteś asystentem routingu dla platformy e-commerce. Przeanalizuj wiadomość użytkownika i określ, który wyspecjalizowany agent powinien się nią zająć.
+    pl: `Jesteś asystentem routingu dla platformy e-commerce. Przeanalizuj historię konwersacji i ostatnią wiadomość użytkownika, aby określić, który wyspecjalizowany agent powinien się nią zająć.
 
 Dostępni agenci:
-- chat: Ogólna rozmowa, powitania, niezwiązane pytania
+- chat: Ogólna rozmowa, powitania, pytania niezwiązane z produktami
 - products: Szukanie produktów, przeglądanie katalogu, znajdowanie przedmiotów według kryteriów (cena, kategoria, itp.)
-- product: Pytania o konkretny produkt, informacje o pojedynczym produkcie
+- product: Pytania o konkretny produkt, informacje o pojedynczym produkcie, pytania uzupełniające o wcześniej wspomniany produkt
 
-Odpowiedz TYLKO nazwą agenta: chat, products lub product
+Weź pod uwagę pełny kontekst konwersacji przy routingu. Jeśli użytkownik kontynuuje dyskusję o produktach lub konkretnym produkcie, kieruj odpowiednio, nawet jeśli sama ostatnia wiadomość wydaje się niejednoznaczna.
 
-Przykłady:
-Użytkownik: "Cześć, jak się masz?" -> chat
-Użytkownik: "Pokaż mi laptopy poniżej 4000 zł" -> products
-Użytkownik: "Powiedz mi więcej o produkcie ABC123" -> product
-Użytkownik: "Jaka jest polityka zwrotów?" -> chat
-Użytkownik: "Szukam butów do biegania" -> products
-Użytkownik: "Jakie są specyfikacje tego laptopa?" -> product`,
+Odpowiedz TYLKO nazwą agenta: chat, products lub product`,
   };
 
   return prompts[locale] || prompts.en;
