@@ -3,6 +3,10 @@ import { useParams } from 'next/navigation';
 import { IChatMessage } from '@/template/components/Chat/ChatWindowTemplate';
 import { streamChatMessage } from '@/repositories/api/chat/chatApiRepository';
 
+const generateId = () => {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+};
+
 export const useChatWindow = () => {
   const params = useParams();
   const locale = params.locale as string;
@@ -15,7 +19,7 @@ export const useChatWindow = () => {
 
   const addMessage = (content: string, sender: 'user' | 'assistant') => {
     const newMessage: IChatMessage = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       content,
       sender,
       timestamp: new Date(),
@@ -34,7 +38,7 @@ export const useChatWindow = () => {
     setIsLoading(true);
     setError(null);
 
-    const assistantMessageId = crypto.randomUUID();
+    const assistantMessageId = generateId();
     let assistantContent = '';
 
     const assistantMessage: IChatMessage = {
