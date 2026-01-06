@@ -24,10 +24,10 @@ export const createQwen3VLClient = (temperature: number, maxTokens: number) => {
   const { vllmQwen3VlUrl, vllmApiKey } = getVllmConfig();
 
   return new ChatOpenAI({
-    model: 'Qwen/Qwen2-VL-7B-Instruct',
+    model: 'Qwen/Qwen3-VL-8B-Instruct-FP8',
     temperature,
     maxTokens,
-    openAIApiKey: vllmApiKey,
+    apiKey: vllmApiKey,
     configuration: {
       baseURL: vllmQwen3VlUrl,
     },
@@ -38,10 +38,10 @@ export const createQwen3Client = (temperature: number, maxTokens: number) => {
   const { vllmQwen3Url, vllmApiKey } = getVllmConfig();
 
   return new ChatOpenAI({
-    model: 'Qwen/Qwen2.5-7B-Instruct',
+    model: 'Qwen/Qwen3-8B-FP8',
     temperature,
     maxTokens,
-    openAIApiKey: vllmApiKey,
+    apiKey: vllmApiKey,
     configuration: {
       baseURL: vllmQwen3Url,
     },
