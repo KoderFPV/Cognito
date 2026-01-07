@@ -72,6 +72,11 @@
     "products": {
       "invalidPaginationParameters": "Nieprawidłowe parametry paginacji",
       "fetchFailed": "Nie udało się pobrać produktów"
+    },
+    "chat": {
+      "success": "Wiadomość wysłana",
+      "validationFailed": "Nieprawidłowy format wiadomości",
+      "processingFailed": "Nie udało się przetworzyć wiadomości"
     }
   },
   "product": {
@@ -153,6 +158,13 @@
   "chat": {
     "inputPlaceholder": "Wpisz wiadomość... (Shift+Enter dla nowej linii)",
     "sendButton": "Wyślij",
-    "emptyState": "Rozpocznij rozmowę, aby znaleźć produkty"
+    "emptyState": "Rozpocznij rozmowę, aby znaleźć produkty",
+    "errors": {
+      "sessionNotFound": "Sesja konwersacji nie została znaleziona",
+      "messageEmpty": "Wiadomość nie może być pusta",
+      "streamFailed": "Nie udało się wygenerować odpowiedzi",
+      "agentError": "Agent AI napotkał błąd",
+      "processingFailed": "Nie udało się przetworzyć wiadomości"
+    }
   }
 }

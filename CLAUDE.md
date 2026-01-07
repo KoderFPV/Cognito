@@ -560,6 +560,76 @@ npm start
 npm run lint
 ```
 
+## Development Commands
+
+### Quick Start (Recommended for Claude Code)
+
+**Start everything (Docker + Next.js) in one command:**
+```bash
+make dev-full
+```
+
+This is the easiest way to start the development environment. It will:
+- Start all Docker services (MongoDB, Weaviate, vLLM)
+- Start Next.js development server
+- Show colored output for each process
+
+**Alternative commands:**
+```bash
+# Using npm
+npm run dev:full
+
+# Using bash script
+./dev.sh start
+```
+
+### Common Development Tasks
+
+```bash
+# Start/Stop
+make dev-full      # Start everything
+make dev           # Start only Next.js (Docker must be running)
+make dev-infra     # Start only Docker services
+make stop          # Stop Docker services
+make status        # Check Docker services status
+
+# Logs and Debugging
+make logs          # View Docker logs (follow mode)
+
+# Testing
+make test          # Run all tests
+make test-watch    # Run tests in watch mode
+make lint          # Run ESLint
+make type-check    # Run TypeScript type checking
+
+# Build
+make build         # Build production bundle
+
+# Cleanup
+make clean         # Stop Docker and remove volumes (DANGER: deletes data)
+```
+
+### Available Services After Starting
+
+- **Application**: http://localhost:2137
+  - Shop (AI Chat): http://localhost:2137/en/shop/chat
+  - CMS (Admin): http://localhost:2137/en/cms
+- **MongoDB**: localhost:2138
+- **Weaviate**: localhost:2139 (HTTP), localhost:2140 (gRPC)
+- **vLLM Qwen3-VL**: localhost:2141
+- **vLLM Qwen3**: localhost:2142
+
+### Troubleshooting
+
+If services fail to start:
+```bash
+make clean         # Remove all Docker data
+make dev-infra     # Restart Docker services
+make dev           # Start Next.js
+```
+
+For more detailed information, see [DEVELOPMENT.md](DEVELOPMENT.md).
+
 ## GitHub Tasks
 
 When working on a GitHub task, try to link the PR to the task using the "Closes #[task-number]" keyword in the PR description (only when it naturally comes up in the conversation, don't force it).
