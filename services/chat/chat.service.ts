@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
-import { IStreamCallback, createInitialState } from '@/services/agents/state/agentState';
-import { executeChatGraph } from '@/services/agents/graph/chatGraph';
+import { IStreamCallback, executeChatGraphWithStream } from '@/agents/graph/chatGraph';
 import {
   createConversation,
   getConversationBySessionId,
@@ -47,20 +46,16 @@ export const streamChatResponse = async (
       content: msg.content,
     }));
 
-    const initialState = createInitialState(
+    const assistantResponse = await executeChatGraphWithStream(
       currentSessionId!,
       locale,
-      message,
-      userId
+      agentMessages,
+      {
+        onToken: callbacks.onToken,
+        onError: callbacks.onError,
+        onComplete: callbacks.onComplete,
+      }
     );
-
-    initialState.messages = agentMessages;
-
-    const assistantResponse = await executeChatGraph(initialState, {
-      onToken: callbacks.onToken,
-      onError: callbacks.onError,
-      onComplete: callbacks.onComplete,
-    });
 
     const messageId = new ObjectId().toString();
 

@@ -52,7 +52,7 @@ services:
     command: >
       --host 0.0.0.0
       --port 8000
-      --model Qwen/Qwen3-VL-8B-Instruct-FP8 
+      --model Qwen/Qwen3-VL-8B-Instruct-FP8
       --enforce-eager
       --gpu-memory-utilization 0.75
       --max-model-len 3070
@@ -64,19 +64,12 @@ services:
               device_ids: ["1"]
               capabilities: [gpu]
 
-  vllm-qwen3:
-    image: vllm/vllm-openai:latest
-    volumes:
-      - "./hfmodels:/root/.cache/huggingface"
+  ollama:
+    image: ollama/ollama
     ports:
-      - "2142:8000"
-    command: >
-      --host 0.0.0.0
-      --port 8000
-      --model Qwen/Qwen3-8B-FP8
-      --enforce-eager
-      --gpu-memory-utilization 0.50
-      --max-model-len 3070
+      - "2142:11434"
+    volumes:
+      - ollama-data:/root/.ollama
     deploy:
       resources:
         reservations:
@@ -88,3 +81,4 @@ services:
 volumes:
   mongo-data:
   weaviate-data:
+  ollama-data:

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 2137",
+    "dev:log": "next dev -p 2137 2>&1 | tee logs/dev.log",
     "dev:full": "concurrently \"npm run docker:up\" \"npm run dev\" --names \"docker,next\" --prefix-colors \"blue,green\"",
     "dev:infra": "docker-compose up -d",
     "build": "next build",
@@ -45,6 +46,7 @@
     "zod-i18n-map": "^2.27.0"
   },
   "devDependencies": {
+    "@langchain/langgraph-cli": "^1.1.2",
     "@playwright/test": "^1.56.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
