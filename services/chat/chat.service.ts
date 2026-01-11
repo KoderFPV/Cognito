@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
-import { IStreamCallback } from '@/services/agents/state/agentState';
-import { executeChatGraphWithStream } from '@/services/agents/graph/compiledGraph';
+import { IStreamCallback, executeChatGraphWithStream } from '@/agents/graph/chatGraph';
 import {
   createConversation,
   getConversationBySessionId,

@@ -1,4 +1,4 @@
-Read the file `services/agents/graph/compiledGraph.ts` and draw the LangGraph workflow as ASCII art.
+Read the file `agents/graph/chatGraph.ts` and draw the LangGraph workflow as ASCII art.
 
 Show:
 - All nodes defined with `.addNode()`
