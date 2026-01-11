@@ -43,10 +43,31 @@ services:
   text2vec-snowflake:
     image: kodercloud/snowflake-l-2-0-weaviate
 
+  vllm-qwen3-vl:
+    image: vllm/vllm-openai:latest
+    volumes:
+      - "./hfmodels:/root/.cache/huggingface"
+    ports:
+      - "2141:8000"
+    command: >
+      --host 0.0.0.0
+      --port 8000
+      --model Qwen/Qwen3-VL-8B-Instruct-FP8
+      --enforce-eager
+      --gpu-memory-utilization 0.75
+      --max-model-len 3070
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]
+
   ollama:
     image: ollama/ollama
     ports:
-      - "2141:11434"
+      - "2142:11434"
     volumes:
       - ollama-data:/root/.ollama
     deploy:
@@ -54,7 +75,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: all
+              device_ids: ["0"]
               capabilities: [gpu]
 
 volumes:
