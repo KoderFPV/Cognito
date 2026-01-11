@@ -32,8 +32,6 @@ export const POST = async (request: NextRequest) => {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Registration error:', error);
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         {

@@ -42,7 +42,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Return types**: Do not explicitly declare return types for functions - let TypeScript infer them automatically (e.g., `const add = (a: number, b: number) => a + b` instead of `const add = (a: number, b: number): number => a + b`)
 - **Always use braces**: Always use curly braces `{}` for if statements, even for single-line blocks (e.g., `if (condition) { return value; }` instead of `if (condition) return value;`)
 - **No magic numbers**: Extract numeric constants to named constants at the top of the file to make the code self-documenting (e.g., `const DEFAULT_PAGE_SIZE = 10;` instead of using `10` directly in code)
-- **User-facing strings must be translated**: All strings visible to users must be internationalized, including UI text, error messages from services, and API responses. Strings should never be hardcoded in components, services, or API handlers. Services must accept locale parameter to provide translated error messages that will be displayed to users.
+- **User-facing strings must be translated**: All strings visible to users must be internationalized. This includes:
+  - UI text in components
+  - Error messages from services and API responses
+  - **AI agent responses** (chatNode, productsNode, etc.) - all messages returned to users must use translations from `messages/` files
+  - Never hardcode user-facing strings in code - always use `getTranslations` or translation files
+  - Services and agents must accept locale parameter and use it to fetch translated strings
 - This makes optional properties more concise and follows TypeScript best practices
 
 ## Documentation
@@ -596,9 +601,10 @@ make status        # Check Docker services status
 # Logs and Debugging
 make logs          # View Docker logs (follow mode)
 
-# Testing
-make test          # Run all tests
-make test-watch    # Run tests in watch mode
+# Testing (always run with TEST_LOCALE=en)
+TEST_LOCALE=en make test          # Run all tests
+TEST_LOCALE=en make test-watch    # Run tests in watch mode
+TEST_LOCALE=en npm test           # Alternative: run tests with npm
 make lint          # Run ESLint
 make type-check    # Run TypeScript type checking
 

@@ -9,15 +9,57 @@ vi.mock('@/services/logger/graphLogger', () => ({
   },
 }));
 
+vi.mock('@/agents/utils/translations', () => ({
+  getAgentTranslations: vi.fn(() => (key: string, params?: Record<string, string | number>) => {
+    const translations: Record<string, string> = {
+      noQueryDetected: 'No product query detected. Try describing what you are looking for.',
+      noProductsFound: 'No products found matching your query.',
+      foundProducts: 'Found {count} products:',
+      inStock: 'In stock',
+      outOfStock: 'Out of stock',
+      category: 'Category',
+      searchError: 'An error occurred while searching for products. Please try again later.',
+    };
+    let result = translations[key] || key;
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        result = result.replace(`{${k}}`, String(v));
+      });
+    }
+    return result;
+  }),
+}));
+
+vi.mock('@/clients/weaviate/weaviate', () => ({
+  connectToWeaviate: vi.fn(() => Promise.resolve({})),
+}));
+
+vi.mock('@/clients/mongodb/mongodb', () => ({
+  connectToMongo: vi.fn(() => Promise.resolve({})),
+}));
+
+vi.mock('@/models/products/weaviateProductsModel', () => ({
+  searchProductIdsInWeaviate: vi.fn(() => Promise.resolve([])),
+}));
+
+vi.mock('@/models/products/productsModel', () => ({
+  getProductById: vi.fn(() => Promise.resolve(null)),
+}));
+
 const mockLlmInvoke = vi.fn();
 
 vi.mock('@/services/llm/llm.service', () => ({
-  createBielikClient: vi.fn(() => ({
+  createOllamaClient: vi.fn(() => ({
     invoke: mockLlmInvoke,
   })),
 }));
 
 import { executeChatGraphWithStream, IStreamCallback } from './chatGraph';
+import { searchProductIdsInWeaviate } from '@/models/products/weaviateProductsModel';
+import { getProductById } from '@/models/products/productsModel';
+
+const mockSearchProductIds = vi.mocked(searchProductIdsInWeaviate);
+const mockGetProductById = vi.mocked(getProductById);
 
 describe('chatGraph', () => {
   let mockCallbacks: IStreamCallback;
@@ -49,7 +91,9 @@ describe('chatGraph', () => {
     });
 
     it('should route product query to products agent', async () => {
-      mockLlmInvoke.mockResolvedValueOnce({ content: 'products' });
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'products' })
+        .mockResolvedValueOnce({ content: 'laptop' });
 
       const result = await executeChatGraphWithStream(
         'session-123',
@@ -58,11 +102,13 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('Product search functionality');
+      expect(result).toContain('No products found matching your query');
     });
 
     it('should route to products agent when router returns "product"', async () => {
-      mockLlmInvoke.mockResolvedValueOnce({ content: 'product' });
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'product' })
+        .mockResolvedValueOnce({ content: 'produkt szczegóły' });
 
       const result = await executeChatGraphWithStream(
         'session-123',
@@ -71,7 +117,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('implementacji');
+      expect(result).toContain('No products found');
     });
 
     it('should handle tool call and execute weather tool', async () => {
@@ -170,21 +216,25 @@ describe('chatGraph', () => {
       expect(result).toContain('laptop');
     });
 
-    it('should use Polish locale for products fallback message', async () => {
-      mockLlmInvoke.mockResolvedValueOnce({ content: 'products' });
+    it('should return no query detected when LLM returns EMPTY', async () => {
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'products' })
+        .mockResolvedValueOnce({ content: 'EMPTY' });
 
       const result = await executeChatGraphWithStream(
         'session-123',
         'pl',
-        [{ role: 'user', content: 'Pokaż mi laptopy' }],
+        [{ role: 'user', content: 'Cześć' }],
         mockCallbacks
       );
 
-      expect(result).toContain('Funkcja wyszukiwania produktów');
+      expect(result).toContain('No product query detected');
     });
 
-    it('should use English locale for products fallback message', async () => {
-      mockLlmInvoke.mockResolvedValueOnce({ content: 'products' });
+    it('should return no products found when Weaviate returns empty results', async () => {
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'products' })
+        .mockResolvedValueOnce({ content: 'laptop' });
 
       const result = await executeChatGraphWithStream(
         'session-123',
@@ -193,7 +243,109 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('Product search functionality');
+      expect(result).toContain('No products found matching your query');
+    });
+
+    it('should return formatted products when found in database', async () => {
+      const mockProduct = {
+        _id: 'product-1',
+        name: 'Gaming Laptop Pro',
+        description: 'High performance gaming laptop',
+        price: 4999.99,
+        sku: 'LAPTOP-001',
+        stock: 10,
+        category: 'Electronics',
+        isActive: true,
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'products' })
+        .mockResolvedValueOnce({ content: 'gaming laptop' });
+
+      mockSearchProductIds.mockResolvedValueOnce(['product-1']);
+      mockGetProductById.mockResolvedValueOnce(mockProduct);
+
+      const result = await executeChatGraphWithStream(
+        'session-123',
+        'en',
+        [{ role: 'user', content: 'Show me gaming laptops' }],
+        mockCallbacks
+      );
+
+      expect(result).toContain('Found 1 products:');
+      expect(result).toContain('Gaming Laptop Pro');
+      expect(result).toContain('4999.99');
+      expect(result).toContain('Electronics');
+      expect(result).toContain('In stock');
+    });
+
+    it('should filter out deleted and inactive products', async () => {
+      const activeProduct = {
+        _id: 'product-1',
+        name: 'Active Laptop',
+        description: 'Available laptop',
+        price: 3000,
+        sku: 'LAPTOP-001',
+        stock: 5,
+        category: 'Laptops',
+        isActive: true,
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const deletedProduct = {
+        _id: 'product-2',
+        name: 'Deleted Laptop',
+        description: 'Deleted laptop',
+        price: 2000,
+        sku: 'LAPTOP-002',
+        stock: 0,
+        category: 'Laptops',
+        isActive: true,
+        deleted: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const inactiveProduct = {
+        _id: 'product-3',
+        name: 'Inactive Laptop',
+        description: 'Inactive laptop',
+        price: 1000,
+        sku: 'LAPTOP-003',
+        stock: 3,
+        category: 'Laptops',
+        isActive: false,
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      mockLlmInvoke
+        .mockResolvedValueOnce({ content: 'products' })
+        .mockResolvedValueOnce({ content: 'laptop' });
+
+      mockSearchProductIds.mockResolvedValueOnce(['product-1', 'product-2', 'product-3']);
+      mockGetProductById
+        .mockResolvedValueOnce(activeProduct)
+        .mockResolvedValueOnce(deletedProduct)
+        .mockResolvedValueOnce(inactiveProduct);
+
+      const result = await executeChatGraphWithStream(
+        'session-123',
+        'en',
+        [{ role: 'user', content: 'Show me laptops' }],
+        mockCallbacks
+      );
+
+      expect(result).toContain('Found 1 products:');
+      expect(result).toContain('Active Laptop');
+      expect(result).not.toContain('Deleted Laptop');
+      expect(result).not.toContain('Inactive Laptop');
     });
 
     it('should default to chat when router returns unknown agent', async () => {

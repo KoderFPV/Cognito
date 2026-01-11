@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: cognito-eval-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=cognito-eval
+    tmpfs:
+      - /data/db
+
+  weaviate:
+    image: docker.io/semitechnologies/weaviate:1.30.1
+    container_name: cognito-eval-weaviate
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      LOG_LEVEL: "warning"
+      QUERY_DEFAULTS_LIMIT: 100
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      ENABLE_MODULES: "text2vec-transformers"
+      CLUSTER_HOSTNAME: "node1"
+      TRANSFORMERS_INFERENCE_API: "http://text2vec-snowflake:8080"
+    depends_on:
+      - text2vec-snowflake
+    tmpfs:
+      - /var/lib/weaviate
+
+  text2vec-snowflake:
+    image: kodercloud/snowflake-l-2-0-weaviate
+    container_name: cognito-eval-vectorizer

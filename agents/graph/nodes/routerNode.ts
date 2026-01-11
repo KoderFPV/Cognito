@@ -1,5 +1,5 @@
 import { SystemMessage } from '@langchain/core/messages';
-import { createBielikClient } from '@/services/llm/llm.service';
+import { createOllamaClient } from '@/services/llm/llm.service';
 import { createRouterSystemPrompt } from '@/agents/prompts/routerPrompts';
 import { graphLogger } from '@/services/logger/graphLogger';
 import { IGraphState } from '@/agents/graph/state';
@@ -10,7 +10,7 @@ const ROUTER_MAX_TOKENS = 50;
 const MAX_CONTEXT_MESSAGES = 10;
 
 export const routerNode = async (state: IGraphState) => {
-  const llm = createBielikClient(ROUTER_TEMPERATURE, ROUTER_MAX_TOKENS);
+  const llm = createOllamaClient(ROUTER_TEMPERATURE, ROUTER_MAX_TOKENS);
   const locale = state.locale || 'en';
   const systemPrompt = createRouterSystemPrompt(locale);
 

@@ -43,3 +43,6 @@ weaviate-data
 
 # Dev server logs
 /logs/
+
+# Evaluation test results
+agents/__tests__/evaluation/last-run/

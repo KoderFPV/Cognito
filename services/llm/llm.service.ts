@@ -15,7 +15,7 @@ const getOllamaConfig = () => {
   return { ollamaUrl, ollamaModel };
 };
 
-export const createBielikClient = (temperature: number, maxTokens: number) => {
+export const createOllamaClient = (temperature: number, maxTokens: number) => {
   const { ollamaUrl, ollamaModel } = getOllamaConfig();
 
   return new ChatOpenAI({
