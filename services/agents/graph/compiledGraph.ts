@@ -38,7 +38,7 @@ const executeToolCall = async (toolCall: IToolCall): Promise<string> => {
   }
 
   try {
-    const result = await tool.invoke(toolCall.arguments);
+    const result = await tool.invoke(JSON.stringify(toolCall.arguments));
     graphLogger.info('tools', `Executed ${toolCall.name}, result: ${result}`);
     return String(result);
   } catch (error) {
