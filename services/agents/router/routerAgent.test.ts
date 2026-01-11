@@ -7,7 +7,7 @@ const { mockLlmInvoke } = vi.hoisted(() => {
 });
 
 vi.mock('@/services/llm/llm.service', () => ({
-  createQwen3Client: vi.fn(() => ({
+  createBielikClient: vi.fn(() => ({
     invoke: mockLlmInvoke,
   })),
 }));

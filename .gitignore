@@ -37,3 +37,9 @@ next-env.d.ts
 
 hfmodels
 weaviate-data
+
+# LangGraph API
+.langgraph_api
+
+# Dev server logs
+/logs/

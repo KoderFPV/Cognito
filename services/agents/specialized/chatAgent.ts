@@ -1,5 +1,5 @@
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
-import { createQwen3Client } from '@/services/llm/llm.service';
+import { createBielikClient } from '@/services/llm/llm.service';
 import { IAgentState, IStreamCallback } from '@/services/agents/state/agentState';
 
 const CHAT_TEMPERATURE = 0.7;
@@ -25,7 +25,7 @@ export const processChatMessage = async (
   state: IAgentState,
   callbacks: IStreamCallback
 ): Promise<string> => {
-  const llm = createQwen3Client(CHAT_TEMPERATURE, CHAT_MAX_TOKENS);
+  const llm = createBielikClient(CHAT_TEMPERATURE, CHAT_MAX_TOKENS);
   const systemPrompt = createChatSystemPrompt(state.locale);
 
   const messages: (SystemMessage | HumanMessage | AIMessage)[] = [

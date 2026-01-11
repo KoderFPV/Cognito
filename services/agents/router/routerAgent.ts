@@ -1,5 +1,5 @@
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
-import { createQwen3Client } from '@/services/llm/llm.service';
+import { createBielikClient } from '@/services/llm/llm.service';
 import { IAgentState, IAgentMessage, AgentType } from '@/services/agents/state/agentState';
 import { createRouterSystemPrompt } from './routerPrompts';
 
@@ -12,7 +12,7 @@ const getRecentMessages = (messages: IAgentMessage[]): IAgentMessage[] => {
 };
 
 export const routeMessage = async (state: IAgentState): Promise<AgentType> => {
-  const llm = createQwen3Client(ROUTER_TEMPERATURE, ROUTER_MAX_TOKENS);
+  const llm = createBielikClient(ROUTER_TEMPERATURE, ROUTER_MAX_TOKENS);
   const systemPrompt = createRouterSystemPrompt(state.locale);
 
   const lastMessage = state.messages[state.messages.length - 1];
@@ -36,7 +36,8 @@ export const routeMessage = async (state: IAgentState): Promise<AgentType> => {
   }
 
   const response = await llm.invoke(messages);
-  const routedAgent = response.content.toString().toLowerCase().trim();
+  const rawContent = response.content.toString();
+  const routedAgent = rawContent.toLowerCase().trim();
 
   const validAgents: AgentType[] = ['chat', 'products', 'product'];
 
