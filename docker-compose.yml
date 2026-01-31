@@ -70,6 +70,7 @@ services:
       - "2142:11434"
     volumes:
       - ollama-data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull mistral-small3.2:24b-instruct-2506-q8_0 && wait"]
     deploy:
       resources:
         reservations:

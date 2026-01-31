@@ -52,14 +52,33 @@ export const executeChatGraphWithStream = async (
     response: '',
   };
 
+  let fullResponse = '';
+
   try {
-    const finalState = await chatGraph.invoke(initialState);
-    const response = finalState.response || '';
+    const eventStream = chatGraph.streamEvents(initialState, {
+      version: 'v2',
+    });
 
-    callbacks.onToken(response);
-    graphLogger.info('graph', `Completed, response length=${response.length}`);
+    for await (const event of eventStream) {
+      if (event.event === 'on_chat_model_stream') {
+        const nodeName = event.metadata?.langgraph_node;
+        if (nodeName !== 'chat') {
+          continue;
+        }
+        const chunk = event.data?.chunk;
+        if (chunk?.content) {
+          const token = typeof chunk.content === 'string' ? chunk.content : '';
+          if (token) {
+            fullResponse += token;
+            callbacks.onToken(token);
+          }
+        }
+      }
+    }
 
-    return response;
+    graphLogger.info('graph', `Completed, response length=${fullResponse.length}`);
+
+    return fullResponse;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Graph execution failed';
     callbacks.onError(new Error(errorMessage));

@@ -22,6 +22,7 @@ export const createBielikClient = (temperature: number, maxTokens: number) => {
     model: ollamaModel,
     temperature,
     maxTokens,
+    streaming: true,
     apiKey: 'ollama',
     configuration: {
       baseURL: ollamaUrl,
