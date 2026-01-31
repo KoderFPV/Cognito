@@ -1,5 +1,5 @@
 import { SystemMessage, AIMessage } from '@langchain/core/messages';
-import { createBielikClient } from '@/services/llm/llm.service';
+import { createOllamaClient } from '@/services/llm/llm.service';
 import { createChatSystemPrompt } from '@/agents/prompts/chatPrompts';
 import { graphLogger } from '@/services/logger/graphLogger';
 import { IGraphState } from '@/agents/graph/state';
@@ -10,7 +10,7 @@ const CHAT_TEMPERATURE = 0.7;
 const CHAT_MAX_TOKENS = 500;
 
 export const chatNode = async (state: IGraphState) => {
-  const llm = createBielikClient(CHAT_TEMPERATURE, CHAT_MAX_TOKENS);
+  const llm = createOllamaClient(CHAT_TEMPERATURE, CHAT_MAX_TOKENS);
   const locale = state.locale || 'en';
   const systemPrompt = createChatSystemPrompt(locale);
 

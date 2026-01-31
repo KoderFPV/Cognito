@@ -166,5 +166,16 @@
       "agentError": "Agent AI napotkał błąd",
       "processingFailed": "Nie udało się przetworzyć wiadomości"
     }
+  },
+  "agents": {
+    "products": {
+      "noQueryDetected": "Nie wykryłem zapytania o produkty. Spróbuj opisać czego szukasz.",
+      "noProductsFound": "Nie znaleziono produktów pasujących do Twojego zapytania.",
+      "foundProducts": "Znaleziono {count} produktów:",
+      "inStock": "Dostępny",
+      "outOfStock": "Niedostępny",
+      "category": "Kategoria",
+      "searchError": "Wystąpił błąd podczas wyszukiwania produktów. Spróbuj ponownie później."
+    }
   }
 }

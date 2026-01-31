@@ -78,6 +78,16 @@ services:
               device_ids: ["0"]
               capabilities: [gpu]
 
+  ollama-pull:
+    image: ollama/ollama
+    depends_on:
+      - ollama
+    volumes:
+      - ollama-data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "sleep 5 && ollama pull mistral-small3.2:24b-instruct-2506-q8_0"]
+    environment:
+      - OLLAMA_HOST=ollama:11434
+
 volumes:
   mongo-data:
   weaviate-data:

@@ -44,3 +44,21 @@ export const deleteProductFromWeaviate = async (
   const whereFilter = collection.filter.byProperty('mongoId').equal(productId);
   await collection.data.deleteMany(whereFilter);
 };
+
+const SEARCH_LIMIT = 5;
+
+export const searchProductIdsInWeaviate = async (
+  client: WeaviateClient,
+  query: string,
+  limit: number
+): Promise<string[]> => {
+  const collection = client.collections.get(PRODUCTS_COLLECTION);
+
+  const result = await collection.query.nearText(query, {
+    targetVector: 'text_vector',
+    limit,
+    returnProperties: ['mongoId'],
+  });
+
+  return result.objects.map((obj) => (obj.properties as unknown as IWeaviateProduct).mongoId);
+};

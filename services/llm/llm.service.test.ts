@@ -8,7 +8,7 @@ vi.mock('@langchain/openai', () => ({
   ChatOpenAI: mockChatOpenAI,
 }));
 
-import { createBielikClient } from './llm.service';
+import { createOllamaClient } from './llm.service';
 
 describe('llm.service', () => {
   const originalEnv = process.env;
@@ -25,9 +25,9 @@ describe('llm.service', () => {
   describe('getOllamaConfig (tested via client creation)', () => {
     it('should throw error when OLLAMA_URL is not set', () => {
       delete process.env.OLLAMA_URL;
-      process.env.OLLAMA_MODEL = 'speakleash/bielik-11b-v3.0-instruct:Q8_0';
+      process.env.OLLAMA_MODEL = 'mistral-small3.2:24b-instruct-2506-q8_0';
 
-      expect(() => createBielikClient(0.7, 500)).toThrow(
+      expect(() => createOllamaClient(0.7, 500)).toThrow(
         'OLLAMA_URL environment variable is not set'
       );
     });
@@ -36,30 +36,30 @@ describe('llm.service', () => {
       process.env.OLLAMA_URL = 'http://localhost:2141/v1';
       delete process.env.OLLAMA_MODEL;
 
-      expect(() => createBielikClient(0.7, 500)).toThrow(
+      expect(() => createOllamaClient(0.7, 500)).toThrow(
         'OLLAMA_MODEL environment variable is not set'
       );
     });
   });
 
-  describe('createBielikClient', () => {
+  describe('createOllamaClient', () => {
     beforeEach(() => {
       process.env.OLLAMA_URL = 'http://localhost:2141/v1';
-      process.env.OLLAMA_MODEL = 'speakleash/bielik-11b-v3.0-instruct:Q8_0';
+      process.env.OLLAMA_MODEL = 'mistral-small3.2:24b-instruct-2506-q8_0';
     });
 
     it('should create ChatOpenAI client with correct model from env', () => {
-      createBielikClient(0.7, 500);
+      createOllamaClient(0.7, 500);
 
       expect(mockChatOpenAI).toHaveBeenCalledWith(
         expect.objectContaining({
-          model: 'speakleash/bielik-11b-v3.0-instruct:Q8_0',
+          model: 'mistral-small3.2:24b-instruct-2506-q8_0',
         })
       );
     });
 
     it('should create ChatOpenAI client with provided temperature', () => {
-      createBielikClient(0.5, 500);
+      createOllamaClient(0.5, 500);
 
       expect(mockChatOpenAI).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -69,7 +69,7 @@ describe('llm.service', () => {
     });
 
     it('should create ChatOpenAI client with provided maxTokens', () => {
-      createBielikClient(0.7, 1000);
+      createOllamaClient(0.7, 1000);
 
       expect(mockChatOpenAI).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -79,7 +79,7 @@ describe('llm.service', () => {
     });
 
     it('should create ChatOpenAI client with correct baseURL', () => {
-      createBielikClient(0.7, 500);
+      createOllamaClient(0.7, 500);
 
       expect(mockChatOpenAI).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -91,7 +91,7 @@ describe('llm.service', () => {
     });
 
     it('should create ChatOpenAI client with ollama as apiKey', () => {
-      createBielikClient(0.7, 500);
+      createOllamaClient(0.7, 500);
 
       expect(mockChatOpenAI).toHaveBeenCalledWith(
         expect.objectContaining({

@@ -166,5 +166,16 @@
       "agentError": "AI agent encountered an error",
       "processingFailed": "Failed to process message"
     }
+  },
+  "agents": {
+    "products": {
+      "noQueryDetected": "No product query detected. Try describing what you are looking for.",
+      "noProductsFound": "No products found matching your query.",
+      "foundProducts": "Found {count} products:",
+      "inStock": "In stock",
+      "outOfStock": "Out of stock",
+      "category": "Category",
+      "searchError": "An error occurred while searching for products. Please try again later."
+    }
   }
 }
