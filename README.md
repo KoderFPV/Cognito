@@ -94,7 +94,7 @@ Project in initialization phase.
 | Feature | Status |
 |---------|--------|
 | Login | ✅ |
-| Product Search | ❌ |
+| Simple Product Search | ✅ |
 | Checkout | ❌ |
 | Payments | ❌ |
 | Add New Products | ✅ |
