@@ -146,6 +146,7 @@ curl http://localhost:8080/v1/.well-known/ready
 1. Verify Ollama is running on `192.168.68.80`
 2. Check firewall rules allow port `11434`
 3. Test connectivity from Jenkins agent:
+
    ```bash
    curl http://192.168.68.80:11434/api/tags
    ```
