@@ -1,6 +1,15 @@
 pipeline {
     agent any
 
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    triggers {
+        githubPush()
+    }
+
     tools {
         nodejs 'Node24'
     }
@@ -63,10 +72,28 @@ pipeline {
             sh 'docker compose -f docker-compose.eval.yml down -v || true'
         }
         failure {
-            echo 'Evaluation tests failed. Check archived artifacts for details.'
+            script {
+                if (env.GIT_COMMIT) {
+                    githubNotify context: 'eval-tests',
+                                 status: 'FAILURE',
+                                 description: 'Evaluation tests failed',
+                                 repo: 'Cognito',
+                                 credentialsId: 'github-cognito-webhook',
+                                 account: 'KoderFPV'
+                }
+            }
         }
         success {
-            echo 'All evaluation tests passed!'
+            script {
+                if (env.GIT_COMMIT) {
+                    githubNotify context: 'eval-tests',
+                                 status: 'SUCCESS',
+                                 description: 'Evaluation tests passed',
+                                 repo: 'Cognito',
+                                 credentialsId: 'github-cognito-webhook',
+                                 account: 'KoderFPV'
+                }
+            }
         }
     }
 }
