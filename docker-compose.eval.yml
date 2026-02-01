@@ -15,8 +15,8 @@ services:
     image: docker.io/semitechnologies/weaviate:1.35.0
     container_name: cognito-eval-weaviate
     ports:
-      - "8080:8080"
-      - "50051:50051"
+      - "8081:8080"
+      - "50052:50051"
     environment:
       LOG_LEVEL: "warning"
       QUERY_DEFAULTS_LIMIT: 100

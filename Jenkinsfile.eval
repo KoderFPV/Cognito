@@ -11,9 +11,9 @@ pipeline {
         OLLAMA_MODEL = 'mistral-small3.2:24b-instruct-2506-q8_0'
         MONGODB_URI = 'mongodb://localhost:27017/cognito-eval'
         WEAVIATE_HTTP_HOST = 'localhost'
-        WEAVIATE_HTTP_PORT = '8080'
+        WEAVIATE_HTTP_PORT = '8081'
         WEAVIATE_GRPC_HOST = 'localhost'
-        WEAVIATE_GRPC_PORT = '50051'
+        WEAVIATE_GRPC_PORT = '50052'
         WEAVIATE_SECURE = 'false'
         WEAVIATE_API_KEY = ''
     }
@@ -34,7 +34,7 @@ pipeline {
                     timeout 60 bash -c 'until docker exec cognito-eval-mongo mongosh --eval "db.runCommand({ ping: 1 })" > /dev/null 2>&1; do sleep 2; done'
 
                     echo "Waiting for Weaviate..."
-                    timeout 120 bash -c 'until curl -s http://localhost:8080/v1/.well-known/ready > /dev/null 2>&1; do sleep 2; done'
+                    timeout 120 bash -c 'until curl -s http://localhost:8081/v1/.well-known/ready > /dev/null 2>&1; do sleep 2; done'
 
                     echo "Infrastructure ready!"
                 '''
