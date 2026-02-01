@@ -28,7 +28,7 @@ pipeline {
         stage('Start Infrastructure') {
             steps {
                 sh '''
-                    docker-compose -f docker-compose.eval.yml up -d
+                    docker compose -f docker-compose.eval.yml up -d
 
                     echo "Waiting for MongoDB..."
                     timeout 60 bash -c 'until docker exec cognito-eval-mongo mongosh --eval "db.runCommand({ ping: 1 })" > /dev/null 2>&1; do sleep 2; done'
@@ -57,7 +57,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'agents/__tests__/evaluation/last-run/*.json', allowEmptyArchive: true
-            sh 'docker-compose -f docker-compose.eval.yml down -v || true'
+            sh 'docker compose -f docker-compose.eval.yml down -v || true'
         }
         failure {
             echo 'Evaluation tests failed. Check archived artifacts for details.'
