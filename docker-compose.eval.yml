@@ -20,7 +20,10 @@ services:
     environment:
       LOG_LEVEL: "warning"
       QUERY_DEFAULTS_LIMIT: 100
-      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "false"
+      AUTHENTICATION_APIKEY_ENABLED: "true"
+      AUTHENTICATION_APIKEY_ALLOWED_KEYS: "eval-test-key"
+      AUTHENTICATION_APIKEY_USERS: "eval-user"
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
       ENABLE_MODULES: "text2vec-transformers"
       CLUSTER_HOSTNAME: "node1"

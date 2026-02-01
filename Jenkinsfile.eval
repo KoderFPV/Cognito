@@ -16,7 +16,7 @@ pipeline {
         WEAVIATE_GRPC_HOST = '172.17.0.1'
         WEAVIATE_GRPC_PORT = '50052'
         WEAVIATE_SECURE = 'false'
-        WEAVIATE_API_KEY = 'anonymous'
+        WEAVIATE_API_KEY = 'eval-test-key'
     }
 
     stages {
