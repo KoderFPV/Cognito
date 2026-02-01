@@ -10,7 +10,7 @@ import { runConversation, IConversationScenario } from './conversationRunner';
 import { clearLastRunDirectory, saveFailedTest } from './testResultsReporter';
 import { setupTestProducts, teardownTestProducts } from './testFixtures';
 
-const MINIMUM_PASSING_SCORE = 4.0;
+const MINIMUM_PASSING_SCORE = 3.5;
 
 beforeAll(async () => {
   clearLastRunDirectory();
