@@ -33,6 +33,15 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                withCredentials([string(credentialsId: 'github-cognito-webhook', variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        curl -s -X POST \
+                            -H "Authorization: token $GITHUB_TOKEN" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
+                            -d '{"state":"pending","context":"eval-tests","description":"Evaluation tests running...","target_url":"'$BUILD_URL'"}'
+                    '''
+                }
             }
         }
 
@@ -72,10 +81,26 @@ pipeline {
             sh 'docker compose -f docker-compose.eval.yml down -v || true'
         }
         failure {
-            publishChecks name: 'eval-tests', status: 'COMPLETED', conclusion: 'FAILURE', summary: 'Evaluation tests failed'
+            withCredentials([string(credentialsId: 'github-cognito-webhook', variable: 'GITHUB_TOKEN')]) {
+                sh '''
+                    curl -s -X POST \
+                        -H "Authorization: token $GITHUB_TOKEN" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
+                        -d '{"state":"failure","context":"eval-tests","description":"Evaluation tests failed","target_url":"'$BUILD_URL'"}'
+                '''
+            }
         }
         success {
-            publishChecks name: 'eval-tests', status: 'COMPLETED', conclusion: 'SUCCESS', summary: 'Evaluation tests passed'
+            withCredentials([string(credentialsId: 'github-cognito-webhook', variable: 'GITHUB_TOKEN')]) {
+                sh '''
+                    curl -s -X POST \
+                        -H "Authorization: token $GITHUB_TOKEN" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
+                        -d '{"state":"success","context":"eval-tests","description":"Evaluation tests passed","target_url":"'$BUILD_URL'"}'
+                '''
+            }
         }
     }
 }
