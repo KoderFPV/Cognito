@@ -25,14 +25,20 @@ services:
       AUTHENTICATION_APIKEY_ALLOWED_KEYS: "eval-test-key"
       AUTHENTICATION_APIKEY_USERS: "eval-user"
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
-      ENABLE_MODULES: "text2vec-transformers"
+      ENABLE_MODULES: "text2vec-transformers,multi2vec-clip"
       CLUSTER_HOSTNAME: "node1"
       TRANSFORMERS_INFERENCE_API: "http://text2vec-snowflake:8080"
+      CLIP_INFERENCE_API: "http://multi2vec-clip:8080"
     depends_on:
       - text2vec-snowflake
+      - multi2vec-clip
     tmpfs:
       - /var/lib/weaviate
 
   text2vec-snowflake:
     image: kodercloud/snowflake-l-2-0-weaviate
     container_name: cognito-eval-vectorizer
+
+  multi2vec-clip:
+    image: semitechnologies/multi2vec-clip:sentence-transformers-clip-ViT-B-32-multilingual-v1
+    container_name: cognito-eval-clip
