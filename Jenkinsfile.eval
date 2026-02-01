@@ -17,6 +17,7 @@ pipeline {
         WEAVIATE_GRPC_PORT = '50052'
         WEAVIATE_SECURE = 'false'
         WEAVIATE_API_KEY = 'eval-test-key'
+        ENABLE_VECTORIZERS = 'true'
     }
 
     stages {
