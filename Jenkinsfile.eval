@@ -72,28 +72,10 @@ pipeline {
             sh 'docker compose -f docker-compose.eval.yml down -v || true'
         }
         failure {
-            script {
-                if (env.GIT_COMMIT) {
-                    githubNotify context: 'eval-tests',
-                                 status: 'FAILURE',
-                                 description: 'Evaluation tests failed',
-                                 repo: 'Cognito',
-                                 credentialsId: 'github-cognito-webhook',
-                                 account: 'KoderFPV'
-                }
-            }
+            publishChecks name: 'eval-tests', status: 'COMPLETED', conclusion: 'FAILURE', summary: 'Evaluation tests failed'
         }
         success {
-            script {
-                if (env.GIT_COMMIT) {
-                    githubNotify context: 'eval-tests',
-                                 status: 'SUCCESS',
-                                 description: 'Evaluation tests passed',
-                                 repo: 'Cognito',
-                                 credentialsId: 'github-cognito-webhook',
-                                 account: 'KoderFPV'
-                }
-            }
+            publishChecks name: 'eval-tests', status: 'COMPLETED', conclusion: 'SUCCESS', summary: 'Evaluation tests passed'
         }
     }
 }
