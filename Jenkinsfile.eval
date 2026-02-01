@@ -30,7 +30,8 @@ pipeline {
         stage('Start Infrastructure') {
             steps {
                 sh '''
-                    docker compose -f docker-compose.eval.yml up -d
+                    docker compose -f docker-compose.eval.yml down -v 2>/dev/null || true
+                    docker compose -f docker-compose.eval.yml up -d --force-recreate
 
                     echo "Waiting for MongoDB..."
                     timeout 60 bash -c 'until docker exec cognito-eval-mongo mongosh --eval "db.runCommand({ ping: 1 })" > /dev/null 2>&1; do sleep 2; done'
