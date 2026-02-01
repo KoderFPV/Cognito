@@ -39,7 +39,7 @@ pipeline {
                             -H "Authorization: token $GITHUB_TOKEN" \
                             -H "Accept: application/vnd.github.v3+json" \
                             "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
-                            -d '{"state":"pending","context":"eval-tests","description":"Evaluation tests running..."}'
+                            -d '{"state":"pending","context":"CI / Evaluation tests","description":"Evaluation tests running..."}'
                     '''
                 }
             }
@@ -87,7 +87,7 @@ pipeline {
                         -H "Authorization: token $GITHUB_TOKEN" \
                         -H "Accept: application/vnd.github.v3+json" \
                         "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
-                        -d '{"state":"failure","context":"eval-tests","description":"Evaluation tests failed"}'
+                        -d '{"state":"failure","context":"CI / Evaluation tests","description":"Evaluation tests failed"}'
                 '''
             }
         }
@@ -98,7 +98,7 @@ pipeline {
                         -H "Authorization: token $GITHUB_TOKEN" \
                         -H "Accept: application/vnd.github.v3+json" \
                         "https://api.github.com/repos/KoderFPV/Cognito/statuses/$GIT_COMMIT" \
-                        -d '{"state":"success","context":"eval-tests","description":"Evaluation tests passed"}'
+                        -d '{"state":"success","context":"CI / Evaluation tests","description":"Evaluation tests passed"}'
                 '''
             }
         }
