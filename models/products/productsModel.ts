@@ -97,3 +97,25 @@ export const deleteProduct = async (
     return false;
   }
 };
+
+export const findProductByName = async (
+  db: Db,
+  name: string
+): Promise<IProduct | null> => {
+  const collection = db.collection<IProductMongo>(PRODUCTS_COLLECTION);
+
+  const product = await collection.findOne({
+    name: { $regex: name, $options: 'i' },
+    deleted: false,
+    isActive: true,
+  });
+
+  if (!product) {
+    return null;
+  }
+
+  return {
+    ...product,
+    _id: product._id.toString(),
+  };
+};

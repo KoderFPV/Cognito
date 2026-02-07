@@ -19,6 +19,14 @@ vi.mock('@/agents/utils/translations', () => ({
       outOfStock: 'Out of stock',
       category: 'Category',
       searchError: 'An error occurred while searching for products. Please try again later.',
+      notFound: 'I could not find that product.',
+      noReference: 'I am not sure which product you are asking about.',
+      noSearchResults: 'I do not have any previous search results.',
+      productDetails: 'Product Details',
+      price: 'Price',
+      specifications: 'Specifications',
+      description: 'Description',
+      error: 'An error occurred while fetching product details.',
     };
     let result = translations[key] || key;
     if (params) {
@@ -44,6 +52,7 @@ vi.mock('@/models/products/weaviateProductsModel', () => ({
 
 vi.mock('@/models/products/productsModel', () => ({
   getProductById: vi.fn(() => Promise.resolve(null)),
+  findProductByName: vi.fn(() => Promise.resolve(null)),
 }));
 
 const mockLlmInvoke = vi.fn();
@@ -86,7 +95,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('Hello! How can I help you today?');
+      expect(result.response).toBe('Hello! How can I help you today?');
       expect(mockCallbacks.onToken).toHaveBeenCalledWith('Hello! How can I help you today?');
     });
 
@@ -102,13 +111,13 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('No products found matching your query');
+      expect(result.response).toContain('No products found matching your query');
     });
 
-    it('should route to products agent when router returns "product"', async () => {
+    it('should route to product agent when router returns "product"', async () => {
       mockLlmInvoke
         .mockResolvedValueOnce({ content: 'product' })
-        .mockResolvedValueOnce({ content: 'produkt szczegóły' });
+        .mockResolvedValueOnce({ content: '{"type": "unknown"}' });
 
       const result = await executeChatGraphWithStream(
         'session-123',
@@ -117,7 +126,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('No products found');
+      expect(result.response).toContain('not sure which product');
     });
 
     it('should handle tool call and execute weather tool', async () => {
@@ -137,7 +146,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('The weather in Warsaw is sunny, 22°C.');
+      expect(result.response).toBe('The weather in Warsaw is sunny, 22°C.');
       expect(mockLlmInvoke).toHaveBeenCalledTimes(3);
     });
 
@@ -158,7 +167,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('The result of 15 times 3 is 45.');
+      expect(result.response).toBe('The result of 15 times 3 is 45.');
     });
 
     it('should handle multiple tool calls in sequence', async () => {
@@ -179,7 +188,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('18');
+      expect(result.response).toContain('18');
     });
 
     it('should call onError callback when graph execution fails', async () => {
@@ -213,7 +222,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('laptop');
+      expect(result.response).toContain('laptop');
     });
 
     it('should return no query detected when LLM returns EMPTY', async () => {
@@ -228,7 +237,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('No product query detected');
+      expect(result.response).toContain('No product query detected');
     });
 
     it('should return no products found when Weaviate returns empty results', async () => {
@@ -243,7 +252,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('No products found matching your query');
+      expect(result.response).toContain('No products found matching your query');
     });
 
     it('should return formatted products when found in database', async () => {
@@ -275,11 +284,11 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('Found 1 products:');
-      expect(result).toContain('Gaming Laptop Pro');
-      expect(result).toContain('4999.99');
-      expect(result).toContain('Electronics');
-      expect(result).toContain('In stock');
+      expect(result.response).toContain('Found 1 products:');
+      expect(result.response).toContain('Gaming Laptop Pro');
+      expect(result.response).toContain('4999.99');
+      expect(result.response).toContain('Electronics');
+      expect(result.response).toContain('In stock');
     });
 
     it('should filter out deleted and inactive products', async () => {
@@ -342,10 +351,10 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toContain('Found 1 products:');
-      expect(result).toContain('Active Laptop');
-      expect(result).not.toContain('Deleted Laptop');
-      expect(result).not.toContain('Inactive Laptop');
+      expect(result.response).toContain('Found 1 products:');
+      expect(result.response).toContain('Active Laptop');
+      expect(result.response).not.toContain('Deleted Laptop');
+      expect(result.response).not.toContain('Inactive Laptop');
     });
 
     it('should default to chat when router returns unknown agent', async () => {
@@ -360,7 +369,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('I can help you with that.');
+      expect(result.response).toBe('I can help you with that.');
     });
 
     it('should handle empty response from LLM', async () => {
@@ -375,7 +384,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('');
+      expect(result.response).toBe('');
       expect(mockCallbacks.onToken).toHaveBeenCalledWith('');
     });
 
@@ -396,7 +405,7 @@ describe('chatGraph', () => {
         mockCallbacks
       );
 
-      expect(result).toBe('Sorry, I could not process that request.');
+      expect(result.response).toBe('Sorry, I could not process that request.');
     });
   });
 });

@@ -176,6 +176,19 @@
       "outOfStock": "Out of stock",
       "category": "Category",
       "searchError": "An error occurred while searching for products. Please try again later."
+    },
+    "product": {
+      "notFound": "I could not find that product. Please try searching for products first or specify the product name more precisely.",
+      "noReference": "I am not sure which product you are asking about. Please specify the product by name or number from the list.",
+      "noSearchResults": "I do not have any previous search results. Please search for products first, then ask about a specific one.",
+      "productDetails": "Product Details",
+      "price": "Price",
+      "category": "Category",
+      "inStock": "In stock",
+      "outOfStock": "Out of stock",
+      "specifications": "Specifications",
+      "description": "Description",
+      "error": "An error occurred while fetching product details. Please try again later."
     }
   }
 }

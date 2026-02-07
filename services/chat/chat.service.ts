@@ -46,7 +46,7 @@ export const streamChatResponse = async (
       content: msg.content,
     }));
 
-    const assistantResponse = await executeChatGraphWithStream(
+    const result = await executeChatGraphWithStream(
       currentSessionId!,
       locale,
       agentMessages,
@@ -61,13 +61,13 @@ export const streamChatResponse = async (
 
     await addMessageToConversation(currentSessionId!, {
       role: 'assistant',
-      content: assistantResponse,
+      content: result.response,
       timestamp: new Date(),
     });
 
     callbacks.onComplete(messageId, currentSessionId!);
 
-    return assistantResponse;
+    return result.response;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : t('processingFailed');

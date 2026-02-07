@@ -176,6 +176,19 @@
       "outOfStock": "Niedostępny",
       "category": "Kategoria",
       "searchError": "Wystąpił błąd podczas wyszukiwania produktów. Spróbuj ponownie później."
+    },
+    "product": {
+      "notFound": "Nie mogę znaleźć tego produktu. Spróbuj najpierw wyszukać produkty lub podaj dokładniejszą nazwę produktu.",
+      "noReference": "Nie jestem pewien, o który produkt pytasz. Podaj nazwę produktu lub jego numer z listy.",
+      "noSearchResults": "Nie mam poprzednich wyników wyszukiwania. Najpierw wyszukaj produkty, a potem zapytaj o konkretny.",
+      "productDetails": "Szczegóły produktu",
+      "price": "Cena",
+      "category": "Kategoria",
+      "inStock": "Dostępny",
+      "outOfStock": "Niedostępny",
+      "specifications": "Specyfikacja",
+      "description": "Opis",
+      "error": "Wystąpił błąd podczas pobierania szczegółów produktu. Spróbuj ponownie później."
     }
   }
 }
