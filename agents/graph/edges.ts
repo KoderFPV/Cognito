@@ -4,8 +4,11 @@ import { parseToolCalls } from '@/agents/utils/toolParser';
 
 export const routeAfterRouter = (state: IGraphState) => {
   const agent = state.currentAgent;
-  if (agent === 'products' || agent === 'product') {
+  if (agent === 'products') {
     return 'products';
+  }
+  if (agent === 'product') {
+    return 'product';
   }
   return 'chat';
 };

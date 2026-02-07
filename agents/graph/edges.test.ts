@@ -19,6 +19,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'products',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = routeAfterRouter(state);
@@ -26,17 +27,18 @@ describe('edges', () => {
       expect(result).toBe('products');
     });
 
-    it('should route to products when currentAgent is "product"', () => {
+    it('should route to product when currentAgent is "product"', () => {
       const state: IGraphState = {
         messages: [],
         locale: 'en',
         currentAgent: 'product',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = routeAfterRouter(state);
 
-      expect(result).toBe('products');
+      expect(result).toBe('product');
     });
 
     it('should route to chat when currentAgent is "chat"', () => {
@@ -45,6 +47,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = routeAfterRouter(state);
@@ -58,6 +61,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: '',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = routeAfterRouter(state);
@@ -71,6 +75,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'unknown',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = routeAfterRouter(state);
@@ -88,6 +93,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -106,6 +112,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -121,6 +128,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -134,6 +142,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -150,6 +159,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -165,6 +175,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -180,6 +191,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);
@@ -195,6 +207,7 @@ describe('edges', () => {
         locale: 'en',
         currentAgent: 'chat',
         response: '',
+        lastSearchResults: null,
       };
 
       const result = shouldContinue(state);

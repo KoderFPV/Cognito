@@ -13,6 +13,12 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 15,
     category: 'Laptops',
     isActive: true,
+    attributes: [
+      { name: 'RAM', value: '32', unit: 'GB' },
+      { name: 'GPU', value: 'RTX 4080' },
+      { name: 'Storage', value: '1', unit: 'TB SSD' },
+      { name: 'Processor', value: 'Intel Core i9-13900HX' },
+    ],
   },
   {
     name: 'Business Laptop Elite',
@@ -22,6 +28,12 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 25,
     category: 'Laptops',
     isActive: true,
+    attributes: [
+      { name: 'RAM', value: '16', unit: 'GB' },
+      { name: 'Processor', value: 'Intel Core i7-1365U' },
+      { name: 'Storage', value: '512', unit: 'GB SSD' },
+      { name: 'Weight', value: '1.3', unit: 'kg' },
+    ],
   },
   {
     name: 'Budget Laptop Basic',
@@ -31,6 +43,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 50,
     category: 'Laptops',
     isActive: true,
+    attributes: [
+      { name: 'RAM', value: '8', unit: 'GB' },
+      { name: 'Processor', value: 'Intel Core i5-1235U' },
+      { name: 'Storage', value: '256', unit: 'GB SSD' },
+    ],
   },
   {
     name: 'Samsung Galaxy S24 Ultra',
@@ -40,6 +57,12 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 30,
     category: 'Smartphones',
     isActive: true,
+    attributes: [
+      { name: 'RAM', value: '12', unit: 'GB' },
+      { name: 'Storage', value: '512', unit: 'GB' },
+      { name: 'Camera', value: '200', unit: 'MP' },
+      { name: 'Display', value: '6.8', unit: 'inch' },
+    ],
   },
   {
     name: 'iPhone 15 Pro Max',
@@ -49,6 +72,12 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 20,
     category: 'Smartphones',
     isActive: true,
+    attributes: [
+      { name: 'Processor', value: 'A17 Pro' },
+      { name: 'Storage', value: '256', unit: 'GB' },
+      { name: 'Display', value: '6.7', unit: 'inch' },
+      { name: 'Material', value: 'Titanium' },
+    ],
   },
   {
     name: 'Xiaomi 14 Pro',
@@ -58,6 +87,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 40,
     category: 'Smartphones',
     isActive: true,
+    attributes: [
+      { name: 'Processor', value: 'Snapdragon 8 Gen 3' },
+      { name: 'Storage', value: '256', unit: 'GB' },
+      { name: 'Camera', value: 'Leica' },
+    ],
   },
   {
     name: 'Mechanical Gaming Keyboard RGB',
@@ -67,6 +101,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 100,
     category: 'Gaming Peripherals',
     isActive: true,
+    attributes: [
+      { name: 'Switch Type', value: 'Cherry MX' },
+      { name: 'Backlight', value: 'RGB' },
+      { name: 'Keys', value: '104' },
+    ],
   },
   {
     name: 'Gaming Mouse Pro',
@@ -76,6 +115,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 80,
     category: 'Gaming Peripherals',
     isActive: true,
+    attributes: [
+      { name: 'DPI', value: '25000' },
+      { name: 'Buttons', value: '8' },
+      { name: 'Lighting', value: 'RGB' },
+    ],
   },
   {
     name: 'Sony WH-1000XM5 Headphones',
@@ -85,6 +129,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 35,
     category: 'Audio',
     isActive: true,
+    attributes: [
+      { name: 'Battery Life', value: '30', unit: 'hours' },
+      { name: 'Noise Cancellation', value: 'Active' },
+      { name: 'Connection', value: 'Wireless Bluetooth' },
+    ],
   },
   {
     name: 'AirPods Pro 2',
@@ -94,6 +143,11 @@ export const TEST_PRODUCTS: IProductCreateInput[] = [
     stock: 45,
     category: 'Audio',
     isActive: true,
+    attributes: [
+      { name: 'Noise Cancellation', value: 'Active' },
+      { name: 'Audio', value: 'Spatial Audio' },
+      { name: 'Type', value: 'Wireless Earbuds' },
+    ],
   },
 ];
 

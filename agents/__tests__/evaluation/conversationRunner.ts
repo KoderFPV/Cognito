@@ -1,4 +1,5 @@
 import { executeChatGraphWithStream, IStreamCallback } from '@/agents/graph/chatGraph';
+import { ISearchResult } from '@/agents/graph/state';
 import { IConversationTurn } from './evaluator';
 
 export interface IConversationScenario {
@@ -32,22 +33,26 @@ export const runConversation = async (
   const callbacks = createNoopCallbacks();
 
   const messages: Array<{ role: string; content: string }> = [];
+  let lastSearchResults: ISearchResult | null = null;
 
   for (const turn of scenario.turns) {
     messages.push({ role: 'user', content: turn.userMessage });
     conversation.push({ role: 'user', content: turn.userMessage });
 
-    const response = await executeChatGraphWithStream(
+    const result = await executeChatGraphWithStream(
       sessionId,
       scenario.locale,
       messages,
-      callbacks
+      callbacks,
+      lastSearchResults
     );
 
-    messages.push({ role: 'assistant', content: response });
-    conversation.push({ role: 'assistant', content: response });
+    lastSearchResults = result.lastSearchResults;
 
-    if (turn.validateResponse && !turn.validateResponse(response)) {
+    messages.push({ role: 'assistant', content: result.response });
+    conversation.push({ role: 'assistant', content: result.response });
+
+    if (turn.validateResponse && !turn.validateResponse(result.response)) {
       return {
         scenario,
         conversation,

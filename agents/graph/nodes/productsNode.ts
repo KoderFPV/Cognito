@@ -123,7 +123,15 @@ export const productsNode = async (state: IGraphState) => {
     graphLogger.info('products', `Retrieved ${products.length} products from MongoDB`);
 
     const responseMessage = formatProductsResponse(products, translations);
-    return { messages: [new AIMessage(responseMessage)], response: responseMessage };
+    return {
+      messages: [new AIMessage(responseMessage)],
+      response: responseMessage,
+      lastSearchResults: {
+        products,
+        query: searchQuery,
+        timestamp: new Date(),
+      },
+    };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error';
     graphLogger.error('products', `Search failed: ${errorMsg}`);

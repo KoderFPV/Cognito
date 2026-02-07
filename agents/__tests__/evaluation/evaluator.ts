@@ -164,3 +164,26 @@ export const defaultChatCriteria: IEvaluationCriteria[] = [
     weight: 1,
   },
 ];
+
+export const defaultProductDetailsCriteria: IEvaluationCriteria[] = [
+  {
+    name: 'Accuracy',
+    description: 'Does the assistant provide accurate product details?',
+    weight: 3,
+  },
+  {
+    name: 'Completeness',
+    description: 'Does the response include relevant specifications?',
+    weight: 2,
+  },
+  {
+    name: 'Reference Understanding',
+    description: 'Does the assistant correctly identify which product the user is asking about?',
+    weight: 3,
+  },
+  {
+    name: 'Natural Language',
+    description: 'Is the response natural and easy to understand?',
+    weight: 1,
+  },
+];

@@ -1,3 +1,9 @@
+export interface IProductAttribute {
+  name: string;
+  value: string;
+  unit?: string;
+}
+
 export interface IProduct {
   _id: string;
   name: string;
@@ -11,6 +17,7 @@ export interface IProduct {
   createdAt: Date;
   updatedAt: Date;
   deleted: boolean;
+  attributes?: IProductAttribute[];
 }
 
 export interface IProductCreateInput {
@@ -22,4 +29,5 @@ export interface IProductCreateInput {
   imageUrl?: string;
   category: string;
   isActive: boolean;
+  attributes?: IProductAttribute[];
 }
